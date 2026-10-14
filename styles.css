@@ -1,0 +1,39 @@
+/* The shared Angular component owns editor styles with Angular encapsulation. */
+.workspace-leaf-content[data-type="era-canvas"] .view-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Follow the vault theme while keeping the page's own paper settings. */
+.workspace-leaf-content[data-type="era-canvas"] era-editor {
+  --era-theme-paper: var(--background-primary, #f4efe5);
+  --era-theme-surface: var(--background-secondary, #fffbf3);
+  --era-theme-hover: var(--background-modifier-hover, #eee6d9);
+  --era-theme-active: var(--background-modifier-active-hover, #e8dcc8);
+  --era-theme-accent: var(--text-accent, #927b59);
+  --era-theme-ink: var(--text-normal, #443e35);
+  --era-theme-muted: var(--text-muted, #8a8072);
+  --era-theme-line: var(--background-modifier-border, #e2d9ca);
+  font-family: var(--font-interface, sans-serif);
+  min-width: 0;
+}
+
+.theme-light .workspace-leaf-content[data-type="era-canvas"] era-editor {
+  color-scheme: light;
+}
+
+.theme-dark .workspace-leaf-content[data-type="era-canvas"] era-editor {
+  color-scheme: dark;
+}
+
+.era-obsidian-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--layer-modal, 1000) - 1);
+  background: var(--background-primary);
+}
+
+.era-obsidian-expanded > .view-content {
+  width: 100%;
+  height: 100%;
+}
