@@ -48,6 +48,20 @@ Los cuadernos anteriores se siguen abriendo. Las funciones recientes de letra y 
 
 Descarga el ZIP de la publicación, extrae su carpeta `era` en `<vault>/.obsidian/plugins/`, recarga Obsidian y activa Era. Para actualizar, sustituye los archivos del plugin y conserva los cuadernos y la configuración. Si tu vault usa otra carpeta de configuración, úsala en lugar de `.obsidian`.
 
+## Licencia, privacidad y acceso
+
+Era se ofrece para uso gratuito personal, educativo y profesional. No requiere pagos ni una cuenta propia de Era. La [licencia de uso gratuito](LICENSE) permite instalar, utilizar y conservar copias de respaldo; el autor conserva los derechos de modificación y redistribución del código y del compilado de Era. Los componentes de terceros mantienen sus propias licencias y los derechos que estas conceden.
+
+El código fuente original se conserva en un repositorio privado. La revisión por Obsidian podrá realizarse mediante la vía de repositorio privado de la aplicación GitHub del directorio de la comunidad. Esta publicación distribuye el compilado; no afirma que Era sea un producto creado o aprobado por el equipo de Obsidian.
+
+**Red.** El dibujo, los cuadernos, la renderización de PDFs y Windows Ink funcionan localmente. Al pegar un enlace y pedir una vista previa, Era consulta la página HTTP/HTTPS indicada para obtener título y descripción. Al importar un recurso mediante un enlace, descarga el archivo de esa dirección. Las solicitudes van al servidor de la dirección elegida, que recibe la solicitud de red habitual. No se utiliza un servicio remoto de reconocimiento de escritura ni se envían los cuadernos para estas funciones. Pegar solo texto o enlace evita solicitar la vista previa.
+
+**Archivos y portapapeles.** Era lee y guarda cuadernos y recursos dentro del Vault y puede modificar los PDFs que anotas. Conserva copias previas de los PDFs en `.era/pdf-backups/`. Puedes seleccionar archivos del equipo desde el selector del sistema para importarlos al Vault, y exportar dibujos mediante la descarga elegida. El acceso al portapapeles se usa al ejecutar acciones de pegado. No se escanean carpetas externas al Vault.
+
+**Almacenamiento local.** Las preferencias de herramientas y colores se guardan localmente. Si falla el guardado de un cuaderno, puede conservarse una copia de recuperación en el almacenamiento local de Obsidian; el comando de recuperación permite devolverla al Vault. Estas copias no se sincronizan automáticamente.
+
+La versión 1.0.0 no incorpora telemetría ni anuncios. En Windows, el reconocimiento de palabras utiliza un proceso local de Windows Ink y los componentes de escritura a mano instalados para español o inglés. No descarga ni instala esos componentes.
+
 ## Distribución y soporte
 
 Era todavía no está en el catálogo oficial de plugins de Obsidian. Se instala mediante BRAT o la descarga manual.

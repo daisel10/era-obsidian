@@ -1,0 +1,24 @@
+Era — Free-use license
+
+Copyright (c) 2026 Daisel10
+
+Permission is granted, free of charge, to install and use the official compiled
+versions of Era for personal, educational and professional purposes, and to
+make backup copies for that use.
+
+The copyright holder authorizes delivery of official release assets through
+GitHub and the Obsidian community plugin directory.
+
+The copyright holder retains the rights to modify and redistribute Era's
+original code. This license does not grant permission to modify, redistribute,
+sublicense or sell Era's original code or compiled distributions. It does not
+grant access to the private source repository or require publication of source
+code. Copyright and license notices must be preserved in backup copies.
+
+Third-party components are governed by their respective licenses, as identified
+in THIRD_PARTY_NOTICES.txt and the notices embedded in main.js. The restrictions
+above do not limit rights granted by those third-party licenses.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER IS NOT
+LIABLE FOR CLAIMS OR DAMAGES ARISING FROM USE OF THE SOFTWARE.
