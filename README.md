@@ -6,6 +6,44 @@ Este repositorio distribuye el plugin compilado, listo para instalar.
 
 [Descargar Era 1.0.1](https://github.com/daisel10/era-obsidian/releases/download/1.0.1/era-1.0.1.zip) · [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.0.1)
 
+## Installation
+
+Requires **Obsidian 1.8.7 or later on desktop**. Era is currently installed through BRAT or manually while community-directory review is pending.
+
+1. In Obsidian, open **Settings → Community plugins → Browse**.
+2. Install and enable **BRAT**.
+3. Open the command palette and run **BRAT: Add a beta plugin for testing**.
+4. Enter `https://github.com/daisel10/era-obsidian`, select the latest version and click **Add Plugin**.
+5. Enable **Era** in Community plugins if it is not enabled automatically.
+
+For manual installation, download `era-1.0.1.zip` from [Releases](https://github.com/daisel10/era-obsidian/releases/tag/1.0.1), extract its `era` folder into `<vault>/.obsidian/plugins/`, reload Obsidian and enable Era. Use your vault's configuration folder if it differs from `.obsidian`.
+
+To update, check for updates in BRAT. If you pinned an older version, select the latest version. Manual updates replace the plugin files; keep your notebook files and configuration.
+
+## Usage
+
+1. Run **Era: Crear cuaderno** from Obsidian's command palette, or click the pencil ribbon icon.
+2. Draw on the canvas. The tool wheel provides three independent brush presets, selection, eraser and the **+** menu for text and references.
+3. Add notebook pages with **+ Página** in the sidebar. Use **Recursos** to import PDFs, images and text files.
+4. Open a PDF in the expanded reader to annotate it and navigate its pages.
+5. Notebook changes are saved automatically; **Guardar cuaderno** forces a save.
+
+Open an existing `.era` file from Obsidian or run **Era: Abrir cuaderno** to return to a notebook.
+
+## License
+
+Era uses a **custom free-use license**: personal, educational and professional use and backup copies are permitted; modification and redistribution rights for Era remain with the author. See the authoritative [LICENSE](LICENSE) and its [plain-language explanation](LICENSE-EXPLAINED.md). Third-party components retain their own license terms. A custom license may continue to appear as unrecognized in GitHub's automated license detection.
+
+Era's source repository is private and can be provided through Obsidian's private-source review process. Catalogue approval is still pending.
+
+## Network and process disclosures
+
+Web previews and linked-resource imports contact the HTTP/HTTPS URL explicitly supplied by the user. Drawing, notebook storage, PDF processing and handwriting recognition run locally. Era does not include telemetry, ads or its own account requirement.
+
+On Windows, handwriting recognition starts a local Windows PowerShell process through `node:child_process`, using a fixed bundled Windows Ink script. Stroke coordinates and the selected language are sent as JSON through standard input, rather than inserted into a shell command. This process capability is disclosed for review; the automatic shell-execution warning may remain.
+
+Angular also formats version-specific documentation links. The inspected split/join pattern parses Angular's version number. These observations and the limits of the domain-warning investigation are documented in [Review notes](REVIEW-NOTES.md).
+
 ## Instalar con BRAT
 
 Requiere Obsidian **1.8.7 o posterior para escritorio** y los plugins de la comunidad habilitados.
@@ -38,7 +76,7 @@ Para volver a un cuaderno, abre su archivo `.era` desde Obsidian o ejecuta **Era
 - La distribución incluye la licencia de uso gratuito y los avisos de terceros, también dentro del plugin.
 - Se declara compatibilidad de escritorio por el uso de Node.js en Windows Ink. Móvil queda fuera de esta publicación.
 
-La solicitud al directorio sigue pendiente de envío y revisión. Esta actualización no implica que Era haya sido aprobada por Obsidian.
+La aprobación en el directorio sigue pendiente. La revisión automática mostrada el 17 de octubre de 2026 no pudo completarse y señala que un administrador la investigará. Esta actualización no implica que Era haya sido aprobada por Obsidian.
 
 ## Funciones incluidas
 
