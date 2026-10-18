@@ -4,8 +4,8 @@
   "files": [
     {
       "name": "worker.js",
-      "bytes": 1730703,
-      "sha256": "c4a7a830da8708b8b887c10e10e693ac2cfaffccf86703c0f61dc6186bbb698e"
+      "bytes": 1732574,
+      "sha256": "63adeaba9b67002cfb72cf7b7a43e4c4de92d302ce9b9a5f0fb2069afc6d1c51"
     },
     {
       "name": "encoder_int8.onnx",

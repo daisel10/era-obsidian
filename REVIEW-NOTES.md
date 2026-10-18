@@ -1,12 +1,14 @@
 # Review notes
 
-## Current release: 1.6.2
+## Current release: 1.6.4
 
-This stable release adds Vault folder browsing and PDF relinking from the Vault or a local computer file, validating compatibility before importing. It retains the previous resource, connection, palette and trackpad improvements, custom free-use license, Windows Ink word recognition and desktop-only declaration. Directory approval remains pending.
+This stable release consolidates approved handwriting styles/providers, recoverable blocks, eraser/pen corrections, save recovery, clipboard actions and guarded mobile loading. Windows Ink is created only on Windows desktop; browser handwriting remains conditional on API and language availability. ML Kit is not integrated. The custom free-use license and disclosed process capability remain in place. Directory approval is pending.
 
-The matching private source reference is tag `1.6.2` in `daisel10/era`, on `main`, commit `7ae4050bef38929eef89b4c32c891069bde8e3e0`. Validation passed 89 plugin and 166 UI tests (255 total), types and formatting. Frozen-ZIP integrity and installation checks preserved plugin data and verified equation assets. The complete ZIP includes `equations/` with locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
+The matching private source reference is tag `1.6.4` in `daisel10/era`, commit `985d8abf86068222dbf0207c5e3d35b2b8a1cf56`. Validation passed 185 native, 99 plugin and 203 UI tests (487 total), Clippy, types and formatting. The tested bundle includes simulated mobile and recovery scenarios, and frozen installation preserves plugin data. The complete ZIP includes `equations/` with local models, runtime and licenses; handwriting fonts and their notices are incorporated into the compiled distribution. BRAT's main-file installation additionally requires copying `equations/` from the matching ZIP.
 
-The bundle hashes and scanner observations below are historical and refer to their stated versions. They do not assert that 1.6.2 has passed directory review or resolved the size, custom-license, domain or process warnings.
+New font choices and recoverable handwriting blocks require notebook formats v19 and v20 respectively. Use 1.6.4 or later to open notebooks using these features. Simulated mobile/provider/sync checks do not certify physical devices or real external synchronization services.
+
+The hashes and scanner observations below are historical. They do not assert that 1.6.4 has passed directory review or resolved prior warnings.
 
 ## Evidence for 1.6.0
 
