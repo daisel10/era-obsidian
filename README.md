@@ -1,10 +1,10 @@
 # Era para Obsidian
 
-**Versión 1.6.1.** Cuadernos con páginas para dibujar, escribir y trabajar con imágenes, textos y PDFs dentro de Obsidian.
+**Versión 1.6.2.** Cuadernos con páginas para dibujar, escribir y trabajar con imágenes, textos y PDFs dentro de Obsidian.
 
 Este repositorio distribuye el plugin compilado, listo para instalar.
 
-[Descargar Era 1.6.1](https://github.com/daisel10/era-obsidian/releases/download/1.6.1/era-1.6.1.zip) · [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.1)
+[Descargar Era 1.6.2](https://github.com/daisel10/era-obsidian/releases/download/1.6.2/era-1.6.2.zip) · [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.2)
 
 ## Installation
 
@@ -12,7 +12,7 @@ Requires **Obsidian 1.8.7 or later on desktop**. Era is currently installed thro
 
 For the complete plugin, including local equation recognition:
 
-1. Download [era-1.6.1.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.1/era-1.6.1.zip).
+1. Download [era-1.6.2.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.2/era-1.6.2.zip).
 2. Disable Era if it is already running, then extract the ZIP's `era` folder into `<vault>/.obsidian/plugins/`.
 3. Copy the entire folder, including `equations/`. When updating, merge/replace the distributed files and preserve `data.json` and notebook files.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**. Use your vault's configuration folder if it differs from `.obsidian`.
@@ -56,11 +56,11 @@ Requiere Obsidian **1.8.7 o posterior para escritorio** y los plugins de la comu
 3. Abre la paleta de comandos con **Ctrl + P** (**Cmd + P** en macOS).
 4. Ejecuta **BRAT: Add a beta plugin for testing**.
 5. Pega `https://github.com/daisel10/era-obsidian`.
-6. Selecciona `1.6.1` o la última versión y pulsa **Add Plugin**.
+6. Selecciona `1.6.2` o la última versión y pulsa **Add Plugin**.
 7. Para usar el reconocimiento de ecuaciones, descarga también el ZIP completo de esta versión y copia su carpeta `equations/` dentro de `<vault>/.obsidian/plugins/era/`. BRAT no instala esa carpeta.
 8. Recarga Obsidian y activa **Era** en Plugins de la comunidad si todavía no está activado.
 
-Para actualizar una instalación existente, busca actualizaciones desde BRAT y sustituye también `equations/` por la carpeta del ZIP de la misma versión. Si fijaste Era a una versión anterior, selecciona `1.6.1` o la última disponible. El comando de BRAT conserva la palabra «beta» aunque esta publicación es una versión normal.
+Para actualizar una instalación existente, busca actualizaciones desde BRAT y sustituye también `equations/` por la carpeta del ZIP de la misma versión. Si fijaste Era a una versión anterior, selecciona `1.6.2` o la última disponible. El comando de BRAT conserva la palabra «beta» aunque esta publicación es una versión normal.
 
 ## Empezar a usar Era
 
@@ -73,7 +73,13 @@ Para actualizar una instalación existente, busca actualizaciones desde BRAT y s
 
 Para volver a un cuaderno, abre su archivo `.era` desde Obsidian o ejecuta **Era: Abrir cuaderno**.
 
-## Novedades de 1.6.1
+## Novedades de 1.6.2
+
+- Exploración de carpetas del Vault, navegación por ruta y búsqueda por nombre o carpeta sin distinguir tildes ni mayúsculas.
+- Más resultados para carpetas con más de 100 archivos y retorno a la carpeta explorada al salir de la búsqueda.
+- Volver a vincular PDFs desde el Vault o desde el equipo, validando la copia antes de importarla y conservando las referencias del cuaderno.
+
+## Mejoras conservadas de 1.6.1
 
 - Renombrado de recursos en el Vault y actualización de referencias en cuadernos abiertos y cerrados, conservando los nombres personalizados de capas.
 - Conexiones que conservan los lados elegidos al arrastrar y acompañan a los objetos al moverlos o cambiar su tamaño.
@@ -115,9 +121,9 @@ Los cuadernos anteriores se siguen abriendo. Las funciones recientes de letra y 
 
 ## Instalación manual
 
-Descarga [era-1.6.1.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.1/era-1.6.1.zip), desactiva Era si ya está abierto y copia la carpeta `era` **completa, incluida `equations/`**, en `<vault>/.obsidian/plugins/`. Recarga Obsidian y activa Era. Para actualizar, combina la carpeta y sustituye los archivos distribuidos; conserva `data.json`, tus cuadernos y los datos de Estudio. Si tu vault usa otra carpeta de configuración, úsala en lugar de `.obsidian`.
+Descarga [era-1.6.2.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.2/era-1.6.2.zip), desactiva Era si ya está abierto y copia la carpeta `era` **completa, incluida `equations/`**, en `<vault>/.obsidian/plugins/`. Recarga Obsidian y activa Era. Para actualizar, combina la carpeta y sustituye los archivos distribuidos; conserva `data.json`, tus cuadernos y los datos de Estudio. Si tu vault usa otra carpeta de configuración, úsala en lugar de `.obsidian`.
 
-No descargues los archivos «Source code» que GitHub genera automáticamente. Usa el ZIP `era-1.6.1.zip` de los archivos adjuntos de la publicación.
+No descargues los archivos «Source code» que GitHub genera automáticamente. Usa el ZIP `era-1.6.2.zip` de los archivos adjuntos de la publicación.
 
 ## Licencia, privacidad y acceso
 
@@ -131,7 +137,7 @@ El código fuente original se conserva en un repositorio privado. La revisión p
 
 **Almacenamiento local.** Estudio guarda sus mazos, multimedia y repasos en `Era/Estudio/`, dentro del Vault; su sincronización depende del mecanismo del Vault. Las preferencias de herramientas y colores se guardan localmente. Si falla el guardado de un cuaderno, puede conservarse una copia de recuperación en el almacenamiento local de Obsidian; el comando de recuperación permite devolverla al Vault. Estas copias no se sincronizan automáticamente.
 
-La versión 1.6.1 no incorpora telemetría ni anuncios. En Windows, el reconocimiento de palabras utiliza un proceso local de Windows Ink y los componentes de escritura a mano instalados para español o inglés. No descarga ni instala esos componentes.
+La versión 1.6.2 no incorpora telemetría ni anuncios. En Windows, el reconocimiento de palabras utiliza un proceso local de Windows Ink y los componentes de escritura a mano instalados para español o inglés. No descarga ni instala esos componentes.
 
 ## Distribución y soporte
 

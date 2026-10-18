@@ -1,12 +1,12 @@
 # Review notes
 
-## Current release: 1.6.1
+## Current release: 1.6.2
 
-This stable release includes resource renaming across notebook references, connection sides, palette layouts and trackpad navigation. It retains the 1.6.0 theme corrections, custom free-use license, local Windows Ink word recognition and desktop-only declaration. Directory approval remains pending.
+This stable release adds Vault folder browsing and PDF relinking from the Vault or a local computer file, validating compatibility before importing. It retains the previous resource, connection, palette and trackpad improvements, custom free-use license, Windows Ink word recognition and desktop-only declaration. Directory approval remains pending.
 
-The matching private source reference is tag `1.6.1` in `daisel10/era`, on `main`, commit `9d4089b3fff7115fa26558fd14ae90e33129e5c4`. Validation passed 173 native, 89 plugin and 163 UI tests (425 total), Clippy, types and formatting. Frozen-ZIP integrity and installation checks preserved plugin data and verified equation assets. The complete ZIP includes `equations/` with the locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
+The matching private source reference is tag `1.6.2` in `daisel10/era`, on `main`, commit `7ae4050bef38929eef89b4c32c891069bde8e3e0`. Validation passed 89 plugin and 166 UI tests (255 total), types and formatting. Frozen-ZIP integrity and installation checks preserved plugin data and verified equation assets. The complete ZIP includes `equations/` with locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
 
-The bundle hashes and scanner observations below are historical and refer to their stated versions. They do not assert that 1.6.1 has passed directory review or resolved the size, custom-license, domain or process warnings.
+The bundle hashes and scanner observations below are historical and refer to their stated versions. They do not assert that 1.6.2 has passed directory review or resolved the size, custom-license, domain or process warnings.
 
 ## Evidence for 1.6.0
 
