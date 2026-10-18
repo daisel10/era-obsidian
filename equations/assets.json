@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "modelCommit": "2585994ee11fe2ed98065c555c4aae8ee9096209",
+  "files": [
+    {
+      "name": "worker.js",
+      "bytes": 1730703,
+      "sha256": "c4a7a830da8708b8b887c10e10e693ac2cfaffccf86703c0f61dc6186bbb698e"
+    },
+    {
+      "name": "encoder_int8.onnx",
+      "bytes": 3460779,
+      "sha256": "272f17c7b120db61db6cd8d77e695d0139144044abd57d9b23284435a5d916fa"
+    },
+    {
+      "name": "decoder_int8.onnx",
+      "bytes": 4118047,
+      "sha256": "658901d81ca3aa4b62b0da262e8fe67ebcfdac19cfb52ca2cfd076bebd481088"
+    },
+    {
+      "name": "vocab.json",
+      "bytes": 3697,
+      "sha256": "1d75cbbea3bed558683d7e9c3b3c72069ef2143a155d5f8c610f85a281af000c"
+    },
+    {
+      "name": "ort-wasm-simd-threaded.mjs",
+      "bytes": 24274,
+      "sha256": "b538a29137066dbed1f0f449fb081dfd35ccde3d5b155adc34532cefa3b23ee2"
+    },
+    {
+      "name": "ort-wasm-simd-threaded.wasm",
+      "bytes": 12303130,
+      "sha256": "175fabe412fc7fd1376e3178861a47ebfdc30cedb3b2c3f6bb72c37d96c26f73"
+    },
+    {
+      "name": "LICENSE-ink-on.txt",
+      "bytes": 10762,
+      "sha256": "2b5d696225da7b4f127b88d055695165e50f7ec62a485d52b4745cf8e87dac67"
+    },
+    {
+      "name": "LICENSE-onnxruntime.txt",
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    {
+      "name": "LICENSE-mathjax.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    }
+  ]
+}

@@ -1,24 +1,23 @@
 # Era para Obsidian
 
-**Versión 1.0.1.** Cuadernos con páginas para dibujar, escribir y trabajar con imágenes, textos y PDFs dentro de Obsidian.
+**Versión 1.5.0.** Cuadernos con páginas para dibujar, escribir y trabajar con imágenes, textos y PDFs dentro de Obsidian.
 
 Este repositorio distribuye el plugin compilado, listo para instalar.
 
-[Descargar Era 1.0.1](https://github.com/daisel10/era-obsidian/releases/download/1.0.1/era-1.0.1.zip) · [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.0.1)
+[Descargar Era 1.5.0](https://github.com/daisel10/era-obsidian/releases/download/1.5.0/era-1.5.0.zip) · [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.5.0)
 
 ## Installation
 
 Requires **Obsidian 1.8.7 or later on desktop**. Era is currently installed through BRAT or manually while community-directory review is pending.
 
-1. In Obsidian, open **Settings → Community plugins → Browse**.
-2. Install and enable **BRAT**.
-3. Open the command palette and run **BRAT: Add a beta plugin for testing**.
-4. Enter `https://github.com/daisel10/era-obsidian`, select the latest version and click **Add Plugin**.
-5. Enable **Era** in Community plugins if it is not enabled automatically.
+For the complete plugin, including local equation recognition:
 
-For manual installation, download `era-1.0.1.zip` from [Releases](https://github.com/daisel10/era-obsidian/releases/tag/1.0.1), extract its `era` folder into `<vault>/.obsidian/plugins/`, reload Obsidian and enable Era. Use your vault's configuration folder if it differs from `.obsidian`.
+1. Download [era-1.5.0.zip](https://github.com/daisel10/era-obsidian/releases/download/1.5.0/era-1.5.0.zip).
+2. Disable Era if it is already running, then extract the ZIP's `era` folder into `<vault>/.obsidian/plugins/`.
+3. Copy the entire folder, including `equations/`. When updating, merge/replace the distributed files and preserve `data.json` and notebook files.
+4. Reload Obsidian and enable Era in **Settings → Community plugins**. Use your vault's configuration folder if it differs from `.obsidian`.
 
-To update, check for updates in BRAT. If you pinned an older version, select the latest version. Manual updates replace the plugin files; keep your notebook files and configuration.
+**BRAT:** add `https://github.com/daisel10/era-obsidian` using **BRAT: Add a beta plugin for testing**, or check for updates if already installed. BRAT installs the main plugin files; local equation recognition additionally requires the matching `equations/` folder from the complete ZIP. Copy it after installing/updating, then reload Obsidian. A ZIP-only installation is sufficient; BRAT is optional.
 
 ## Usage
 
@@ -26,7 +25,9 @@ To update, check for updates in BRAT. If you pinned an older version, select the
 2. Draw on the canvas. The tool wheel provides three independent brush presets, selection, eraser and the **+** menu for text and references.
 3. Add notebook pages with **+ Página** in the sidebar. Use **Recursos** to import PDFs, images and text files.
 4. Open a PDF in the expanded reader to annotate it and navigate its pages.
-5. Notebook changes are saved automatically; **Guardar cuaderno** forces a save.
+5. For handwritten formulas, enable the mathematics option in handwriting settings; it uses the locally installed `equations/` files.
+6. Run **Era: Abrir Estudio** to import Anki `.apkg` decks, create cards and review with daily goals. Estudio can be disabled in Era settings.
+7. Notebook changes are saved automatically; **Guardar cuaderno** forces a save.
 
 Open an existing `.era` file from Obsidian or run **Era: Abrir cuaderno** to return to a notebook.
 
@@ -53,10 +54,11 @@ Requiere Obsidian **1.8.7 o posterior para escritorio** y los plugins de la comu
 3. Abre la paleta de comandos con **Ctrl + P** (**Cmd + P** en macOS).
 4. Ejecuta **BRAT: Add a beta plugin for testing**.
 5. Pega `https://github.com/daisel10/era-obsidian`.
-6. Selecciona `1.0.1` o la última versión y pulsa **Add Plugin**.
-7. Activa **Era** en Plugins de la comunidad si todavía no está activado.
+6. Selecciona `1.5.0` o la última versión y pulsa **Add Plugin**.
+7. Para usar el reconocimiento de ecuaciones, descarga también el ZIP completo de esta versión y copia su carpeta `equations/` dentro de `<vault>/.obsidian/plugins/era/`. BRAT no instala esa carpeta.
+8. Recarga Obsidian y activa **Era** en Plugins de la comunidad si todavía no está activado.
 
-Para actualizar una instalación existente, busca actualizaciones desde BRAT. Si fijaste Era a una versión anterior, selecciona `1.0.1` o la última disponible. El comando de BRAT conserva la palabra «beta» aunque esta publicación es una versión normal.
+Para actualizar una instalación existente, busca actualizaciones desde BRAT y sustituye también `equations/` por la carpeta del ZIP de la misma versión. Si fijaste Era a una versión anterior, selecciona `1.5.0` o la última disponible. El comando de BRAT conserva la palabra «beta» aunque esta publicación es una versión normal.
 
 ## Empezar a usar Era
 
@@ -69,14 +71,17 @@ Para actualizar una instalación existente, busca actualizaciones desde BRAT. Si
 
 Para volver a un cuaderno, abre su archivo `.era` desde Obsidian o ejecuta **Era: Abrir cuaderno**.
 
-## Preparación del catálogo en 1.0.1
+## Novedades de 1.5.0
 
-- El HTML del portapapeles y de los metadatos de enlaces se sanea antes de procesarlo.
-- La exportación construye los elementos del documento de forma explícita y sanea su contenido.
-- La distribución incluye la licencia de uso gratuito y los avisos de terceros, también dentro del plugin.
-- Se declara compatibilidad de escritorio por el uso de Node.js en Windows Ink. Móvil queda fuera de esta publicación.
+- Reconocimiento local de ecuaciones manuscritas a LaTeX y contornos vectoriales, con edición, reintento y recuperación de los trazos originales.
+- Conexiones persistentes entre trazos, ayudas de escritura y refinamientos de la Rueda de herramientas, colores y controles táctiles.
+- Herramientas PDF ampliadas: borrador configurable, texto, comentarios, páginas y lectura al ancho.
+- Diccionario inglés/español sin conexión, con traducciones, sentidos, definiciones y sinónimos.
+- Estudio opcional con importación/exportación de mazos Anki, tarjetas desde el Lienzo, repasos FSRS y metas diarias o semanales.
 
-La aprobación en el directorio sigue pendiente. La revisión automática mostrada el 17 de octubre de 2026 no pudo completarse y señala que un administrador la investigará. Esta actualización no implica que Era haya sido aprobada por Obsidian.
+Se conservan la licencia de uso gratuito y el saneamiento de HTML publicados en 1.0.1. La distribución sigue declarada para escritorio. La adaptación de controles a pantallas pequeñas no implica compatibilidad validada con Obsidian móvil.
+
+La aprobación en el directorio sigue pendiente. La revisión automática de 1.0.1 mostrada el 17 de octubre de 2026 no pudo completarse y señala que un administrador la investigará. Esta publicación no implica que Era haya sido aprobada por Obsidian.
 
 ## Funciones incluidas
 
@@ -93,7 +98,9 @@ Los cuadernos anteriores se siguen abriendo. Las funciones recientes de letra y 
 
 ## Instalación manual
 
-Descarga el ZIP de la publicación, extrae su carpeta `era` en `<vault>/.obsidian/plugins/`, recarga Obsidian y activa Era. Para actualizar, sustituye los archivos del plugin y conserva los cuadernos y la configuración. Si tu vault usa otra carpeta de configuración, úsala en lugar de `.obsidian`.
+Descarga [era-1.5.0.zip](https://github.com/daisel10/era-obsidian/releases/download/1.5.0/era-1.5.0.zip), desactiva Era si ya está abierto y copia la carpeta `era` **completa, incluida `equations/`**, en `<vault>/.obsidian/plugins/`. Recarga Obsidian y activa Era. Para actualizar, combina la carpeta y sustituye los archivos distribuidos; conserva `data.json`, tus cuadernos y los datos de Estudio. Si tu vault usa otra carpeta de configuración, úsala en lugar de `.obsidian`.
+
+No descargues los archivos «Source code» que GitHub genera automáticamente. Usa el ZIP `era-1.5.0.zip` de los archivos adjuntos de la publicación.
 
 ## Licencia, privacidad y acceso
 
@@ -105,14 +112,14 @@ El código fuente original se conserva en un repositorio privado. La revisión p
 
 **Archivos y portapapeles.** Era lee y guarda cuadernos y recursos dentro del Vault y puede modificar los PDFs que anotas. Conserva copias previas de los PDFs en `.era/pdf-backups/`. Puedes seleccionar archivos del equipo desde el selector del sistema para importarlos al Vault, y exportar dibujos mediante la descarga elegida. El acceso al portapapeles se usa al ejecutar acciones de pegado. No se escanean carpetas externas al Vault.
 
-**Almacenamiento local.** Las preferencias de herramientas y colores se guardan localmente. Si falla el guardado de un cuaderno, puede conservarse una copia de recuperación en el almacenamiento local de Obsidian; el comando de recuperación permite devolverla al Vault. Estas copias no se sincronizan automáticamente.
+**Almacenamiento local.** Estudio guarda sus mazos, multimedia y repasos en `Era/Estudio/`, dentro del Vault; su sincronización depende del mecanismo del Vault. Las preferencias de herramientas y colores se guardan localmente. Si falla el guardado de un cuaderno, puede conservarse una copia de recuperación en el almacenamiento local de Obsidian; el comando de recuperación permite devolverla al Vault. Estas copias no se sincronizan automáticamente.
 
-La versión 1.0.1 no incorpora telemetría ni anuncios. En Windows, el reconocimiento de palabras utiliza un proceso local de Windows Ink y los componentes de escritura a mano instalados para español o inglés. No descarga ni instala esos componentes.
+La versión 1.5.0 no incorpora telemetría ni anuncios. En Windows, el reconocimiento de palabras utiliza un proceso local de Windows Ink y los componentes de escritura a mano instalados para español o inglés. No descarga ni instala esos componentes.
 
 ## Distribución y soporte
 
 Era todavía no está en el catálogo oficial de plugins de Obsidian. Se instala mediante BRAT o la descarga manual.
 
-El motor WebAssembly y las dependencias de ejecución están incluidos en el plugin. Los avisos de terceros acompañan la distribución y están incorporados en `main.js`.
+El motor WebAssembly está incluido en `main.js`. Los modelos y el runtime de reconocimiento matemático se incluyen en `equations/` dentro del ZIP completo; no se descargan durante el reconocimiento. Estudio incluye su SQLite/WASM en el bundle y no se conecta a AnkiWeb. Los avisos de terceros acompañan la distribución y están incorporados en `main.js`.
 
 Comunica problemas desde [Issues](https://github.com/daisel10/era-obsidian/issues), indicando versión de Era y Obsidian, sistema operativo y pasos para reproducirlos.
