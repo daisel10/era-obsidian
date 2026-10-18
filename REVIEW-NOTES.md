@@ -1,12 +1,12 @@
 # Review notes
 
-## Current release: 1.6.0
+## Current release: 1.6.1
 
-This stable release includes the approved Obsidian theme integration and menu/input colors. Angular retains the editor's host class, and integration CSS targets `.era-editor` rather than the unknown element selector. The published compiled files include these changes; directory approval is still pending.
+This stable release includes resource renaming across notebook references, connection sides, palette layouts and trackpad navigation. It retains the 1.6.0 theme corrections, custom free-use license, local Windows Ink word recognition and desktop-only declaration. Directory approval remains pending.
 
-The matching private source reference is tag `1.6.0` in `daisel10/era`, on `main`, commit `4438147a5aacb4a5aab8c450a3c1c58555e6a5f7`. Local validation passed 86 plugin and 158 UI tests (244 total), types and formatting, plus frozen-ZIP integrity and installation checks preserving plugin data. The free-use license and desktop-only declaration remain in place. The complete ZIP includes `equations/` with the locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
+The matching private source reference is tag `1.6.1` in `daisel10/era`, on `main`, commit `9d4089b3fff7115fa26558fd14ae90e33129e5c4`. Validation passed 173 native, 89 plugin and 163 UI tests (425 total), Clippy, types and formatting. Frozen-ZIP integrity and installation checks preserved plugin data and verified equation assets. The complete ZIP includes `equations/` with the locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
 
-The observations below refer specifically to 1.0.1. Bundle line numbers and scanner matches have not been revalidated against 1.6.0. This release does not claim to resolve bundle size, custom-license recognition or the process capability warning.
+The bundle hashes and scanner observations below are historical and refer to their stated versions. They do not assert that 1.6.1 has passed directory review or resolved the size, custom-license, domain or process warnings.
 
 ## Evidence for 1.6.0
 
