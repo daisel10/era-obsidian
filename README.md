@@ -43,6 +43,8 @@ Web previews and linked-resource imports contact the HTTP/HTTPS URL explicitly s
 
 On Windows, handwriting recognition starts a local Windows PowerShell process through `node:child_process`, using a fixed bundled Windows Ink script. Stroke coordinates and the selected language are sent as JSON through standard input, rather than inserted into a shell command. This process capability is disclosed for review; the automatic shell-execution warning may remain.
 
+The author retains Windows Ink word recognition and discloses its process capability. See the [review response for release 1.6.0](REVIEW-RESPONSE.md), including the exact bundle hash, the inspected Angular split/join expression and the restrictive-license assessment.
+
 Angular also formats version-specific documentation links. The inspected split/join pattern parses Angular's version number. These observations and the limits of the domain-warning investigation are documented in [Review notes](REVIEW-NOTES.md).
 
 ## Instalar con BRAT

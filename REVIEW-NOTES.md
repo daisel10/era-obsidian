@@ -8,6 +8,10 @@ The matching private source reference is tag `1.6.0` in `daisel10/era`, on `main
 
 The observations below refer specifically to 1.0.1. Bundle line numbers and scanner matches have not been revalidated against 1.6.0. This release does not claim to resolve bundle size, custom-license recognition or the process capability warning.
 
+## Evidence for 1.6.0
+
+See [Review response](REVIEW-RESPONSE.md) for the exact 1.6.0 bundle hash, the Angular version-parser expression at line 13648, Windows Ink process boundaries and the author's decision to retain word recognition. Its scanner mapping is still unconfirmed. The current license remains unchanged while standard restrictive alternatives are assessed.
+
 ## Historical review of 1.0.1
 
 These notes explain the existing 1.0.1 distribution for review. They do not change the runtime, CSS, executable assets, dependencies, version or packaging. Catalogue approval remains pending.
