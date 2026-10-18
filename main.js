@@ -25235,6 +25235,7 @@ var mv = class n74 {
       background: var(--era-surface);
       border: 1px solid var(--era-line);
       border-radius: 12px;
+      color: var(--era-ink);
       box-shadow: 0 6px 24px #0003;
       display: grid;
       gap: 10px;
@@ -28160,6 +28161,7 @@ button.wheel-delete[_ngcontent-%COMP%] {
   border: 1px solid var(--era-line);
   border-radius: 12px;
   background: var(--era-surface);
+  color: var(--era-ink);
   box-shadow: 0 6px 20px #0002;
   pointer-events: auto;
   user-select: text;
@@ -35848,6 +35850,7 @@ button.layers-toggle[_ngcontent-%COMP%] {
   border-radius: 12px;
   padding: 8px;
   background: var(--era-surface);
+  color: var(--era-ink);
   box-shadow: 0 6px 25px #0002;
   font-size: 12px;
 }
@@ -35961,6 +35964,15 @@ form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {
   width: 100%;
   height: 30px;
   box-sizing: border-box;
+}
+form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], 
+.move-stroke[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {
+  background: var(--era-paper);
+  color: var(--era-ink);
+  border: 1px solid var(--era-line);
+  border-radius: 6px;
+  padding: 5px 7px;
+  box-shadow: none;
 }
 .layer-confirm[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {
   margin: 9px 0;
@@ -53926,7 +53938,7 @@ var My = class n102 {
         let i;
         rr(i = ir()) && (r.canvas = i.first);
       }
-    }, hostAttrs: [1, "era-view"], hostVars: 8, hostBindings: function(t, r) {
+    }, hostAttrs: [1, "era-view", "era-editor"], hostVars: 8, hostBindings: function(t, r) {
       t & 1 && M("pointerover", function(o) {
         return r.showTooltip(o);
       })("mouseover", function(o) {

@@ -5,7 +5,7 @@
 }
 
 /* Follow the vault theme while keeping the page's own paper settings. */
-.workspace-leaf-content[data-type="era-canvas"] era-editor {
+.workspace-leaf-content[data-type="era-canvas"] .era-editor {
   --era-theme-paper: var(--background-primary, #f4efe5);
   --era-theme-surface: var(--background-secondary, #fffbf3);
   --era-theme-hover: color-mix(
@@ -26,11 +26,11 @@
   min-width: 0;
 }
 
-.theme-light .workspace-leaf-content[data-type="era-canvas"] era-editor {
+.theme-light .workspace-leaf-content[data-type="era-canvas"] .era-editor {
   color-scheme: light;
 }
 
-.theme-dark .workspace-leaf-content[data-type="era-canvas"] era-editor {
+.theme-dark .workspace-leaf-content[data-type="era-canvas"] .era-editor {
   color-scheme: dark;
 }
 

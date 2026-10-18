@@ -1,12 +1,12 @@
 # Review notes
 
-## Current release: 1.5.0
+## Current release: 1.6.0
 
-The current release includes the approved ink, PDF, dictionary and optional study changes, while retaining the sanitization and free-use license shipped in 1.0.1. The matching private source reference is tag `1.5.0` in `daisel10/era`, now on `main`, commit `ae3fe698cbbb6d246bc03fabc992018114c24eb0`. It remains declared desktop-only. Local validation: 169 native, 158 UI and 86 plugin tests passed (413 total); Clippy, types and formatting passed. The frozen ZIP and a temporary-vault installation, including equation asset hashes and preservation of plugin data, were verified. Catalogue approval is pending.
+This stable release includes the approved Obsidian theme integration and menu/input colors. Angular retains the editor's host class, and integration CSS targets `.era-editor` rather than the unknown element selector. The published compiled files include these changes; directory approval is still pending.
 
-The complete ZIP includes an `equations/` directory with locally executed model/runtime files and their licenses. The standard three-file installer does not install this directory; the README explicitly requires the complete ZIP or copying the matching directory for equation recognition. No runtime download was added.
+The matching private source reference is tag `1.6.0` in `daisel10/era`, on `main`, commit `4438147a5aacb4a5aab8c450a3c1c58555e6a5f7`. Local validation passed 86 plugin and 158 UI tests (244 total), types and formatting, plus frozen-ZIP integrity and installation checks preserving plugin data. The free-use license and desktop-only declaration remain in place. The complete ZIP includes `equations/` with the locally executed models, runtime and licenses. BRAT's main-file installation additionally requires copying this directory from the matching ZIP for equation recognition.
 
-The observations below refer specifically to 1.0.1. Their bundle line numbers and scanner matches have not been revalidated against 1.5.0. They do not assert that the new release has passed directory review.
+The observations below refer specifically to 1.0.1. Bundle line numbers and scanner matches have not been revalidated against 1.6.0. This release does not claim to resolve bundle size, custom-license recognition or the process capability warning.
 
 ## Historical review of 1.0.1
 
