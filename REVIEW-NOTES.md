@@ -1,14 +1,34 @@
 # Review notes
 
-## Current release: 1.6.4
+## Current release: 1.6.5
 
-This stable release consolidates approved handwriting styles/providers, recoverable blocks, eraser/pen corrections, save recovery, clipboard actions and guarded mobile loading. Windows Ink is created only on Windows desktop; browser handwriting remains conditional on API and language availability. ML Kit is not integrated. The custom free-use license and disclosed process capability remain in place. Directory approval is pending.
+This release corrects version identification across the source, manifests, BRAT
+metadata, documentation and downloadable assets. It retains the functional code
+from 1.6.4, including copy/paste, recoverable handwriting, pen erasing and save
+recovery. Windows Ink is available only on Windows desktop; browser handwriting
+depends on API and language availability. ML Kit is not integrated.
 
-The matching private source reference is tag `1.6.4` in `daisel10/era`, commit `985d8abf86068222dbf0207c5e3d35b2b8a1cf56`. Validation passed 185 native, 99 plugin and 203 UI tests (487 total), Clippy, types and formatting. The tested bundle includes simulated mobile and recovery scenarios, and frozen installation preserves plugin data. The complete ZIP includes `equations/` with local models, runtime and licenses; handwriting fonts and their notices are incorporated into the compiled distribution. BRAT's main-file installation additionally requires copying `equations/` from the matching ZIP.
+The matching private source is tag `1.6.5` in `daisel10/era`, commit
+`d42f4f82dd4b85a1701d77054e48d2f8b79f0ad8`. The compiled `main.js` SHA-256 is
+`2dfb48222883998dfe273f206b8afebbc4020ae5497ae4fb83a18197386ac282`. The runtime bundle matches the 1.6.4 bundle byte for byte; the
+release manifest now identifies it as 1.6.5.
 
-New font choices and recoverable handwriting blocks require notebook formats v19 and v20 respectively. Use 1.6.4 or later to open notebooks using these features. Simulated mobile/provider/sync checks do not certify physical devices or real external synchronization services.
+Validation for this release consists of compilation, formatting, static inspection
+of clipboard UI bindings and handlers, ZIP byte comparisons and mathematical
+asset hashes. No functional or automated tests are rerun for 1.6.5. The historical
+1.6.4 validation recorded 185 native, 99 plugin and 203 UI tests; those counts do
+not describe a new test run.
 
-The hashes and scanner observations below are historical. They do not assert that 1.6.4 has passed directory review or resolved prior warnings.
+The complete ZIP includes `equations/`, with local models, runtime and licenses;
+fonts and their notices are incorporated in the distribution. BRAT's main-file
+installation additionally needs `equations/` from the matching ZIP. New font
+choices and recoverable blocks use notebook formats v19 and v20, compatible with
+Era 1.6.4 and later.
+
+The custom free-use license, private-source model and process capability remain
+in place. Physical pen/mobile and real external-sync validation remain pending.
+Directory approval is pending. Historical hashes and scanner observations below
+have not been remapped to this release and do not establish directory approval.
 
 ## Evidence for 1.6.0
 
@@ -30,6 +50,7 @@ The [LICENSE](LICENSE) retains the author's selected free-use terms. [License ex
 
 The screenshot reports **split/join domain assembly**, without a source location. Inspection of the exact published `main.js` found one literal `.join(".")` occurrence, at line **13081**, inside Angular's version parser:
 
+<!-- prettier-ignore -->
 ```js
 let t = e.split(".");
 this.major = t[0], this.minor = t[1], this.patch = t.slice(2).join(".");
