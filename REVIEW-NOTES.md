@@ -1,34 +1,30 @@
 # Review notes
 
-## Current release: 1.6.5
+## Current release: 1.6.6
 
-This release corrects version identification across the source, manifests, BRAT
-metadata, documentation and downloadable assets. It retains the functional code
-from 1.6.4, including copy/paste, recoverable handwriting, pen erasing and save
-recovery. Windows Ink is available only on Windows desktop; browser handwriting
-depends on API and language availability. ML Kit is not integrated.
+This release restores drawing and erasing after failed pointer operations, reuses
+exotic-brush geometry and compact previews, restores square COPIC samples, and
+preserves APKG cards with shared source GUIDs and ordinals as independent cards.
+The notebook format and minimum supported Obsidian version remain unchanged.
 
-The matching private source is tag `1.6.5` in `daisel10/era`, commit
-`d42f4f82dd4b85a1701d77054e48d2f8b79f0ad8`. The compiled `main.js` SHA-256 is
-`2dfb48222883998dfe273f206b8afebbc4020ae5497ae4fb83a18197386ac282`. The runtime bundle matches the 1.6.4 bundle byte for byte; the
-release manifest now identifies it as 1.6.5.
+The matching private source is tag `1.6.6` in `daisel10/era`, commit
+`8c554b9d77011f7a368a258ef7f9246557244bf6`. The compiled `main.js` SHA-256 is
+`2d40dbe692b9f969b67d3bcf4bd57f86ca298ac0297c954791aa5b362767f12c`.
 
-Validation for this release consists of compilation, formatting, static inspection
-of clipboard UI bindings and handlers, ZIP byte comparisons and mathematical
-asset hashes. No functional or automated tests are rerun for 1.6.5. The historical
-1.6.4 validation recorded 185 native, 99 plugin and 203 UI tests; those counts do
-not describe a new test run.
+Validation: 207 UI tests, 102 plugin tests and 186 Rust workspace tests pass.
+WASM, Angular AOT and plugin compilation, host type checks, formatting and Clippy
+pass. All 15 ZIP entries match the distribution byte for byte; the nine equation
+assets match the hashes recorded in their asset manifest.
 
-The complete ZIP includes `equations/`, with local models, runtime and licenses;
-fonts and their notices are incorporated in the distribution. BRAT's main-file
-installation additionally needs `equations/` from the matching ZIP. New font
-choices and recoverable blocks use notebook formats v19 and v20, compatible with
-Era 1.6.4 and later.
+The complete ZIP includes `equations/`, with local models, runtime and licenses.
+BRAT's main-file installation also needs `equations/` from the matching ZIP.
+Windows Ink remains limited to Windows desktop; browser handwriting depends on
+API and language availability. ML Kit is not integrated.
 
 The custom free-use license, private-source model and process capability remain
 in place. Physical pen/mobile and real external-sync validation remain pending.
 Directory approval is pending. Historical hashes and scanner observations below
-have not been remapped to this release and do not establish directory approval.
+do not establish directory approval for this release.
 
 ## Evidence for 1.6.0
 

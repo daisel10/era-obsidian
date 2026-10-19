@@ -8104,7 +8104,6 @@ agrees to preserve same.
 
 Equation recognition and typesetting: ink-on / CoMER ONNX export (kimseungdae, Apache-2.0, source commit 2585994ee11fe2ed98065c555c4aae8ee9096209); ONNX Runtime Web 1.24.2 (Microsoft, MIT); MathJax 3.2.2 (Apache-2.0). Full licenses are distributed in equations/LICENSE-*.txt (Obsidian) and equations-licenses/ (desktop).
 
-
 Era Estudio — Third-party notices
 
 The Anki package format is read and written by Era. No Anki application code is bundled.
@@ -8474,7 +8473,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 
 THIS IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 
 Era — VectorCraft drawing integration
 
@@ -10399,6 +10397,3 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
-
-
-Local equation recognition: CoMER / ink-on, ONNX Runtime Web and MathJax. Their full license texts are included in equations/LICENSE-*.txt. Model provenance and hashes are recorded in equations/assets.json.
