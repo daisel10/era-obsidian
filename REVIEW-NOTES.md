@@ -1,30 +1,29 @@
 # Review notes
 
-## Current release: 1.6.6
+## Current release: 1.6.7
 
-This release restores drawing and erasing after failed pointer operations, reuses
-exotic-brush geometry and compact previews, restores square COPIC samples, and
-preserves APKG cards with shared source GUIDs and ordinals as independent cards.
-The notebook format and minimum supported Obsidian version remain unchanged.
+This release joins neighboring COPIC color boxes along shared radial and angular
+boundaries. It preserves color codes, the complete palette, rotation, favorites
+and notebook formats. The minimum Obsidian version remains 1.8.7.
 
-The matching private source is tag `1.6.6` in `daisel10/era`, commit
-`8c554b9d77011f7a368a258ef7f9246557244bf6`. The compiled `main.js` SHA-256 is
-`2d40dbe692b9f969b67d3bcf4bd57f86ca298ac0297c954791aa5b362767f12c`.
+The matching private source is tag `1.6.7` in `daisel10/era`, commit
+`99cd634dacfd0521b5858531d0b5fa556c34c1d7`. The compiled `main.js` SHA-256 is
+`8ca64d07070d5887cd7155db461af4df33c0f444a2fdfa76d2719f9f0b85aa88`.
 
-Validation: 207 UI tests, 102 plugin tests and 186 Rust workspace tests pass.
-WASM, Angular AOT and plugin compilation, host type checks, formatting and Clippy
-pass. All 15 ZIP entries match the distribution byte for byte; the nine equation
-assets match the hashes recorded in their asset manifest.
+Validation: Angular and plugin compilation, five focused color tests and four
+layout tests pass. The tested runtime matches the local Vault installation.
+The release updates version metadata and verifies all ZIP entries and equation
+asset hashes. The complete 1.6.6 suites are not rerun for this focused change.
 
 The complete ZIP includes `equations/`, with local models, runtime and licenses.
-BRAT's main-file installation also needs `equations/` from the matching ZIP.
+BRAT's main-file installation also needs that folder from the matching ZIP.
 Windows Ink remains limited to Windows desktop; browser handwriting depends on
 API and language availability. ML Kit is not integrated.
 
 The custom free-use license, private-source model and process capability remain
 in place. Physical pen/mobile and real external-sync validation remain pending.
-Directory approval is pending. Historical hashes and scanner observations below
-do not establish directory approval for this release.
+Directory approval is pending. Historical observations below do not establish
+directory approval for this release.
 
 ## Evidence for 1.6.0
 

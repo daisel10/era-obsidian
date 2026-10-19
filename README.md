@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.6.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.7.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.6](https://github.com/daisel10/era-obsidian/releases/download/1.6.6/era-1.6.6.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.6)
+[Descargar Era 1.6.7](https://github.com/daisel10/era-obsidian/releases/download/1.6.7/era-1.6.7.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.7)
 
 ## Installation
 
@@ -14,7 +14,7 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.6.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.6/era-1.6.6.zip).
+2. Download [era-1.6.7.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.7/era-1.6.7.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
    `equations/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
@@ -22,12 +22,12 @@ on Windows desktop. Community-directory approval is pending.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
 **BRAT:** add `https://github.com/daisel10/era-obsidian` through **BRAT: Add a beta
-plugin for testing**, or check for updates. Select `1.6.6` if using a pinned
+plugin for testing**, or check for updates. Select `1.6.7` if using a pinned
 version. BRAT installs the main files; local equation recognition also needs
 `equations/` from the complete ZIP of the same version. Copy that folder and
 reload Obsidian. Manual ZIP installation is sufficient; BRAT is optional.
 
-Use the attached `era-1.6.6.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.7.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -46,14 +46,11 @@ archives.
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.6
+## Qué cambia en 1.6.7
 
-- Recuperación del Lienzo tras errores de pincel y lotes grandes de movimientos.
-- Vistas previas más ligeras para los pinceles exóticos.
-- Muestras COPIC cuadradas en las tres bandas.
-- Importación APKG con tarjetas de origen repetido, conservadas como tarjetas independientes.
-
-No cambia el formato de los cuadernos.
+Las cajitas de COPIC quedan pegadas alrededor de la rueda, sin los huecos entre
+filas y columnas. Se mantienen las tres bandas, los códigos, los 358 colores,
+el giro y los favoritos. No cambia el formato de los cuadernos.
 
 ## Escritura, dibujo y portapapeles
 
@@ -77,7 +74,7 @@ No cambia el formato de los cuadernos.
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.6.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.6/era-1.6.6.zip)
+2. Descarga [era-1.6.7.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.7/era-1.6.7.zip)
    y copia su carpeta `era` completa, incluida `equations/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
@@ -88,7 +85,7 @@ No cambia el formato de los cuadernos.
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.6`.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.7`.
 Para ecuaciones, añade `equations/` del ZIP completo de la misma versión;
 BRAT no instala esa carpeta. Después, recarga Obsidian.
 
