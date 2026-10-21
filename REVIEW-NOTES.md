@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.10
+## Current release: 1.6.11
+
+Automatic touch navigation now shares pen detection between the canvas and PDF reader and across canvas reattachment. Choosing a brush no longer arms finger ink after pen use in Automatic mode; explicit Draw with finger remains available. Focus preserves the scroll offset of the embedding host.
+
+Long ordinary pen and fountain-pen drafts repaint only changed pixels and cull segments outside that damage rectangle. Earlier ink crossing the rectangle is recomposited in its actual layer, preserving pressure and opacity. Camera, viewport size, density, style and guide changes invalidate reuse; art brushes retain full rendering.
+
+Matching private source: tag `1.6.11` in `daisel10/era`, commit `0f28569b5e12371e8d8ae1ad1471bbcff3481867`.
+`main.js` SHA-256: `7c289757411babae3d1e397c9e92598eb33bb7cd72d0bd61b6484d341fd1a4b9`.
+
+Validation: 229 UI and 110 plugin tests pass, Angular/plugin compilation and both host type checks. Chrome runs native CDP pen and touch input with the real editor and a simulated PDF through the actual reader, density 2, three window sizes and four PDF docking positions. It checks coordinate alignment, camera stability, scroll offsets, bitmap resolution and finger navigation without ink. Partial/full repaint comparisons exercise pressure, overlap, alpha and edited sample tails at zoom 0.5/1/2; interior colors match, with Skia antialiasing differences confined to a backing-pixel edge. A 1500-move stroke reduced the paint-time p95 from 23.7 ms to 0.4 ms in this run. Isolated outliers remain. This does not certify physical pen hardware or all documents; the user's actual device/PDF retest remains pending.
+
+The complete ZIP contains 21 verified files, including the existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7, recognition privacy and native-provider priority remain unchanged. BRAT prepares missing recognition files with pinned URLs and SHA-256 verification. Handwriting remains experimental. No community-directory approval is claimed.
+
+## Previous release: 1.6.10
 
 This release separates Retina ink bitmaps from CSS-transformed objects and invalidates raster caches on size, density and viewport zoom changes. It adds an experimental local handwriting fallback, verified first-use model provisioning and shape recognition on pen lift. Obsidian minimum remains 1.8.7; notebook formats are unchanged.
 

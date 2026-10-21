@@ -12245,8 +12245,50 @@ function canvasPixelRatio(canvas, rect) {
 }
 var inkBuffers = /* @__PURE__ */ new WeakMap();
 var frames = /* @__PURE__ */ new WeakMap();
+var drafts = /* @__PURE__ */ new WeakMap();
+function draftDamage(canvas, scene, key, rect) {
+  const stroke = scene.draft;
+  if (!stroke.samples.length) {
+    drafts.delete(canvas);
+    return;
+  }
+  const ratio = canvasPixelRatio(canvas, rect), zoom = scene.camera.zoom;
+  const previous = drafts.get(canvas);
+  const reusable = previous?.key === key;
+  const radius = (s, i) => s.radii?.[i] ?? s.width * (0.1 + 0.9 * s.samples[i].pressure) / 2;
+  let first = 0;
+  if (reusable) {
+    const old = previous.stroke;
+    while (first < Math.min(old.samples.length, stroke.samples.length)) {
+      const a10 = old.samples[first], b10 = stroke.samples[first];
+      if (a10.point.x !== b10.point.x || a10.point.y !== b10.point.y || radius(old, first) !== radius(stroke, first))
+        break;
+      first++;
+    }
+  }
+  let x10 = 0, y10 = 0, w10 = canvas.width, h = canvas.height;
+  if (reusable) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const s of [previous.stroke, stroke])
+      for (let i = Math.max(0, first - 1); i < s.samples.length; i++) {
+        const p = s.samples[i].point, r = radius(s, i);
+        minX = Math.min(minX, p.x - r);
+        minY = Math.min(minY, p.y - r);
+        maxX = Math.max(maxX, p.x + r);
+        maxY = Math.max(maxY, p.y + r);
+      }
+    const origin = scene.camera.origin;
+    x10 = Math.max(0, Math.floor((minX - origin.x) * zoom * ratio) - 2);
+    y10 = Math.max(0, Math.floor((minY - origin.y) * zoom * ratio) - 2);
+    w10 = Math.min(canvas.width, Math.ceil((maxX - origin.x) * zoom * ratio) + 2) - x10;
+    h = Math.min(canvas.height, Math.ceil((maxY - origin.y) * zoom * ratio) + 2) - y10;
+  }
+  drafts.set(canvas, { key, stroke });
+  return reusable ? { x: x10, y: y10, w: w10, h } : void 0;
+}
 function paint(canvas, scene, selected = -1, settings, appearance) {
   if (scene.inkRevision === void 0 || selected >= 0 || scene.measurement || scene.strokeMeasurements || scene.placingArtboard) {
+    drafts.delete(canvas);
     paintScene(
       canvas,
       scene.draft ? { ...scene, strokes: [...scene.strokes, scene.draft] } : scene,
@@ -12348,15 +12390,37 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
       return;
     }
   }
+  if (canvas.width !== w10 || canvas.height !== h) drafts.delete(canvas);
   if (canvas.width !== w10) canvas.width = w10;
   if (canvas.height !== h) canvas.height = h;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas 2D no disponible");
+  const damage = scene.draft && !scene.draft.outline && !scene.backgroundOnly ? draftDamage(
+    canvas,
+    scene,
+    JSON.stringify([
+      key,
+      scene.strokes.length,
+      scene.draft.width,
+      scene.draft.color,
+      scene.draft.opacity,
+      scene.guide
+    ]),
+    rect
+  ) : void 0;
+  if (!scene.draft || scene.draft.outline || scene.backgroundOnly)
+    drafts.delete(canvas);
+  ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (damage) {
+    ctx.beginPath();
+    ctx.rect(damage.x, damage.y, Math.max(0, damage.w), Math.max(0, damage.h));
+    ctx.clip();
+  }
   ctx.globalAlpha = 1;
   ctx.clearRect(0, 0, w10, h);
   ctx.drawImage(cache.lower, 0, 0);
-  if (scene.draft && !scene.backgroundOnly && (scene.layerPass === void 0 || (scene.draft.layer ?? 1) === scene.layerPass))
+  if (scene.draft && !scene.backgroundOnly && (scene.layerPass === void 0 || (scene.draft.layer ?? 1) === scene.layerPass)) {
     paintScene(
       canvas,
       {
@@ -12370,8 +12434,10 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
       settings,
       appearance,
       rect,
-      false
+      false,
+      damage
     );
+  }
   if (cache.hasUpper) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
@@ -12387,8 +12453,9 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
       rect,
       false
     );
+  ctx.restore();
 }
-function paintScene(canvas, scene, selected = -1, settings, appearance, viewport, clear = true) {
+function paintScene(canvas, scene, selected = -1, settings, appearance, viewport, clear = true, damage) {
   const rect = viewport ?? canvas.getBoundingClientRect();
   const ratio = canvasPixelRatio(canvas, rect);
   const w10 = Math.max(1, Math.round(rect.width * ratio));
@@ -12403,6 +12470,12 @@ function paintScene(canvas, scene, selected = -1, settings, appearance, viewport
   if (clear) ctx.clearRect(0, 0, w10, h);
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   const { origin, zoom } = scene.camera;
+  const dirty = damage && {
+    minX: origin.x + damage.x / (zoom * ratio),
+    minY: origin.y + damage.y / (zoom * ratio),
+    maxX: origin.x + (damage.x + damage.w) / (zoom * ratio),
+    maxY: origin.y + (damage.y + damage.h) / (zoom * ratio)
+  };
   const background = settings && {
     paper: "#f4efe5",
     white: "#ffffff",
@@ -12563,6 +12636,8 @@ function paintScene(canvas, scene, selected = -1, settings, appearance, viewport
       const dx2 = b10.point.x - a10.point.x, dy2 = b10.point.y - a10.point.y, length = Math.hypot(dx2, dy2);
       if (!length) continue;
       const nx = -dy2 / length, ny2 = dx2 / length, ra = radius(i - 1), rb2 = radius(i);
+      if (dirty && (Math.max(a10.point.x + ra, b10.point.x + rb2) < dirty.minX || Math.min(a10.point.x - ra, b10.point.x - rb2) > dirty.maxX || Math.max(a10.point.y + ra, b10.point.y + rb2) < dirty.minY || Math.min(a10.point.y - ra, b10.point.y - rb2) > dirty.maxY))
+        continue;
       ctx.moveTo(a10.point.x - nx * ra, a10.point.y - ny2 * ra);
       ctx.lineTo(b10.point.x - nx * rb2, b10.point.y - ny2 * rb2);
       ctx.lineTo(b10.point.x + nx * rb2, b10.point.y + ny2 * rb2);
@@ -12570,6 +12645,9 @@ function paintScene(canvas, scene, selected = -1, settings, appearance, viewport
       ctx.closePath();
     }
     for (const [index, s] of stroke.samples.entries()) {
+      const r = radius(index);
+      if (dirty && (s.point.x + r < dirty.minX || s.point.x - r > dirty.maxX || s.point.y + r < dirty.minY || s.point.y - r > dirty.maxY))
+        continue;
       ctx.moveTo(s.point.x + radius(index), s.point.y);
       ctx.arc(s.point.x, s.point.y, radius(index), 0, Math.PI * 2);
       ctx.closePath();
@@ -42682,18 +42760,20 @@ var yc = class {
       this.lastTap = void 0, this.ignored.add(A.pointerId);
       return;
     }
-    this.actions.touchStarted?.(), this.actions.touchAction() === "pan" && (B = false, A.preventDefault());
-    let t = this.point(A);
+    this.actions.touchStarted?.();
+    let t = this.actions.touchAction(), g = t === "pan" || t === "auto" && this.penSeen;
+    g && (B = false, A.preventDefault());
+    let n = this.point(A);
     if (this.touches.has(A.pointerId)) return;
-    this.touches.set(A.pointerId, { point: t, start: t }), B || this.capture(A.pointerId), this.session || (this.session = { started: this.now(), max: 1, moved: false, changed: false, cancelled: false, releasing: false, center: t });
-    let g = this.session;
-    g.max = Math.max(g.max, this.touches.size);
-    let n = [...this.touches.values()];
-    if (g.center = { x: n.reduce((i, Q) => i + Q.start.x, 0) / n.length, y: n.reduce((i, Q) => i + Q.start.y, 0) / n.length }, g.releasing && (g.cancelled = true), this.touches.size === 1 && g.max === 1) this.singleId = A.pointerId, this.externalSingle = B, B || this.actions.down(A, this.actions.touchAction() === "pan" || this.actions.touchAction() === "auto" && this.penSeen);
+    this.touches.set(A.pointerId, { point: n, start: n }), B || this.capture(A.pointerId), this.session || (this.session = { started: this.now(), max: 1, moved: false, changed: false, cancelled: false, releasing: false, center: n });
+    let i = this.session;
+    i.max = Math.max(i.max, this.touches.size);
+    let Q = [...this.touches.values()];
+    if (i.center = { x: Q.reduce((o, C) => o + C.start.x, 0) / Q.length, y: Q.reduce((o, C) => o + C.start.y, 0) / Q.length }, i.releasing && (i.cancelled = true), this.touches.size === 1 && i.max === 1) this.singleId = A.pointerId, this.externalSingle = B, B || this.actions.down(A, g);
     else {
       this.singleId !== null && this.cancelSingle();
-      for (let i of this.touches.keys()) this.capture(i);
-      g.pair = this.pair(), [...this.touches.values()].some((i) => Math.hypot(i.point.x - i.start.x, i.point.y - i.start.y) > 8) && (g.moved = true), (this.now() - g.started > 200 || g.max > 4) && (g.cancelled = true);
+      for (let o of this.touches.keys()) this.capture(o);
+      i.pair = this.pair(), [...this.touches.values()].some((o) => Math.hypot(o.point.x - o.start.x, o.point.y - o.start.y) > 8) && (i.moved = true), (this.now() - i.started > 200 || i.max > 4) && (i.cancelled = true);
     }
   }
   sawPen() {
@@ -44972,12 +45052,11 @@ var WF = class e99 {
       this.layout(), this.sizeTools();
       let A = this.viewport.nativeElement.clientWidth;
       this.fitted && this.info && !this.loading && A && A !== this.viewportWidth && this.setZoom(this.fitZoom(), true), this.viewportWidth = A;
-    }), this.resize.observe(this.viewport.nativeElement), this.sizeTools(), this.touchInput = new yc(this.viewport.nativeElement, { ready: () => this.ready && !this.loading && !!this.info, activeId: () => this.pointer?.id, touchAction: () => this.editor.touchNavigationOnly("pdf") ? "pan" : "draw", touchStarted: () => this.editor.focusTouchSurface("pdf"), historyGesture: () => "off", focusGesture: () => false, focus: () => {
+    }), this.resize.observe(this.viewport.nativeElement), this.sizeTools(), this.touchInput = new yc(this.viewport.nativeElement, { ready: () => this.ready && !this.loading && !!this.info, activeId: () => this.pointer?.id, touchAction: () => this.editor.touchInputAction("pdf"), touchStarted: () => this.editor.focusTouchSurface("pdf"), historyGesture: () => "off", focusGesture: () => false, focus: () => {
     }, down: (A, B) => this.beginSingle(A, this.touchAnnotation, B), move: (A) => this.moveSingle(A), end: (A) => void this.endSingle(A), cancel: () => {
       this.cancel(), this.clearSelection();
     }, transform: (A, B) => this.transformTouch(A, B), navigated: () => this.finishTouchNavigation(), history: () => {
-    }, penDetected: () => {
-    } });
+    }, penDetected: () => this.editor.detectPen() });
     try {
       let A = JSON.parse(window.localStorage.getItem("era.pdfAnnotations") ?? "null");
       A && /^#[a-f0-9]{6}$/i.test(A.color) && (this.annotationColor = A.color), A && Number.isFinite(A.opacity) && (this.annotationOpacity = Math.max(5, Math.min(100, A.opacity))), A?.eraserMode === "annotation" && (this.eraserMode = "annotation"), Number.isFinite(A?.eraserSize) && A.eraserSize >= 1 && A.eraserSize <= 200 && (this.eraserSize = A.eraserSize), Number.isFinite(A?.eraserOpacity) && A.eraserOpacity >= 1 && A.eraserOpacity <= 100 && (this.eraserOpacity = Math.round(A.eraserOpacity));
@@ -45165,7 +45244,7 @@ var WF = class e99 {
   }
   begin(A, B) {
     if (!this.textReading) {
-      if (A.pointerType === "touch" && this.touchInput) {
+      if (A.pointerType === "pen" && this.editor.detectPen(), A.pointerType === "touch" && this.touchInput) {
         A.stopPropagation(), this.touchAnnotation = B, this.touchInput.down(A), this.touchAnnotation = void 0;
         return;
       }
@@ -60007,6 +60086,12 @@ var Wm = class {
   touchNavigationOnly(A) {
     return !!this.pdfReader && (this.touchFocus !== A || !this.touchToolArmed);
   }
+  touchInputAction(A) {
+    return this.touchAction === "pan" || this.touchAction === "auto" && this.penDetected || this.touchNavigationOnly(A) ? "pan" : this.touchAction;
+  }
+  detectPen() {
+    this.penDetected || (this.penDetected = true, this.render());
+  }
   get paletteCanUndo() {
     return this.paletteTarget === "pdf" && this.pdfReader && !this.pdfFullscreen ? !!this.pdfPalette?.canUndo() : this.engine.can_undo();
   }
@@ -60871,11 +60956,9 @@ var Wm = class {
     this.detachEvents(), this.canvas = A, this.loadInputPreferences(), this.loadInkPreferences(), this.loadFavoriteColors();
     let B = new AbortController(), t = { signal: B.signal };
     A.addEventListener("contextmenu", (r) => r.preventDefault(), t), this.input?.reset();
-    let g = this.input = new yc(A, { ready: () => this.acceptingInput, activeId: () => this.active?.id, touchAction: () => this.pdfReader ? this.touchNavigationOnly("canvas") || this.touchAction === "pan" ? "pan" : "draw" : this.touchAction, touchStarted: () => this.focusTouchSurface("canvas"), historyGesture: () => this.historyGesture, focusGesture: () => this.focusGesture, focus: () => this.onToggleExpanded(), down: (r, c) => this.down(r, c), move: (r) => this.move(r), end: (r) => this.endPointer(r), cancel: () => this.cancelSurfaceInput(), transform: (r, c) => {
+    let g = this.input = new yc(A, { ready: () => this.acceptingInput, activeId: () => this.active?.id, touchAction: () => this.touchInputAction("canvas"), touchStarted: () => this.focusTouchSurface("canvas"), historyGesture: () => this.historyGesture, focusGesture: () => this.focusGesture, focus: () => this.onToggleExpanded(), down: (r, c) => this.down(r, c), move: (r) => this.move(r), end: (r) => this.endPointer(r), cancel: () => this.cancelSurfaceInput(), transform: (r, c) => {
       this.pendingArtboardFit = false, this.engine.zoom_at(r.center.x, r.center.y, c.distance / r.distance), this.engine.pan(c.center.x - r.center.x, c.center.y - r.center.y), this.render();
-    }, navigated: () => this.changed(), history: (r) => this.history(r), penDetected: () => {
-      this.penDetected = true, this.render();
-    } }), n = A.closest("era-editor") ?? A, i = (r) => {
+    }, navigated: () => this.changed(), history: (r) => this.history(r), penDetected: () => this.detectPen() }), n = A.closest("era-editor") ?? A, i = (r) => {
       let c = r.target;
       return !!c?.closest?.(".era-canvas, era-resource-canvas .object, era-resource-canvas .connection-hit, .era-area-selection") && !c.closest("button,input,textarea,select,[contenteditable],dialog,.object-actions,.connection-options");
     };
@@ -61016,7 +61099,7 @@ var Wm = class {
     return !Number.isFinite(B) || B < 0.5 - 1e-8 || B > 96 + 1e-6 || this.active || !this.acceptingInput ? false : (this.setWidth(Math.max(0.5, Math.min(96, B))), true);
   }
   toggleColorPicker() {
-    this.active || !this.acceptingInput || (this.pickingColor = !this.pickingColor, this.pickingColor && this.canvas?.focus(), this.render());
+    this.active || !this.acceptingInput || (this.pickingColor = !this.pickingColor, this.pickingColor && this.canvas?.focus({ preventScroll: true }), this.render());
   }
   cancelColorPicker() {
     this.pickingColor && (this.pickingColor = false, this.render());
@@ -61139,7 +61222,7 @@ var Wm = class {
     if (n === "measure") {
       A.preventDefault();
       let o = this.world(i);
-      this.measurement = { start: o, end: o }, this.active = { id: A.pointerId, mode: n, ...i }, this.canvas.focus(), this.canvas.setPointerCapture(A.pointerId), this.render();
+      this.measurement = { start: o, end: o }, this.active = { id: A.pointerId, mode: n, ...i }, this.canvas.focus({ preventScroll: true }), this.canvas.setPointerCapture(A.pointerId), this.render();
       return;
     }
     if (n === "draw" && this.guideEnabled) {
@@ -61160,7 +61243,7 @@ var Wm = class {
     if (Q) {
       A.preventDefault();
       try {
-        if (this.canvas.focus(), n === "select") {
+        if (this.canvas.focus({ preventScroll: true }), n === "select") {
           let C = this.engine.pick_selection(i.x, i.y);
           if (C < 0) {
             this.beginMarquee(A);

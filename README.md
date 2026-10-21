@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.10.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.11.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.10](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.10)
+[Descargar Era 1.6.11](https://github.com/daisel10/era-obsidian/releases/download/1.6.11/era-1.6.11.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.11)
 
 ## Installation
 
@@ -14,16 +14,16 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.10.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip).
+2. Download [era-1.6.11.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.11/era-1.6.11.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
    `equations/` and `handwriting/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
    if it differs from `.obsidian`.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
-**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.10` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
+**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.11` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
 
-Use the attached `era-1.6.10.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.11.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -42,14 +42,14 @@ archives.
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.10
+## Qué cambia en 1.6.11
 
-Correcciones del Lienzo para iPad y otros equipos con pantallas de alta densidad.
+Corrige el uso combinado de lápiz y dedo con un PDF junto al Lienzo y reduce el coste de dibujar trazos largos.
 
-- Las capas de tinta permanecen a resolución de pantalla, sin ampliar su bitmap mediante el contenedor CSS de los objetos. Se repintan al cambiar tamaño, densidad o zoom de viewport, conservando el orden de capas y la tinta vectorial original.
-- Reconocimiento local experimental de escritura cuando no hay un reconocedor nativo o del navegador disponible. Funciona en un Worker, conserva los trazos originales y ofrece alternativas. Puede confundir letras y palabras; no se afirma una precisión certificada en español.
-- Preparación automática de los modelos de matemáticas y escritura que falten en una instalación de BRAT. La primera vez requiere Internet: aproximadamente 80 MB para escritura y 20 MB para matemáticas. Las descargas se verifican por SHA-256 y se guardan para uso local; los trazos no se envían a ningún servicio.
-- En Formas, levantar el lápiz también reconoce la figura. Mantenerlo apoyado sigue permitiendo ajustar tamaño y giro; se conserva la construcción de flechas de varios trazos.
+- En **Acción de un dedo → Automático**, después de detectar un lápiz, el dedo mueve el Lienzo y el PDF. Elegir de nuevo un pincel no habilita tinta con el dedo. La detección se comparte entre superficies y se conserva al volver a montar el Lienzo. **Dibujar con dedo** sigue siendo una elección explícita disponible.
+- Un dedo sobre un objeto también inicia navegación cuando corresponde al modo automático de lápiz, en lugar de delegar el gesto al objeto. Se mantienen la prioridad de la punta y la protección frente a la palma.
+- Al empezar a dibujar, medir o elegir un color, enfocar el Lienzo conserva el desplazamiento del contenedor y las coordenadas del trazo.
+- Los trazos de punta normal y pluma repintan solo la región que cambia. Se vuelven a componer los segmentos anteriores que cruzan esa región, conservando presión, transparencia y orden de capas. Los cambios de cámara, tamaño, estilo o guía invalidan esa reutilización. Los trazos con geometría de pinceles artísticos mantienen su renderizado completo.
 
 
 ## Escritura, dibujo y portapapeles
@@ -74,7 +74,7 @@ Correcciones del Lienzo para iPad y otros equipos con pantallas de alta densidad
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.10.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip)
+2. Descarga [era-1.6.11.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.11/era-1.6.11.zip)
    y copia su carpeta `era` completa, incluidas `equations/` y `handwriting/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
@@ -85,7 +85,7 @@ Correcciones del Lienzo para iPad y otros equipos con pantallas de alta densidad
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.10`.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.11`.
 Era prepara los archivos locales que falten en el primer uso; mantén Internet mientras termina. El ZIP completo ya incluye `equations/` y `handwriting/`. Después, recarga Obsidian.
 
 ## Compatibilidad y funciones conservadas
