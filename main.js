@@ -12200,17 +12200,17 @@ function gridSegments(settings, bounds, _zoom = 1) {
     }
   } else if (settings.grid.startsWith("perspective_")) {
     const size = artboardSize(settings) ?? { width: 1e3, height: 700 };
-    const w10 = size.width, h = size.height;
-    const points = settings.grid === "perspective_1" ? [[w10 / 2, h * 0.38]] : [
-      [0, h * 0.3],
-      [w10, h * 0.3]
+    const w10 = size.width, h10 = size.height;
+    const points = settings.grid === "perspective_1" ? [[w10 / 2, h10 * 0.38]] : [
+      [0, h10 * 0.3],
+      [w10, h10 * 0.3]
     ];
-    if (settings.grid === "perspective_3") points.push([w10 / 2, h * 1.25]);
+    if (settings.grid === "perspective_3") points.push([w10 / 2, h10 * 1.25]);
     const rays = Math.max(
       24,
       Math.min(
         180,
-        Math.round(Math.PI * Math.min(w10, h) / settings.grid_spacing_px)
+        Math.round(Math.PI * Math.min(w10, h10) / settings.grid_spacing_px)
       )
     );
     for (const [px2, py2] of points) {
@@ -12267,7 +12267,7 @@ function draftDamage(canvas, scene, key, rect) {
       first++;
     }
   }
-  let x10 = 0, y = 0, w10 = canvas.width, h = canvas.height;
+  let x10 = 0, y = 0, w10 = canvas.width, h10 = canvas.height;
   if (reusable) {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const s of [previous.stroke, stroke])
@@ -12282,10 +12282,10 @@ function draftDamage(canvas, scene, key, rect) {
     x10 = Math.max(0, Math.floor((minX - origin.x) * zoom * ratio) - 2);
     y = Math.max(0, Math.floor((minY - origin.y) * zoom * ratio) - 2);
     w10 = Math.min(canvas.width, Math.ceil((maxX - origin.x) * zoom * ratio) + 2) - x10;
-    h = Math.min(canvas.height, Math.ceil((maxY - origin.y) * zoom * ratio) + 2) - y;
+    h10 = Math.min(canvas.height, Math.ceil((maxY - origin.y) * zoom * ratio) + 2) - y;
   }
   drafts.set(canvas, { key, stroke });
-  return reusable ? { x: x10, y, w: w10, h } : void 0;
+  return reusable ? { x: x10, y, w: w10, h: h10 } : void 0;
 }
 function paint(canvas, scene, selected = -1, settings, appearance) {
   if (scene.inkRevision === void 0 || selected >= 0 || scene.measurement || scene.strokeMeasurements || scene.placingArtboard) {
@@ -12300,7 +12300,7 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
     return;
   }
   const rect = canvas.getBoundingClientRect(), ratio = canvasPixelRatio(canvas, rect);
-  const w10 = Math.max(1, Math.round(rect.width * ratio)), h = Math.max(1, Math.round(rect.height * ratio));
+  const w10 = Math.max(1, Math.round(rect.width * ratio)), h10 = Math.max(1, Math.round(rect.height * ratio));
   const order = new Map(
     (scene.layers ?? [{ id: 1, visible: true, locked: false }]).map((l, i) => [
       l.id,
@@ -12312,7 +12312,7 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
   const key = JSON.stringify([
     scene.inkRevision,
     w10,
-    h,
+    h10,
     scene.camera,
     settings,
     appearance,
@@ -12391,9 +12391,9 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
       return;
     }
   }
-  if (canvas.width !== w10 || canvas.height !== h) drafts.delete(canvas);
+  if (canvas.width !== w10 || canvas.height !== h10) drafts.delete(canvas);
   if (canvas.width !== w10) canvas.width = w10;
-  if (canvas.height !== h) canvas.height = h;
+  if (canvas.height !== h10) canvas.height = h10;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas 2D no disponible");
   const damage = scene.draft && !scene.draft.outline && !scene.backgroundOnly ? draftDamage(
@@ -12419,7 +12419,7 @@ function paint(canvas, scene, selected = -1, settings, appearance) {
     ctx.clip();
   }
   ctx.globalAlpha = 1;
-  ctx.clearRect(0, 0, w10, h);
+  ctx.clearRect(0, 0, w10, h10);
   ctx.drawImage(cache.lower, 0, 0);
   if (scene.draft && !scene.backgroundOnly && (scene.layerPass === void 0 || (scene.draft.layer ?? 1) === scene.layerPass)) {
     paintScene(
@@ -12460,15 +12460,15 @@ function paintScene(canvas, scene, selected = -1, settings, appearance, viewport
   const rect = viewport ?? canvas.getBoundingClientRect();
   const ratio = canvasPixelRatio(canvas, rect);
   const w10 = Math.max(1, Math.round(rect.width * ratio));
-  const h = Math.max(1, Math.round(rect.height * ratio));
-  if (canvas.width !== w10 || canvas.height !== h) {
+  const h10 = Math.max(1, Math.round(rect.height * ratio));
+  if (canvas.width !== w10 || canvas.height !== h10) {
     canvas.width = w10;
-    canvas.height = h;
+    canvas.height = h10;
   }
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas 2D no disponible");
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  if (clear) ctx.clearRect(0, 0, w10, h);
+  if (clear) ctx.clearRect(0, 0, w10, h10);
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   const { origin, zoom } = scene.camera;
   const dirty = damage && {
@@ -12568,7 +12568,7 @@ function paintScene(canvas, scene, selected = -1, settings, appearance, viewport
           Math.ceil((bounds2.max.x - scene.camera.origin.x) * zoom * ratio) + 2
         );
         const y12 = Math.min(
-          h,
+          h10,
           Math.ceil((bounds2.max.y - scene.camera.origin.y) * zoom * ratio) + 2
         );
         if (x12 <= x02 || y12 <= y02) {
@@ -12949,14 +12949,14 @@ var jT = dt((vc) => {
     e103.bi_valid === 16 ? (Ba(e103, e103.bi_buf), e103.bi_buf = 0, e103.bi_valid = 0) : e103.bi_valid >= 8 && (e103.pending_buf[e103.pending++] = e103.bi_buf & 255, e103.bi_buf >>= 8, e103.bi_valid -= 8);
   }
   function ytA(e103, A) {
-    var B = A.dyn_tree, t = A.max_code, g = A.stat_desc.static_tree, n = A.stat_desc.has_stree, i = A.stat_desc.extra_bits, Q = A.stat_desc.extra_base, o = A.stat_desc.max_length, r, C, c, E, s, D, h = 0;
+    var B = A.dyn_tree, t = A.max_code, g = A.stat_desc.static_tree, n = A.stat_desc.has_stree, i = A.stat_desc.extra_bits, Q = A.stat_desc.extra_base, o = A.stat_desc.max_length, r, C, c, E, s, D, F = 0;
     for (E = 0; E <= Nr; E++) e103.bl_count[E] = 0;
-    for (B[e103.heap[e103.heap_max] * 2 + 1] = 0, r = e103.heap_max + 1; r < dT; r++) C = e103.heap[r], E = B[B[C * 2 + 1] * 2 + 1] + 1, E > o && (E = o, h++), B[C * 2 + 1] = E, !(C > t) && (e103.bl_count[E]++, s = 0, C >= Q && (s = i[C - Q]), D = B[C * 2], e103.opt_len += D * (E + s), n && (e103.static_len += D * (g[C * 2 + 1] + s)));
-    if (h !== 0) {
+    for (B[e103.heap[e103.heap_max] * 2 + 1] = 0, r = e103.heap_max + 1; r < dT; r++) C = e103.heap[r], E = B[B[C * 2 + 1] * 2 + 1] + 1, E > o && (E = o, F++), B[C * 2 + 1] = E, !(C > t) && (e103.bl_count[E]++, s = 0, C >= Q && (s = i[C - Q]), D = B[C * 2], e103.opt_len += D * (E + s), n && (e103.static_len += D * (g[C * 2 + 1] + s)));
+    if (F !== 0) {
       do {
         for (E = o - 1; e103.bl_count[E] === 0; ) E--;
-        e103.bl_count[E]--, e103.bl_count[E + 1] += 2, e103.bl_count[o]--, h -= 2;
-      } while (h > 0);
+        e103.bl_count[E]--, e103.bl_count[E + 1] += 2, e103.bl_count[o]--, F -= 2;
+      } while (F > 0);
       for (E = o; E !== 0; E--) for (C = e103.bl_count[E]; C !== 0; ) c = e103.heap[--r], !(c > t) && (B[c * 2 + 1] !== E && (e103.opt_len += (E - B[c * 2 + 1]) * B[c * 2], B[c * 2 + 1] = E), C--);
     }
   }
@@ -13476,21 +13476,21 @@ var nv = dt((q0A, gv) => {
   "use strict";
   var nh = 30, ygA = 12;
   gv.exports = function(A, B) {
-    var t, g, n, i, Q, o, r, C, c, E, s, D, h, l, u, p, y, k, H, v, z, W, K, BA, q;
-    t = A.state, g = A.next_in, BA = A.input, n = g + (A.avail_in - 5), i = A.next_out, q = A.output, Q = i - (B - A.avail_out), o = i + (A.avail_out - 257), r = t.dmax, C = t.wsize, c = t.whave, E = t.wnext, s = t.window, D = t.hold, h = t.bits, l = t.lencode, u = t.distcode, p = (1 << t.lenbits) - 1, y = (1 << t.distbits) - 1;
+    var t, g, n, i, Q, o, r, C, c, E, s, D, F, l, u, p, y, k, H, v, z, W, K, BA, q;
+    t = A.state, g = A.next_in, BA = A.input, n = g + (A.avail_in - 5), i = A.next_out, q = A.output, Q = i - (B - A.avail_out), o = i + (A.avail_out - 257), r = t.dmax, C = t.wsize, c = t.whave, E = t.wnext, s = t.window, D = t.hold, F = t.bits, l = t.lencode, u = t.distcode, p = (1 << t.lenbits) - 1, y = (1 << t.distbits) - 1;
     A: do {
-      h < 15 && (D += BA[g++] << h, h += 8, D += BA[g++] << h, h += 8), k = l[D & p];
+      F < 15 && (D += BA[g++] << F, F += 8, D += BA[g++] << F, F += 8), k = l[D & p];
       B: for (; ; ) {
-        if (H = k >>> 24, D >>>= H, h -= H, H = k >>> 16 & 255, H === 0) q[i++] = k & 65535;
+        if (H = k >>> 24, D >>>= H, F -= H, H = k >>> 16 & 255, H === 0) q[i++] = k & 65535;
         else if (H & 16) {
-          v = k & 65535, H &= 15, H && (h < H && (D += BA[g++] << h, h += 8), v += D & (1 << H) - 1, D >>>= H, h -= H), h < 15 && (D += BA[g++] << h, h += 8, D += BA[g++] << h, h += 8), k = u[D & y];
+          v = k & 65535, H &= 15, H && (F < H && (D += BA[g++] << F, F += 8), v += D & (1 << H) - 1, D >>>= H, F -= H), F < 15 && (D += BA[g++] << F, F += 8, D += BA[g++] << F, F += 8), k = u[D & y];
           e: for (; ; ) {
-            if (H = k >>> 24, D >>>= H, h -= H, H = k >>> 16 & 255, H & 16) {
-              if (z = k & 65535, H &= 15, h < H && (D += BA[g++] << h, h += 8, h < H && (D += BA[g++] << h, h += 8)), z += D & (1 << H) - 1, z > r) {
+            if (H = k >>> 24, D >>>= H, F -= H, H = k >>> 16 & 255, H & 16) {
+              if (z = k & 65535, H &= 15, F < H && (D += BA[g++] << F, F += 8, F < H && (D += BA[g++] << F, F += 8)), z += D & (1 << H) - 1, z > r) {
                 A.msg = "invalid distance too far back", t.mode = nh;
                 break A;
               }
-              if (D >>>= H, h -= H, H = i - Q, z > H) {
+              if (D >>>= H, F -= H, H = i - Q, z > H) {
                 if (H = z - H, H > c && t.sane) {
                   A.msg = "invalid distance too far back", t.mode = nh;
                   break A;
@@ -13555,14 +13555,14 @@ var nv = dt((q0A, gv) => {
         break;
       }
     } while (g < n && i < o);
-    v = h >> 3, g -= v, h -= v << 3, D &= (1 << h) - 1, A.next_in = g, A.next_out = i, A.avail_in = g < n ? 5 + (n - g) : 5 - (g - n), A.avail_out = i < o ? 257 + (o - i) : 257 - (i - o), t.hold = D, t.bits = h;
+    v = F >> 3, g -= v, F -= v << 3, D &= (1 << F) - 1, A.next_in = g, A.next_out = i, A.avail_in = g < n ? 5 + (n - g) : 5 - (g - n), A.avail_out = i < o ? 257 + (o - i) : 257 - (i - o), t.hold = D, t.bits = F;
   };
 });
 var Ev = dt((_0A, cv) => {
   "use strict";
   var iv = tQ(), zc = 15, Qv = 852, ov = 592, rv = 0, pp = 1, Cv = 2, RgA = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0], HgA = [16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78], JgA = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0], kgA = [16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 64, 64];
   cv.exports = function(A, B, t, g, n, i, Q, o) {
-    var r = o.bits, C = 0, c = 0, E = 0, s = 0, D = 0, h = 0, l = 0, u = 0, p = 0, y = 0, k, H, v, z, W, K = null, BA = 0, q, _ = new iv.Buf16(zc + 1), YA = new iv.Buf16(zc + 1), rA = null, dA = 0, mA, DA, LA;
+    var r = o.bits, C = 0, c = 0, E = 0, s = 0, D = 0, F = 0, l = 0, u = 0, p = 0, y = 0, k, H, v, z, W, K = null, BA = 0, q, _ = new iv.Buf16(zc + 1), YA = new iv.Buf16(zc + 1), rA = null, dA = 0, mA, DA, LA;
     for (C = 0; C <= zc; C++) _[C] = 0;
     for (c = 0; c < g; c++) _[B[t + c]]++;
     for (D = r, s = zc; s >= 1 && _[s] === 0; s--) ;
@@ -13572,9 +13572,9 @@ var Ev = dt((_0A, cv) => {
     if (u > 0 && (A === rv || s !== 1)) return -1;
     for (YA[1] = 0, C = 1; C < zc; C++) YA[C + 1] = YA[C] + _[C];
     for (c = 0; c < g; c++) B[t + c] !== 0 && (Q[YA[B[t + c]]++] = c);
-    if (A === rv ? (K = rA = Q, q = 19) : A === pp ? (K = RgA, BA -= 257, rA = HgA, dA -= 257, q = 256) : (K = JgA, rA = kgA, q = -1), y = 0, c = 0, C = E, W = i, h = D, l = 0, v = -1, p = 1 << D, z = p - 1, A === pp && p > Qv || A === Cv && p > ov) return 1;
+    if (A === rv ? (K = rA = Q, q = 19) : A === pp ? (K = RgA, BA -= 257, rA = HgA, dA -= 257, q = 256) : (K = JgA, rA = kgA, q = -1), y = 0, c = 0, C = E, W = i, F = D, l = 0, v = -1, p = 1 << D, z = p - 1, A === pp && p > Qv || A === Cv && p > ov) return 1;
     for (; ; ) {
-      mA = C - l, Q[c] < q ? (DA = 0, LA = Q[c]) : Q[c] > q ? (DA = rA[dA + Q[c]], LA = K[BA + Q[c]]) : (DA = 96, LA = 0), k = 1 << C - l, H = 1 << h, E = H;
+      mA = C - l, Q[c] < q ? (DA = 0, LA = Q[c]) : Q[c] > q ? (DA = rA[dA + Q[c]], LA = K[BA + Q[c]]) : (DA = 96, LA = 0), k = 1 << C - l, H = 1 << F, E = H;
       do
         H -= k, n[W + (y >> l) + H] = mA << 24 | DA << 16 | LA | 0;
       while (H !== 0);
@@ -13584,9 +13584,9 @@ var Ev = dt((_0A, cv) => {
         C = B[t + Q[c]];
       }
       if (C > D && (y & z) !== v) {
-        for (l === 0 && (l = D), W += E, h = C - l, u = 1 << h; h + l < s && (u -= _[h + l], !(u <= 0)); ) h++, u <<= 1;
-        if (p += 1 << h, A === pp && p > Qv || A === Cv && p > ov) return 1;
-        v = y & z, n[v] = D << 24 | h << 16 | W - i | 0;
+        for (l === 0 && (l = D), W += E, F = C - l, u = 1 << F; F + l < s && (u -= _[F + l], !(u <= 0)); ) F++, u <<= 1;
+        if (p += 1 << F, A === pp && p > Qv || A === Cv && p > ov) return 1;
+        v = y & z, n[v] = D << 24 | F << 16 | W - i | 0;
       }
     }
     return y !== 0 && (n[W + y] = C - l << 24 | 64 << 16 | 0), o.bits = D, 0;
@@ -13638,7 +13638,7 @@ var Kv = dt((pn) => {
     return n.window === null && (n.wsize = 1 << n.wbits, n.wnext = 0, n.whave = 0, n.window = new Jg.Buf8(n.wsize)), t >= n.wsize ? (Jg.arraySet(n.window, A, B - n.wsize, n.wsize, 0), n.wnext = 0, n.whave = n.wsize) : (g = n.wsize - n.wnext, g > t && (g = t), Jg.arraySet(n.window, A, B - t, g, n.wnext), t -= g, t ? (Jg.arraySet(n.window, A, B - t, t, 0), n.wnext = t, n.whave = n.wsize) : (n.wnext += g, n.wnext === n.wsize && (n.wnext = 0), n.whave < n.wsize && (n.whave += g))), 0;
   }
   function qgA(e103, A) {
-    var B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l = 0, u, p, y, k, H, v, z, W, K = new Jg.Buf8(4), BA, q, _ = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+    var B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l = 0, u, p, y, k, H, v, z, W, K = new Jg.Buf8(4), BA, q, _ = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
     if (!e103 || !e103.state || !e103.output || !e103.input && e103.avail_in !== 0) return Bn;
     B = e103.state, B.mode === iQ && (B.mode = mp), i = e103.next_out, g = e103.output, o = e103.avail_out, n = e103.next_in, t = e103.input, Q = e103.avail_in, r = B.hold, C = B.bits, c = Q, E = o, W = fr;
     A: for (; ; ) switch (B.mode) {
@@ -13953,11 +13953,11 @@ var Kv = dt((pn) => {
             e103.msg = "invalid distance too far back", B.mode = Fe;
             break;
           }
-          s > B.wnext ? (s -= B.wnext, D = B.wsize - s) : D = B.wnext - s, s > B.length && (s = B.length), h = B.window;
-        } else h = g, D = i - B.offset, s = B.length;
+          s > B.wnext ? (s -= B.wnext, D = B.wsize - s) : D = B.wnext - s, s > B.length && (s = B.length), F = B.window;
+        } else F = g, D = i - B.offset, s = B.length;
         s > o && (s = o), o -= s, B.length -= s;
         do
-          g[i++] = h[D++];
+          g[i++] = F[D++];
         while (--s);
         B.length === 0 && (B.mode = oh);
         break;
@@ -14364,8 +14364,8 @@ var Yg = (function() {
           var r = o.value;
           r.remove(this);
         }
-      } catch (h) {
-        A = { error: h };
+      } catch (F) {
+        A = { error: F };
       } finally {
         try {
           o && !o.done && (B = Q.return) && B.call(Q);
@@ -14377,8 +14377,8 @@ var Yg = (function() {
       var C = this.initialTeardown;
       if (gg(C)) try {
         C();
-      } catch (h) {
-        n = h instanceof HI ? h.errors : [h];
+      } catch (F) {
+        n = F instanceof HI ? F.errors : [F];
       }
       var c = this._finalizers;
       if (c) {
@@ -14388,12 +14388,12 @@ var Yg = (function() {
             var D = s.value;
             try {
               Fx(D);
-            } catch (h) {
-              n = n ?? [], h instanceof HI ? n = cC(cC([], CC(n)), CC(h.errors)) : n.push(h);
+            } catch (F) {
+              n = n ?? [], F instanceof HI ? n = cC(cC([], CC(n)), CC(F.errors)) : n.push(F);
             }
           }
-        } catch (h) {
-          t = { error: h };
+        } catch (F) {
+          t = { error: F };
         } finally {
           try {
             s && !s.done && (g = E.return) && g.call(E);
@@ -19356,8 +19356,8 @@ function iK(e103, A, B, t, g, n, i) {
   for (let E = 0; E < Q; E++) {
     let s = t[E];
     if (B.mergedAttrs = WC(B.mergedAttrs, s.hostAttrs), oK(e103, B, A, c, s), cK(c, s, g), i !== null && i.has(s)) {
-      let [h, l] = i.get(s);
-      B.directiveToIndex.set(s.type, [c, h + B.directiveStart, l + B.directiveStart]);
+      let [F, l] = i.get(s);
+      B.directiveToIndex.set(s.type, [c, F + B.directiveStart, l + B.directiveStart]);
     } else (n === null || !n.has(s)) && B.directiveToIndex.set(s.type, c);
     s.contentQueries !== null && (B.flags |= 4), (s.hostBindings !== null || s.hostAttrs !== null || s.hostVars !== 0) && (B.flags |= 64);
     let D = s.type.prototype;
@@ -19539,7 +19539,7 @@ function ZU(e103, A, B, t, g, n, i, Q) {
     KL(B, E, n, Q), t || (Q.__ngNativeEl__ = c);
     let s = g.listen(E, n, Q);
     if (!wK(n)) {
-      let D = t ? (h) => t(Qg(h[e103.index])) : e103.index;
+      let D = t ? (F) => t(Qg(F[e103.index])) : e103.index;
       RH(D, A, B, n, Q, s, false);
     }
   }
@@ -19877,8 +19877,8 @@ var yd = class e11 extends mQ {
       let u = (o ? c : this.parentInjector).get(Mg, null);
       u && (n = u);
     }
-    let E = se(C.componentType ?? {}), s = KD(this._lContainer, E?.id ?? null), D = s?.firstChild ?? null, h = C.create(c, g, D, n, i, Q);
-    return this.insertImpl(h.hostView, r, Ko(this._hostTNode, s)), h;
+    let E = se(C.componentType ?? {}), s = KD(this._lContainer, E?.id ?? null), D = s?.firstChild ?? null, F = C.create(c, g, D, n, i, Q);
+    return this.insertImpl(F.hostView, r, Ko(this._hostTNode, s)), F;
   }
   insert(A, B) {
     return this.insertImpl(A, B, true);
@@ -20677,7 +20677,7 @@ function Bc(e103, A, B, t, g, n, i, Q) {
     }
     let D = s3(e103, A, t);
     if (!D || (C.destroy(), Sn(D))) return;
-    let h = a3(D, B), l = g(h, () => {
+    let F = a3(D, B), l = g(F, () => {
       r.run(() => {
         e103 !== D && iD(D, l), n();
       });
@@ -20860,8 +20860,8 @@ function wJ(e103, A, B, t, g) {
     LU(B, r);
     let C;
     if (e103 === ie.Complete) {
-      let D = St(i, t), h = D.providers;
-      h && h.length > 0 && (C = Y3(g[JB], D, h));
+      let D = St(i, t), F = D.providers;
+      F && F.length > 0 && (C = Y3(g[JB], D, F));
     }
     let { dehydratedView: c, dehydratedViewIx: E } = M3(B, A), s = _C(g, o, null, { injector: C, dehydratedView: c });
     if ($C(B, s, r, Ko(o, c)), kY(s, 2), E > -1 && B[Gi]?.splice(E, 1), (e103 === ie.Complete || e103 === ie.Error) && Array.isArray(A[vC])) {
@@ -21291,22 +21291,22 @@ function ZY(e103, A, B) {
   return Q ? (e103.loadingPromise = Promise.allSettled(Q()).then((r) => {
     let C = false, c = null, E = [], s = [];
     for (let D = 0; D < r.length; D++) {
-      let h = r[D];
-      if (h.status === "fulfilled") {
-        let l = h.value, u = se(l) || lg(l);
+      let F = r[D];
+      if (F.status === "fulfilled") {
+        let l = F.value, u = se(l) || lg(l);
         if (u) E.push(u);
         else {
           let p = an(l);
           p && s.push(p);
         }
       } else {
-        C = true, c = h.reason instanceof Error ? h.reason : new Error(String(h.reason));
+        C = true, c = F.reason instanceof Error ? F.reason : new Error(String(F.reason));
         break;
       }
     }
     if (C) {
       if (e103.loadingState = Je.FAILED, e103.errorTmplIndex === null) {
-        let h = "", l = new uA(-750, h);
+        let F = "", l = new uA(-750, F);
         SU(A, l);
       }
     } else {
@@ -21314,7 +21314,7 @@ function ZY(e103, A, B) {
       let D = i.tView;
       if (E.length > 0) {
         D.directiveRegistry = Zf(D.directiveRegistry, E);
-        let h = E.map((u) => u.type), l = AD(false, ...h);
+        let F = E.map((u) => u.type), l = AD(false, ...F);
         e103.providers = l;
       }
       s.length > 0 && (D.pipeRegistry = Zf(D.pipeRegistry, s));
@@ -21419,7 +21419,7 @@ function xQ(e103, A) {
   return B.hydrateTriggers ??= /* @__PURE__ */ new Map();
 }
 function dJ(e103, A, B, t, g, n, i, Q, o, r) {
-  let C = gA(), c = iB(), E = e103 + nB, s = _o(C, c, e103, null, 0, 0), D = C[JB], h = wU(D);
+  let C = gA(), c = iB(), E = e103 + nB, s = _o(C, c, e103, null, 0, 0), D = C[JB], F = wU(D);
   if (c.firstCreatePass) {
     at("NgDefer");
     let v = { primaryTmplIndex: A, loadingTmplIndex: t ?? null, placeholderTmplIndex: g ?? null, errorTmplIndex: n ?? null, placeholderBlockConfig: null, loadingBlockConfig: null, dependencyResolverFn: B ?? null, loadingState: Je.NOT_STARTED, loadingPromise: null, providers: null, hydrateTriggers: null, debug: null, flags: r ?? 0 };
@@ -21435,7 +21435,7 @@ function dJ(e103, A, B, t, g, n, i, Q, o, r) {
   let y = [null, LC.Initial, null, null, null, null, p, u, null, null];
   C3(C, E, y);
   let k = null;
-  p !== null && h && (k = D.get(bw), k.add(p, { lView: C, tNode: s, lContainer: l }));
+  p !== null && F && (k = D.get(bw), k.add(p, { lView: C, tNode: s, lContainer: l }));
   let H = () => {
     QJ(y), p !== null && k?.cleanup([p]);
   };
@@ -21746,9 +21746,9 @@ function J3(e103, A, B, t) {
         E < 0 && e103.updateValue(i, c), i++;
         continue;
       }
-      let s = e103.at(Q), D = A[r], h = z0(Q, s, r, D, B);
-      if (h !== 0) {
-        h < 0 && e103.updateValue(Q, D), Q--, r--;
+      let s = e103.at(Q), D = A[r], F = z0(Q, s, r, D, B);
+      if (F !== 0) {
+        F < 0 && e103.updateValue(Q, D), Q--, r--;
         continue;
       }
       let l = B(i, C), u = B(Q, s), p = B(i, c);
@@ -21779,8 +21779,8 @@ function J3(e103, A, B, t) {
         if (zd(e103, g, i, D)) e103.updateValue(i, E), i++, Q++, C = r.next();
         else if (!n.has(D)) e103.attach(i, e103.create(i, E)), i++, Q++, C = r.next();
         else {
-          let h = B(i, c);
-          g.set(h, e103.detach(i)), Q--;
+          let F = B(i, c);
+          g.set(F, e103.detach(i)), Q--;
         }
       }
     }
@@ -21891,8 +21891,8 @@ var Od = class {
 };
 function nA(e103, A, B, t, g, n, i, Q, o, r, C, c, E) {
   at("NgControlFlow");
-  let s = gA(), D = iB(), h = o !== void 0, l = gA(), u = Q ? i.bind(l[Et][oe]) : i, p = new Od(h, u);
-  l[nB + e103] = p, _o(s, D, e103 + 1, A, B, t, g, wt(D.consts, n), 256), h && _o(s, D, e103 + 2, o, r, C, c, wt(D.consts, E), 512);
+  let s = gA(), D = iB(), F = o !== void 0, l = gA(), u = Q ? i.bind(l[Et][oe]) : i, p = new Od(F, u);
+  l[nB + e103] = p, _o(s, D, e103 + 1, A, B, t, g, wt(D.consts, n), 256), F && _o(s, D, e103 + 2, o, r, C, c, wt(D.consts, E), 512);
 }
 var Xd = class extends Vd {
   lContainer;
@@ -21950,8 +21950,8 @@ function iA(e103) {
       if (ae(t, r, C)) {
         let c = B + 2, E = rY(t, c);
         if (C) {
-          let s = Zd(g, c), D = uH(E, s, t), h = _C(t, s, void 0, { dehydratedView: D });
-          $C(E, h, 0, Ko(s, D));
+          let s = Zd(g, c), D = uH(E, s, t), F = _C(t, s, void 0, { dehydratedView: D });
+          $C(E, F, 0, Ko(s, D));
         } else g.firstUpdatePass && dH(E), LU(E, 0);
       }
     }
@@ -22177,9 +22177,9 @@ function $J(e103, A, B, t) {
         n === null && (n = r, i = g.parentNode(t));
         let C, c;
         if (r === n ? (C = t, c = i) : (C = null, c = Qg(B[r])), c !== null) {
-          let h = Pz(o), l = B[h];
+          let F = Pz(o), l = B[F];
           Vo(g, c, l, C, false);
-          let u = Qw(e103, h);
+          let u = Qw(e103, F);
           if (u !== null && typeof u == "object") {
             let p = bY(u, B);
             p !== null && $J(e103, u.create[p], B, B[u.anchorIdx]);
@@ -22237,8 +22237,8 @@ function Ak(e103, A, B, t, g) {
               }
               break;
             case 0:
-              let h = A[c];
-              h !== null && lR(A[rB], h, o);
+              let F = A[c];
+              F !== null && lR(A[rB], F, o);
               break;
             case 2:
               q3(e103, Qw(e103, c), A, o);
@@ -22320,9 +22320,9 @@ function nO(e103, A, B, t, g, n) {
     let s = c[E];
     if ((E & 1) === 0) {
       let D = _d(s);
-      for (let h = 0; h < D.length; h++) {
-        let l = D[h];
-        if ((h & 1) === 0) {
+      for (let F = 0; F < D.length; F++) {
+        let l = D[F];
+        if ((F & 1) === 0) {
           let u = l;
           u !== "" && iO(C[0], e103, i, r[0], Q, o, B, u);
         } else {
@@ -22333,12 +22333,12 @@ function nO(e103, A, B, t, g, n) {
         }
       }
     } else {
-      let D = s.charCodeAt(0) === 47, h = s.charCodeAt(D ? 1 : 0), l = nB + Number.parseInt(s.substring(D ? 2 : 1));
+      let D = s.charCodeAt(0) === 47, F = s.charCodeAt(D ? 1 : 0), l = nB + Number.parseInt(s.substring(D ? 2 : 1));
       if (D) r.shift(), C.shift(), Ln(mC(), false);
       else {
         let u = vz(e103, r[0], l);
         r.unshift([]), Ln(u, true);
-        let p = { kind: 2, index: l, children: [], type: h === 35 ? 0 : 1 };
+        let p = { kind: 2, index: l, children: [], type: F === 35 ? 0 : 1 };
         C[0].push(p), C.unshift(p.children);
       }
     }
@@ -22413,11 +22413,11 @@ function nk(e103, A, B, t, g, n, i) {
   let r = n.values, C = [];
   for (let c = 0; c < r.length; c++) {
     let E = r[c], s = [];
-    for (let h = 0; h < E.length; h++) {
-      let l = E[h];
+    for (let F = 0; F < E.length; F++) {
+      let l = E[F];
       if (typeof l != "string") {
         let u = s.push(l) - 1;
-        E[h] = `<!--\uFFFD${u}\uFFFD-->`;
+        E[F] = `<!--\uFFFD${u}\uFFFD-->`;
       }
     }
     let D = [];
@@ -22474,12 +22474,12 @@ function ik(e103, A, B, t, g, n, i, Q, o, r, C, c) {
     let D = Sw(A, t, 1, null);
     switch (s.nodeType) {
       case Node.ELEMENT_NODE:
-        let h = s, l = h.tagName.toLowerCase();
+        let F = s, l = F.tagName.toLowerCase();
         if (Dd.hasOwnProperty(l)) {
           O0(n, XJ, l, r, D), A.data[D] = l;
-          let k = h.attributes;
+          let k = F.attributes;
           for (let v = 0; v < k.length; v++) {
-            let z = k.item(v), W = z.name.toLowerCase(), K = !!z.value.match(CY), BA = h.namespaceURI, q = BA && ER[BA], _ = q ? `:${q}:${l}` : l;
+            let z = k.item(v), W = z.name.toLowerCase(), K = !!z.value.match(CY), BA = F.namespaceURI, q = BA && ER[BA], _ = q ? `:${q}:${l}` : l;
             if (K) Yd.hasOwnProperty(W) && cY(Q, z.value, D, z.name, 0, $d(W, _));
             else if (Yd[W]) {
               let YA = z.value;
@@ -22561,13 +22561,13 @@ function dO(e103, A = {}) {
     let t = {}, g = [cy];
     B = B.replace(DO, (n, i, Q) => {
       let o = i || Q, r = t[o] || [];
-      if (r.length || (o.split("|").forEach((h) => {
-        let l = h.match(lO), u = l ? parseInt(l[1], 10) : cy, p = hO.test(h);
-        r.push([u, p, h]);
+      if (r.length || (o.split("|").forEach((F) => {
+        let l = F.match(lO), u = l ? parseInt(l[1], 10) : cy, p = hO.test(F);
+        r.push([u, p, F]);
       }), t[o] = r), !r.length) throw new Error(`i18n postprocess: unmatched placeholder - ${o}`);
       let C = g[g.length - 1], c = 0;
-      for (let h = 0; h < r.length; h++) if (r[h][0] === C) {
-        c = h;
+      for (let F = 0; F < r.length; F++) if (r[F][0] === C) {
+        c = F;
         break;
       }
       let [E, s, D] = r[c];
@@ -22934,8 +22934,8 @@ function zO(e103, A, B, t, g, n, i, Q) {
   g === SB && (g = bB);
   let o = 0, r = 0, C = 0 < g.length ? g[0] : null, c = 0 < n.length ? n[0] : null;
   for (; C !== null || c !== null; ) {
-    let E = o < g.length ? g[o + 1] : void 0, s = r < n.length ? n[r + 1] : void 0, D = null, h;
-    C === c ? (o += 2, r += 2, E !== s && (D = c, h = s)) : c === null || C !== null && C < c ? (o += 2, D = C) : (r += 2, D = c, h = s), D !== null && lk(e103, A, B, t, D, h, i, Q), C = o < g.length ? g[o] : null, c = r < n.length ? n[r] : null;
+    let E = o < g.length ? g[o + 1] : void 0, s = r < n.length ? n[r + 1] : void 0, D = null, F;
+    C === c ? (o += 2, r += 2, E !== s && (D = c, F = s)) : c === null || C !== null && C < c ? (o += 2, D = C) : (r += 2, D = c, F = s), D !== null && lk(e103, A, B, t, D, F, i, Q), C = o < g.length ? g[o] : null, c = r < n.length ? n[r] : null;
   }
 }
 function lk(e103, A, B, t, g, n, i, Q) {
@@ -22972,7 +22972,7 @@ function KO(e103, A) {
 function dk(e103, A) {
   return (e103.flags & (A ? 8 : 16)) !== 0;
 }
-function F(e103, A = "") {
+function h(e103, A = "") {
   let B = gA(), t = iB(), g = e103 + nB, n = t.firstCreatePass ? er(t, g, 1, A, null) : t.data[g], i = OO(t, B, n, A);
   B[g] = i, $E() && bU(t, B, i, n), Ln(n, false);
 }
@@ -23005,16 +23005,16 @@ function mk(e103, A, B, t, g, n, i, Q, o, r, C, c = "") {
   return s = ae(e103, E + 4, C) || s, zn(5), s ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c : SB;
 }
 function xk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s = "") {
-  let D = Vn(), h = zg(e103, D, B, g, i, o);
-  return h = Xo(e103, D + 4, C, E) || h, zn(6), h ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s : SB;
+  let D = Vn(), F = zg(e103, D, B, g, i, o);
+  return F = Xo(e103, D + 4, C, E) || F, zn(6), F ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s : SB;
 }
-function fk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h = "") {
+function fk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F = "") {
   let l = Vn(), u = zg(e103, l, B, g, i, o);
-  return u = PY(e103, l + 4, C, E, D) || u, zn(7), u ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s + oB(D) + h : SB;
+  return u = PY(e103, l + 4, C, E, D) || u, zn(7), u ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s + oB(D) + F : SB;
 }
-function yk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l, u = "") {
+function yk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l, u = "") {
   let p = Vn(), y = zg(e103, p, B, g, i, o);
-  return y = zg(e103, p + 4, C, E, D, l) || y, zn(8), y ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s + oB(D) + h + oB(l) + u : SB;
+  return y = zg(e103, p + 4, C, E, D, l) || y, zn(8), y ? A + oB(B) + t + oB(g) + n + oB(i) + Q + oB(o) + r + oB(C) + c + oB(E) + s + oB(D) + F + oB(l) + u : SB;
 }
 function cA(e103) {
   return CA("", e103), cA;
@@ -23044,11 +23044,11 @@ function xN(e103, A, B, t, g, n, i, Q, o, r, C, c, E) {
   return D !== SB && Wi(s, He(), D), xN;
 }
 function fN(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D) {
-  let h = gA(), l = fk(h, e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D);
-  return l !== SB && Wi(h, He(), l), fN;
+  let F = gA(), l = fk(F, e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D);
+  return l !== SB && Wi(F, He(), l), fN;
 }
-function yN(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l) {
-  let u = gA(), p = yk(u, e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l);
+function yN(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l) {
+  let u = gA(), p = yk(u, e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l);
   return p !== SB && Wi(u, He(), p), yN;
 }
 function RN(e103) {
@@ -23125,8 +23125,8 @@ function Pk(e103, A, B, t, g, n, i, Q, o, r, C, c, E = "") {
 function Sk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D = "") {
   return fk(gA(), e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D);
 }
-function Lk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l = "") {
-  return yk(gA(), e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l);
+function Lk(e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l = "") {
+  return yk(gA(), e103, A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l);
 }
 function Vk(e103) {
   return Uk(gA(), e103);
@@ -23147,8 +23147,8 @@ function Kk(e103, A, B, t, g) {
       let s = new Lo(r, g, qn, null), D = _0(o, A, g ? C : C + E, c);
       D === -1 ? (ed(TD(Q, i), n, o), q0(n, e103, A.length), A.push(o), Q.directiveStart++, Q.directiveEnd++, g && (Q.providerIndexes += 1048576), B.push(s), i.push(s)) : (B[D] = s, i[D] = s);
     } else {
-      let s = _0(o, A, C + E, c), D = _0(o, A, C, C + E), h = s >= 0 && B[s], l = D >= 0 && B[D];
-      if (g && !l || !g && !h) {
+      let s = _0(o, A, C + E, c), D = _0(o, A, C, C + E), F = s >= 0 && B[s], l = D >= 0 && B[D];
+      if (g && !l || !g && !F) {
         ed(TD(Q, i), n, o);
         let u = qO(g ? ZO : XO, B.length, g, t, r, e103);
         !g && l && (B[D].providerFactory = u), q0(n, e103, A.length, 0), A.push(o), Q.directiveStart++, Q.directiveEnd++, g && (Q.providerIndexes += 1048576), B.push(u), i.push(u);
@@ -23423,7 +23423,7 @@ function tX(e103) {
     e103.projection = null;
   }
 }
-var mi = { \u0275\u0275animateEnter: Cw, \u0275\u0275animateEnterListener: cw, \u0275\u0275animateLeave: Ew, \u0275\u0275animateLeaveListener: QY, \u0275\u0275attribute: P, \u0275\u0275defineComponent: BB, \u0275\u0275defineDirective: It, \u0275\u0275defineInjectable: yA, \u0275\u0275defineInjector: sn, \u0275\u0275defineNgModule: ji, \u0275\u0275definePipe: tN, \u0275\u0275directiveInject: qn, \u0275\u0275getInheritedFactory: Hw, \u0275\u0275inject: VA, \u0275\u0275injectAttribute: IY, \u0275\u0275invalidFactory: pH, \u0275\u0275invalidFactoryDep: ZI, \u0275\u0275templateRefExtractor: fQ, \u0275\u0275resetView: N, \u0275\u0275HostDirectivesFeature: gJ, \u0275\u0275NgOnChangesFeature: Pt, \u0275\u0275ControlFeature: tJ, \u0275\u0275ProvidersFeature: Xk, \u0275\u0275InheritDefinitionFeature: gN, \u0275\u0275ExternalStylesFeature: Zk, \u0275\u0275nextContext: a, \u0275\u0275namespaceHTML: jA, \u0275\u0275namespaceMathML: m0, \u0275\u0275namespaceSVG: AA, \u0275\u0275enableBindings: I0, \u0275\u0275disableBindings: D0, \u0275\u0275elementStart: w, \u0275\u0275elementEnd: I, \u0275\u0275element: $, \u0275\u0275elementContainerStart: $Y, \u0275\u0275elementContainerEnd: Ow, \u0275\u0275domElement: Og, \u0275\u0275domElementStart: Ti, \u0275\u0275domElementEnd: vi, \u0275\u0275domElementContainer: IN, \u0275\u0275domElementContainerStart: AM, \u0275\u0275domElementContainerEnd: aN, \u0275\u0275domTemplate: nN, \u0275\u0275domListener: dN, \u0275\u0275elementContainer: _n, \u0275\u0275pureFunction0: rg, \u0275\u0275pureFunction1: $n, \u0275\u0275pureFunction2: $k, \u0275\u0275pureFunction3: Aj, \u0275\u0275pureFunction4: Bj, \u0275\u0275pureFunction5: nM, \u0275\u0275pureFunction6: ej, \u0275\u0275pureFunction7: tj, \u0275\u0275pureFunction8: gj, \u0275\u0275pureFunctionV: nj, \u0275\u0275getCurrentView: S, \u0275\u0275restoreView: U, \u0275\u0275listener: G, \u0275\u0275projection: tM, \u0275\u0275syntheticHostProperty: DN, \u0275\u0275syntheticHostListener: lN, \u0275\u0275pipeBind1: Ej, \u0275\u0275pipeBind2: wj, \u0275\u0275pipeBind3: sj, \u0275\u0275pipeBind4: aj, \u0275\u0275pipeBindV: Ij, \u0275\u0275projectionDef: eM, \u0275\u0275domProperty: Xw, \u0275\u0275ariaProperty: sN, \u0275\u0275property: x, \u0275\u0275control: JH, \u0275\u0275controlCreate: HH, \u0275\u0275pipe: cj, \u0275\u0275queryRefresh: be, \u0275\u0275queryAdvance: ck, \u0275\u0275viewQuery: Dt, \u0275\u0275viewQuerySignal: GN, \u0275\u0275loadQuery: Te, \u0275\u0275contentQuery: NN, \u0275\u0275contentQuerySignal: uN, \u0275\u0275reference: qB, \u0275\u0275classMap: tc, \u0275\u0275styleMap: Ik, \u0275\u0275styleProp: hA, \u0275\u0275classProp: HA, \u0275\u0275advance: Y, \u0275\u0275template: bi, \u0275\u0275conditional: T, \u0275\u0275conditionalCreate: b, \u0275\u0275conditionalBranchCreate: _Y, \u0275\u0275defer: dJ, \u0275\u0275deferWhen: UJ, \u0275\u0275deferOnIdle: pJ, \u0275\u0275deferOnImmediate: fJ, \u0275\u0275deferOnTimer: HJ, \u0275\u0275deferOnHover: jJ, \u0275\u0275deferOnInteraction: vJ, \u0275\u0275deferOnViewport: SJ, \u0275\u0275deferPrefetchWhen: NJ, \u0275\u0275deferPrefetchOnIdle: mJ, \u0275\u0275deferPrefetchOnImmediate: yJ, \u0275\u0275deferPrefetchOnTimer: JJ, \u0275\u0275deferPrefetchOnHover: bJ, \u0275\u0275deferPrefetchOnInteraction: WJ, \u0275\u0275deferPrefetchOnViewport: LJ, \u0275\u0275deferHydrateWhen: uJ, \u0275\u0275deferHydrateNever: GJ, \u0275\u0275deferHydrateOnIdle: xJ, \u0275\u0275deferHydrateOnImmediate: RJ, \u0275\u0275deferHydrateOnTimer: kJ, \u0275\u0275deferHydrateOnHover: TJ, \u0275\u0275deferHydrateOnInteraction: PJ, \u0275\u0275deferHydrateOnViewport: VJ, \u0275\u0275deferEnableTimerScheduling: sJ, \u0275\u0275repeater: iA, \u0275\u0275repeaterCreate: nA, \u0275\u0275repeaterTrackByIndex: MB, \u0275\u0275repeaterTrackByIdentity: ZB, \u0275\u0275componentInstance: zJ, \u0275\u0275text: F, \u0275\u0275textInterpolate: cA, \u0275\u0275textInterpolate1: CA, \u0275\u0275textInterpolate2: te, \u0275\u0275textInterpolate3: gr, \u0275\u0275textInterpolate4: pN, \u0275\u0275textInterpolate5: mN, \u0275\u0275textInterpolate6: xN, \u0275\u0275textInterpolate7: fN, \u0275\u0275textInterpolate8: yN, \u0275\u0275textInterpolateV: RN, \u0275\u0275i18n: Qk, \u0275\u0275i18nAttributes: ok, \u0275\u0275i18nExp: hN, \u0275\u0275i18nStart: MN, \u0275\u0275i18nEnd: FN, \u0275\u0275i18nApply: rk, \u0275\u0275i18nPostprocess: Ck, \u0275\u0275resolveWindow: ug, \u0275\u0275resolveDocument: Ue, \u0275\u0275resolveBody: fR, \u0275\u0275setComponentScope: qk, \u0275\u0275setNgModuleScope: _k, \u0275\u0275registerNgModuleType: BN, \u0275\u0275getComponentDepsFactory: Dj, \u0275setClassDebugInfo: Ce, \u0275\u0275declareLet: qw, \u0275\u0275storeLet: gM, \u0275\u0275arrowFunction: zk, \u0275\u0275readContextLet: Pi, \u0275\u0275attachSourceLocations: Jk, \u0275\u0275interpolate: kk, \u0275\u0275interpolate1: jk, \u0275\u0275interpolate2: bk, \u0275\u0275interpolate3: Tk, \u0275\u0275interpolate4: vk, \u0275\u0275interpolate5: Wk, \u0275\u0275interpolate6: Pk, \u0275\u0275interpolate7: Sk, \u0275\u0275interpolate8: Lk, \u0275\u0275interpolateV: Vk, \u0275\u0275sanitizeHtml: Ww, \u0275\u0275sanitizeStyle: dU, \u0275\u0275sanitizeResourceUrl: dY, \u0275\u0275sanitizeScript: UU, \u0275\u0275validateAttribute: NU, \u0275\u0275sanitizeUrl: Ji, \u0275\u0275sanitizeUrlOrResourceUrl: pR, \u0275\u0275trustConstantHtml: uR, \u0275\u0275trustConstantResourceUrl: GR, forwardRef: bE, resolveForwardRef: RB, \u0275\u0275twoWayProperty: HN, \u0275\u0275twoWayBindingSet: Rk, \u0275\u0275twoWayListener: JN, \u0275\u0275replaceMetadata: Mj, \u0275\u0275getReplaceMetadataURL: Yj };
+var mi = { \u0275\u0275animateEnter: Cw, \u0275\u0275animateEnterListener: cw, \u0275\u0275animateLeave: Ew, \u0275\u0275animateLeaveListener: QY, \u0275\u0275attribute: P, \u0275\u0275defineComponent: BB, \u0275\u0275defineDirective: It, \u0275\u0275defineInjectable: yA, \u0275\u0275defineInjector: sn, \u0275\u0275defineNgModule: ji, \u0275\u0275definePipe: tN, \u0275\u0275directiveInject: qn, \u0275\u0275getInheritedFactory: Hw, \u0275\u0275inject: VA, \u0275\u0275injectAttribute: IY, \u0275\u0275invalidFactory: pH, \u0275\u0275invalidFactoryDep: ZI, \u0275\u0275templateRefExtractor: fQ, \u0275\u0275resetView: N, \u0275\u0275HostDirectivesFeature: gJ, \u0275\u0275NgOnChangesFeature: Pt, \u0275\u0275ControlFeature: tJ, \u0275\u0275ProvidersFeature: Xk, \u0275\u0275InheritDefinitionFeature: gN, \u0275\u0275ExternalStylesFeature: Zk, \u0275\u0275nextContext: a, \u0275\u0275namespaceHTML: jA, \u0275\u0275namespaceMathML: m0, \u0275\u0275namespaceSVG: AA, \u0275\u0275enableBindings: I0, \u0275\u0275disableBindings: D0, \u0275\u0275elementStart: w, \u0275\u0275elementEnd: I, \u0275\u0275element: $, \u0275\u0275elementContainerStart: $Y, \u0275\u0275elementContainerEnd: Ow, \u0275\u0275domElement: Og, \u0275\u0275domElementStart: Ti, \u0275\u0275domElementEnd: vi, \u0275\u0275domElementContainer: IN, \u0275\u0275domElementContainerStart: AM, \u0275\u0275domElementContainerEnd: aN, \u0275\u0275domTemplate: nN, \u0275\u0275domListener: dN, \u0275\u0275elementContainer: _n, \u0275\u0275pureFunction0: rg, \u0275\u0275pureFunction1: $n, \u0275\u0275pureFunction2: $k, \u0275\u0275pureFunction3: Aj, \u0275\u0275pureFunction4: Bj, \u0275\u0275pureFunction5: nM, \u0275\u0275pureFunction6: ej, \u0275\u0275pureFunction7: tj, \u0275\u0275pureFunction8: gj, \u0275\u0275pureFunctionV: nj, \u0275\u0275getCurrentView: S, \u0275\u0275restoreView: U, \u0275\u0275listener: G, \u0275\u0275projection: tM, \u0275\u0275syntheticHostProperty: DN, \u0275\u0275syntheticHostListener: lN, \u0275\u0275pipeBind1: Ej, \u0275\u0275pipeBind2: wj, \u0275\u0275pipeBind3: sj, \u0275\u0275pipeBind4: aj, \u0275\u0275pipeBindV: Ij, \u0275\u0275projectionDef: eM, \u0275\u0275domProperty: Xw, \u0275\u0275ariaProperty: sN, \u0275\u0275property: x, \u0275\u0275control: JH, \u0275\u0275controlCreate: HH, \u0275\u0275pipe: cj, \u0275\u0275queryRefresh: be, \u0275\u0275queryAdvance: ck, \u0275\u0275viewQuery: Dt, \u0275\u0275viewQuerySignal: GN, \u0275\u0275loadQuery: Te, \u0275\u0275contentQuery: NN, \u0275\u0275contentQuerySignal: uN, \u0275\u0275reference: qB, \u0275\u0275classMap: tc, \u0275\u0275styleMap: Ik, \u0275\u0275styleProp: hA, \u0275\u0275classProp: HA, \u0275\u0275advance: Y, \u0275\u0275template: bi, \u0275\u0275conditional: T, \u0275\u0275conditionalCreate: b, \u0275\u0275conditionalBranchCreate: _Y, \u0275\u0275defer: dJ, \u0275\u0275deferWhen: UJ, \u0275\u0275deferOnIdle: pJ, \u0275\u0275deferOnImmediate: fJ, \u0275\u0275deferOnTimer: HJ, \u0275\u0275deferOnHover: jJ, \u0275\u0275deferOnInteraction: vJ, \u0275\u0275deferOnViewport: SJ, \u0275\u0275deferPrefetchWhen: NJ, \u0275\u0275deferPrefetchOnIdle: mJ, \u0275\u0275deferPrefetchOnImmediate: yJ, \u0275\u0275deferPrefetchOnTimer: JJ, \u0275\u0275deferPrefetchOnHover: bJ, \u0275\u0275deferPrefetchOnInteraction: WJ, \u0275\u0275deferPrefetchOnViewport: LJ, \u0275\u0275deferHydrateWhen: uJ, \u0275\u0275deferHydrateNever: GJ, \u0275\u0275deferHydrateOnIdle: xJ, \u0275\u0275deferHydrateOnImmediate: RJ, \u0275\u0275deferHydrateOnTimer: kJ, \u0275\u0275deferHydrateOnHover: TJ, \u0275\u0275deferHydrateOnInteraction: PJ, \u0275\u0275deferHydrateOnViewport: VJ, \u0275\u0275deferEnableTimerScheduling: sJ, \u0275\u0275repeater: iA, \u0275\u0275repeaterCreate: nA, \u0275\u0275repeaterTrackByIndex: MB, \u0275\u0275repeaterTrackByIdentity: ZB, \u0275\u0275componentInstance: zJ, \u0275\u0275text: h, \u0275\u0275textInterpolate: cA, \u0275\u0275textInterpolate1: CA, \u0275\u0275textInterpolate2: te, \u0275\u0275textInterpolate3: gr, \u0275\u0275textInterpolate4: pN, \u0275\u0275textInterpolate5: mN, \u0275\u0275textInterpolate6: xN, \u0275\u0275textInterpolate7: fN, \u0275\u0275textInterpolate8: yN, \u0275\u0275textInterpolateV: RN, \u0275\u0275i18n: Qk, \u0275\u0275i18nAttributes: ok, \u0275\u0275i18nExp: hN, \u0275\u0275i18nStart: MN, \u0275\u0275i18nEnd: FN, \u0275\u0275i18nApply: rk, \u0275\u0275i18nPostprocess: Ck, \u0275\u0275resolveWindow: ug, \u0275\u0275resolveDocument: Ue, \u0275\u0275resolveBody: fR, \u0275\u0275setComponentScope: qk, \u0275\u0275setNgModuleScope: _k, \u0275\u0275registerNgModuleType: BN, \u0275\u0275getComponentDepsFactory: Dj, \u0275setClassDebugInfo: Ce, \u0275\u0275declareLet: qw, \u0275\u0275storeLet: gM, \u0275\u0275arrowFunction: zk, \u0275\u0275readContextLet: Pi, \u0275\u0275attachSourceLocations: Jk, \u0275\u0275interpolate: kk, \u0275\u0275interpolate1: jk, \u0275\u0275interpolate2: bk, \u0275\u0275interpolate3: Tk, \u0275\u0275interpolate4: vk, \u0275\u0275interpolate5: Wk, \u0275\u0275interpolate6: Pk, \u0275\u0275interpolate7: Sk, \u0275\u0275interpolate8: Lk, \u0275\u0275interpolateV: Vk, \u0275\u0275sanitizeHtml: Ww, \u0275\u0275sanitizeStyle: dU, \u0275\u0275sanitizeResourceUrl: dY, \u0275\u0275sanitizeScript: UU, \u0275\u0275validateAttribute: NU, \u0275\u0275sanitizeUrl: Ji, \u0275\u0275sanitizeUrlOrResourceUrl: pR, \u0275\u0275trustConstantHtml: uR, \u0275\u0275trustConstantResourceUrl: GR, forwardRef: bE, resolveForwardRef: RB, \u0275\u0275twoWayProperty: HN, \u0275\u0275twoWayBindingSet: Rk, \u0275\u0275twoWayListener: JN, \u0275\u0275replaceMetadata: Mj, \u0275\u0275getReplaceMetadataURL: Yj };
 var iw = null;
 function Fj(e103) {
   iw !== null && (e103.defaultEncapsulation !== iw.defaultEncapsulation || e103.preserveWhitespaces !== iw.preserveWhitespaces) || (iw = e103);
@@ -24053,12 +24053,12 @@ var qj = class e29 {
   isOversized(A) {
     if (!this.window) return false;
     let B = [".svg"], t = (A.src || "").toLowerCase();
-    if (B.some((h) => t.endsWith(h))) return false;
+    if (B.some((F) => t.endsWith(F))) return false;
     let g = this.window.getComputedStyle(A), n = parseFloat(g.getPropertyValue("width")), i = parseFloat(g.getPropertyValue("height")), Q = g.getPropertyValue("box-sizing");
     if (g.getPropertyValue("object-fit") === "cover") return false;
     if (Q === "border-box") {
-      let h = g.getPropertyValue("padding-top"), l = g.getPropertyValue("padding-right"), u = g.getPropertyValue("padding-bottom"), p = g.getPropertyValue("padding-left");
-      n -= parseFloat(l) + parseFloat(p), i -= parseFloat(h) + parseFloat(u);
+      let F = g.getPropertyValue("padding-top"), l = g.getPropertyValue("padding-right"), u = g.getPropertyValue("padding-bottom"), p = g.getPropertyValue("padding-left");
+      n -= parseFloat(l) + parseFloat(p), i -= parseFloat(F) + parseFloat(u);
     }
     let r = A.naturalWidth, C = A.naturalHeight, c = this.window.devicePixelRatio * n, E = this.window.devicePixelRatio * i, s = r - c >= Zj, D = C - E >= Zj;
     return s || D;
@@ -26279,7 +26279,7 @@ function WZ(e103, A) {
       U(B);
       let g = a(2);
       return N(g.editor.disconnectSelectedInk());
-    }), F(1, " Desconectar "), I();
+    }), h(1, " Desconectar "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -26293,7 +26293,7 @@ function PZ(e103, A) {
       U(B);
       let g = a();
       return N(g.editor.startInkConnection());
-    }), F(1, " \u2197 Conectar "), I(), b(2, WZ, 2, 1, "button", 9);
+    }), h(1, " \u2197 Conectar "), I(), b(2, WZ, 2, 1, "button", 9);
   }
   if (e103 & 2) {
     let B = a();
@@ -26306,7 +26306,7 @@ function SZ(e103, A) {
     w(0, "button", 18), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.move(g.id));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -26324,7 +26324,7 @@ function LZ(e103, A) {
       U(B);
       let g = a();
       return N(g.open = false);
-    }), w(1, "strong"), F(2, "Mover a capa"), I(), w(3, "div", 12), nA(4, SZ, 2, 4, "button", 13, TZ), I(), w(6, "form", 14), G("submit", function(g) {
+    }), w(1, "strong"), h(2, "Mover a capa"), I(), w(3, "div", 12), nA(4, SZ, 2, 4, "button", 13, TZ), I(), w(6, "form", 14), G("submit", function(g) {
       U(B);
       let n = a();
       return N(n.create(g));
@@ -26332,11 +26332,11 @@ function LZ(e103, A) {
       U(B);
       let n = a();
       return N(n.name = n.value(g));
-    }), I(), w(8, "button", 16), F(9, " Crear y mover "), I()(), w(10, "button", 17), G("click", function() {
+    }), I(), w(8, "button", 16), h(9, " Crear y mover "), I()(), w(10, "button", 17), G("click", function() {
       U(B);
       let g = a();
       return N(g.open = false);
-    }), F(11, " Cerrar "), I()();
+    }), h(11, " Cerrar "), I()();
   }
   if (e103 & 2) {
     let B = a(), t = qB(1);
@@ -26510,7 +26510,7 @@ var Ec = class {
 };
 var Yu = (e103, A) => A.id;
 function VZ(e103, A) {
-  e103 & 1 && (w(0, "p", 5), F(1, " Anotaciones PDF: Bol\xEDgrafo, Pluma y Pincel. Los materiales especiales se usan en el Lienzo. "), I());
+  e103 & 1 && (w(0, "p", 5), h(1, " Anotaciones PDF: Bol\xEDgrafo, Pluma y Pincel. Los materiales especiales se usan en el Lienzo. "), I());
 }
 function zZ(e103, A) {
   if (e103 & 1) {
@@ -26519,7 +26519,7 @@ function zZ(e103, A) {
       U(B);
       let g = a();
       return N(g.editor.restoreWriting());
-    }), F(1, " Restaurar trazo original "), I();
+    }), h(1, " Restaurar trazo original "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -26538,7 +26538,7 @@ function OZ(e103, A) {
     w(0, "button", 21), G("click", function() {
       let g = U(B).$implicit, n = a(4);
       return n.category = g.id, N(n.search = "");
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -26563,7 +26563,7 @@ function qZ(e103, A) {
     w(0, "button", 22), G("click", function() {
       let g = U(B).$implicit, n = a(3);
       return N(n.editor.selectInkTool(g.id));
-    }), AA(), w(1, "svg", 23), nA(2, ZZ, 1, 5, ":svg:path", 10, MB), I(), jA(), w(4, "strong"), F(5), I(), w(6, "span"), F(7), I()();
+    }), AA(), w(1, "svg", 23), nA(2, ZZ, 1, 5, ":svg:path", 10, MB), I(), jA(), w(4, "strong"), h(5), I(), w(6, "span"), h(7), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(3);
@@ -26573,15 +26573,15 @@ function qZ(e103, A) {
 function _Z(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "h3", 14), F(1), I(), b(2, XZ, 3, 0, "div", 15), w(3, "div", 16)(4, "span"), F(5, "Desliza hacia los lados"), I(), w(6, "button", 17), G("click", function() {
+    w(0, "h3", 14), h(1), I(), b(2, XZ, 3, 0, "div", 15), w(3, "div", 16)(4, "span"), h(5, "Desliza hacia los lados"), I(), w(6, "button", 17), G("click", function() {
       U(B);
       let g = qB(11);
       return N(g.scrollBy({ left: -220, behavior: "smooth" }));
-    }), F(7, " \u2039 "), I(), w(8, "button", 17), G("click", function() {
+    }), h(7, " \u2039 "), I(), w(8, "button", 17), G("click", function() {
       U(B);
       let g = qB(11);
       return N(g.scrollBy({ left: 220, behavior: "smooth" }));
-    }), F(9, " \u203A "), I()(), w(10, "div", 18, 0), nA(12, qZ, 8, 6, "button", 19, Yu), I();
+    }), h(9, " \u203A "), I()(), w(10, "div", 18, 0), nA(12, qZ, 8, 6, "button", 19, Yu), I();
   }
   if (e103 & 2) {
     let B = a().$implicit;
@@ -26595,7 +26595,7 @@ function $Z(e103, A) {
   }
 }
 function A9(e103, A) {
-  e103 & 1 && (w(0, "p", 5), F(1, "No hay pinceles con ese nombre."), I());
+  e103 & 1 && (w(0, "p", 5), h(1, "No hay pinceles con ese nombre."), I());
 }
 var xM = class e72 {
   constructor() {
@@ -26632,9 +26632,9 @@ var xM = class e72 {
   }
   static {
     this.\u0275cmp = BB({ type: e72, selectors: [["era-brush-panel"]], inputs: { editor: "editor" }, outputs: { closed: "closed" }, decls: 30, vars: 6, consts: [["gallery", ""], ["aria-label", "Colores y pinceles"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cerrar colores y pinceles", "data-era-tooltip", "Cerrar colores y pinceles", 1, "close", 3, "click"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "m6 6 12 12M18 6 6 18"], [1, "hint"], ["eraTouchActivate", "", "type", "button", 1, "restore-writing", 3, "disabled"], [1, "live-preview"], [1, "preview-heading"], ["viewBox", "0 0 180 50", "aria-label", "Vista previa del pincel", "role", "img", 1, "preview"], [3, "fill"], [1, "preview-tones"], ["type", "search", "aria-label", "Buscar pinceles", "placeholder", "Buscar pincel\u2026", 1, "brush-search", 3, "input", "value"], ["eraTouchActivate", "", "type", "button", 1, "restore-writing", 3, "click", "disabled"], [1, "tool-family"], ["role", "group", "aria-label", "Categor\xEDas de pintura", 1, "material-categories"], [1, "gallery-navigation"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["tabindex", "0", "role", "group", 1, "brush-types"], ["eraTouchActivate", "", "type", "button", 1, "brush-card", 3, "disabled"], ["eraTouchActivate", "", "type", "button", 3, "disabled"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "brush-card", 3, "click", "disabled"], ["viewBox", "0 0 180 50", "aria-hidden", "true"]], template: function(B, t) {
-      B & 1 && (w(0, "section", 1)(1, "header")(2, "div")(3, "h2"), F(4, "Pinceles"), I()(), w(5, "button", 2), G("click", function() {
+      B & 1 && (w(0, "section", 1)(1, "header")(2, "div")(3, "h2"), h(4, "Pinceles"), I()(), w(5, "button", 2), G("click", function() {
         return t.closed.emit();
-      }), AA(), w(6, "svg", 3), $(7, "path", 4), I()()(), b(8, VZ, 2, 0, "p", 5), b(9, zZ, 2, 1, "button", 6), jA(), w(10, "div", 7)(11, "div", 8)(12, "span"), F(13), I()(), AA(), w(14, "svg", 9)(15, "g"), nA(16, KZ, 1, 5, ":svg:path", 10, MB), I()(), jA(), w(18, "div", 11)(19, "span"), F(20, "Muestra del trazo"), I(), w(21, "span"), F(22, "Claro \xB7 Oscuro"), I()()(), w(23, "fieldset")(24, "legend"), F(25, "Pincel"), I(), w(26, "input", 12), G("input", function(n) {
+      }), AA(), w(6, "svg", 3), $(7, "path", 4), I()()(), b(8, VZ, 2, 0, "p", 5), b(9, zZ, 2, 1, "button", 6), jA(), w(10, "div", 7)(11, "div", 8)(12, "span"), h(13), I()(), AA(), w(14, "svg", 9)(15, "g"), nA(16, KZ, 1, 5, ":svg:path", 10, MB), I()(), jA(), w(18, "div", 11)(19, "span"), h(20, "Muestra del trazo"), I(), w(21, "span"), h(22, "Claro \xB7 Oscuro"), I()()(), w(23, "fieldset")(24, "legend"), h(25, "Pincel"), I(), w(26, "input", 12), G("input", function(n) {
         return t.search = t.value(n);
       }), I(), nA(27, $Z, 1, 1, null, null, Yu), b(29, A9, 2, 0, "p", 5), I()()), B & 2 && (Y(8), T(t.editor.pdfReader ? 8 : -1), Y(), T(t.editor.canRestoreWriting ? 9 : -1), Y(4), cA(t.brushName), Y(2), P("opacity", t.editor.opacityPercent / 100), Y(), iA(t.previewParts(t.editor.brush)), Y(10), x("value", t.search), Y(), iA(t.brushGroups), Y(2), T(t.brushTypes.length ? -1 : 29));
     }, dependencies: [YB], styles: [`[_nghost-%COMP%] {
@@ -27180,7 +27180,7 @@ function E4() {
   e103.DocumentFragment;
   let n = e103.HTMLTemplateElement, i = e103.Node, Q = e103.Element, o = e103.NodeFilter;
   e103.NamedNodeMap === void 0 && (e103.NamedNodeMap || e103.MozNamedAttrMap), e103.HTMLFormElement;
-  let r = e103.DOMParser, C = e103.trustedTypes, c = Q.prototype, E = Zg(c, "cloneNode"), s = Zg(c, "remove"), D = Zg(c, "removeAttributeNode"), h = Zg(c, "nextSibling"), l = Zg(c, "childNodes"), u = Zg(c, "parentNode"), p = Zg(c, "shadowRoot"), y = Zg(c, "attributes"), k = i && i.prototype ? Zg(i.prototype, "nodeType") : null, H = i && i.prototype ? Zg(i.prototype, "nodeName") : null, v = i && i.prototype ? Zg(i.prototype, "ownerDocument") : null, z = function(J) {
+  let r = e103.DOMParser, C = e103.trustedTypes, c = Q.prototype, E = Zg(c, "cloneNode"), s = Zg(c, "remove"), D = Zg(c, "removeAttributeNode"), F = Zg(c, "nextSibling"), l = Zg(c, "childNodes"), u = Zg(c, "parentNode"), p = Zg(c, "shadowRoot"), y = Zg(c, "attributes"), k = i && i.prototype ? Zg(i.prototype, "nodeType") : null, H = i && i.prototype ? Zg(i.prototype, "nodeName") : null, v = i && i.prototype ? Zg(i.prototype, "ownerDocument") : null, z = function(J) {
     return k ? k(J) : J.nodeType;
   }, W = function(J) {
     return H ? H(J) : J.nodeName;
@@ -27449,7 +27449,7 @@ function E4() {
         let $A = SA.length;
         for (let lB = $A - 1; lB >= 0; --lB) {
           let ze = J === QA ? E(SA[lB], true) : SA[lB];
-          oA.insertBefore(ze, h(J));
+          oA.insertBefore(ze, F(J));
         }
       }
     }
@@ -27702,7 +27702,7 @@ function kM(e103, A, B) {
   return `inset(${e103.top}px ${Math.max(0, A - e103.right)}px ${Math.max(0, B - e103.bottom)}px ${e103.left}px)`;
 }
 function fu(e103, A, B, t, g, n, i) {
-  let Q = t === "palette" || t === "favorites", o = A - e103.left < 112 ? 1 : e103.right - A < 112 ? -1 : 0, r = B - e103.top < 112 ? 1 : e103.bottom - B < 112 ? -1 : 0, C = !!(o || r), c = !!(o && r), E = A > (e103.left + e103.right) / 2 ? -1 : 1, s = C ? Math.atan2(r, o) * 180 / Math.PI : E < 0 ? 180 : 0, D = r ? 1 : E, h = c ? 76 : C ? 150 : t === "rgb" ? 200 : 180, l = {}, u = ["palette", "hsl", "rgb"], p = ["eyedropper", "favorites", "save"], y = [56, 44, 44], k = e103.right - e103.left, H = (z, W) => Math.max(e103.left + 8, Math.min(e103.right - W - 8, z)), v = (z) => Math.max(e103.top + 8, Math.min(e103.bottom - 42, z));
+  let Q = t === "palette" || t === "favorites", o = A - e103.left < 112 ? 1 : e103.right - A < 112 ? -1 : 0, r = B - e103.top < 112 ? 1 : e103.bottom - B < 112 ? -1 : 0, C = !!(o || r), c = !!(o && r), E = A > (e103.left + e103.right) / 2 ? -1 : 1, s = C ? Math.atan2(r, o) * 180 / Math.PI : E < 0 ? 180 : 0, D = r ? 1 : E, F = c ? 76 : C ? 150 : t === "rgb" ? 200 : 180, l = {}, u = ["palette", "hsl", "rgb"], p = ["eyedropper", "favorites", "save"], y = [56, 44, 44], k = e103.right - e103.left, H = (z, W) => Math.max(e103.left + 8, Math.min(e103.right - W - 8, z)), v = (z) => Math.max(e103.top + 8, Math.min(e103.bottom - 42, z));
   if (!C && k >= 600 && !Q && e103.bottom - e103.top < 2 * (i + 62)) {
     let W = (E > 0 ? A - e103.left : e103.right - A) < 280, K = i, BA = 200;
     p.forEach((q, _) => l[q] = { x: H((W ? A + E * (K + 40) : A - E * BA) - (E < 0 ? 34 : 0), 34), y: v(B - 61 + _ * 44) }), u.forEach((q, _) => l[q] = { x: H((W ? A + E * (K + 84) : A - E * (BA + 64)) - (E < 0 ? y[_] : 0), y[_]), y: l[p[_]].y });
@@ -27744,7 +27744,7 @@ function fu(e103, A, B, t, g, n, i) {
       l[BA] = { x: W + K, y: v(B + z) }, K += y[q] + 8;
     });
   }
-  return { controls: l, docked: C, corner: c, orientation: s, direction: D, span: h, horizontal: o, vertical: r, width: k };
+  return { controls: l, docked: C, corner: c, orientation: s, direction: D, span: F, horizontal: o, vertical: r, width: k };
 }
 function zi(e103) {
   return [1, 3, 5].map((A) => parseInt(e103.slice(A, A + 2), 16));
@@ -27787,33 +27787,33 @@ var jM = class {
     try {
       this.radius = 145 + A.width * 1.8, A.configureInk(i);
       let Q = 400 / B, [o, r, C] = zi(A.color), c = 160;
-      for (let h = 0; h <= c; h++) {
-        let l = h * Math.PI * 2 / c, u = 2 * Math.sin(l * 17) + 1.3 * Math.sin(l * 31), p = this.radius + u, y = (400 + p * Math.cos(l)) / B, k = (400 + p * Math.sin(l)) / B, H = 1;
-        h ? i.push_point(y, k, H) : i.begin_stroke(y, k, H, A.width, o, r, C);
+      for (let F = 0; F <= c; F++) {
+        let l = F * Math.PI * 2 / c, u = 2 * Math.sin(l * 17) + 1.3 * Math.sin(l * 31), p = this.radius + u, y = (400 + p * Math.cos(l)) / B, k = (400 + p * Math.sin(l)) / B, H = 1;
+        F ? i.push_point(y, k, H) : i.begin_stroke(y, k, H, A.width, o, r, C);
       }
       let E = JSON.parse(i.draft_json()), s = A.color;
       if (E.outline) {
-        let h = E.outline, l = { x: h.origin.x - Q, y: h.origin.y - Q };
-        this.parts = h.parts?.length ? h.parts.map((u) => ({ path: u.svg ?? cc(u.contours, l), transform: u.svg === void 0 ? void 0 : `translate(${l.x} ${l.y})`, color: `rgb(${u.color.join(",")})`, opacity: u.opacity, rule: u.even_odd ? "evenodd" : "nonzero" })) : [{ path: cc(h.contours, l), color: s, opacity: 1, rule: "nonzero" }];
+        let F = E.outline, l = { x: F.origin.x - Q, y: F.origin.y - Q };
+        this.parts = F.parts?.length ? F.parts.map((u) => ({ path: u.svg ?? cc(u.contours, l), transform: u.svg === void 0 ? void 0 : `translate(${l.x} ${l.y})`, color: `rgb(${u.color.join(",")})`, opacity: u.opacity, rule: u.even_odd ? "evenodd" : "nonzero" })) : [{ path: cc(F.contours, l), color: s, opacity: 1, rule: "nonzero" }];
       } else {
-        let h = "", l = E.samples;
+        let F = "", l = E.samples;
         for (let u = 1; u < l.length; u++) {
           let p = l[u - 1].point, y = l[u].point, k = y.x - p.x, H = y.y - p.y, v = Math.hypot(k, H);
           if (!v) continue;
           let z = -H / v, W = k / v, K = E.radii?.[u - 1] ?? E.width / 2, BA = E.radii?.[u] ?? E.width / 2;
-          h += `M${p.x - Q - z * K} ${p.y - Q - W * K}L${y.x - Q - z * BA} ${y.y - Q - W * BA}L${y.x - Q + z * BA} ${y.y - Q + W * BA}L${p.x - Q + z * K} ${p.y - Q + W * K}Z`;
+          F += `M${p.x - Q - z * K} ${p.y - Q - W * K}L${y.x - Q - z * BA} ${y.y - Q - W * BA}L${y.x - Q + z * BA} ${y.y - Q + W * BA}L${p.x - Q + z * K} ${p.y - Q + W * K}Z`;
         }
         for (let u = 0; u < l.length; u++) {
           let p = l[u].point, y = E.radii?.[u] ?? E.width / 2, k = p.x - Q, H = p.y - Q;
-          h += `M${k - y} ${H}a${y} ${y} 0 1 1 ${y * 2} 0a${y} ${y} 0 1 1 ${-y * 2} 0Z`;
+          F += `M${k - y} ${H}a${y} ${y} 0 1 1 ${y * 2} 0a${y} ${y} 0 1 1 ${-y * 2} 0Z`;
         }
-        this.parts = [{ path: h, color: s, opacity: 1, rule: "nonzero" }];
+        this.parts = [{ path: F, color: s, opacity: 1, rule: "nonzero" }];
       }
-      let D = this.parts.reduce((h, l) => h + l.path.length, 0);
+      let D = this.parts.reduce((F, l) => F + l.path.length, 0);
       if (D <= I4) {
         for (; Ki.size && (Ki.size >= 16 || yu + D > I4); ) {
-          let h = Ki.keys().next().value;
-          yu -= Ki.get(h).size, Ki.delete(h);
+          let F = Ki.keys().next().value;
+          yu -= Ki.get(F).size, Ki.delete(F);
         }
         Ki.set(t, { parts: this.parts, radius: this.radius, size: D }), yu += D;
       }
@@ -27902,7 +27902,7 @@ function j9(e103, A) {
     w(0, "button", 15), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.setMode(g.value));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -27912,7 +27912,7 @@ function j9(e103, A) {
 function b9(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1), w(2, "input", 16), G("input", function(g) {
+    w(0, "label"), h(1), w(2, "input", 16), G("input", function(g) {
       let n = U(B).$index, i = a(2);
       return N(i.quickColorChanged.emit({ index: n, color: g.target.value }));
     }), I()();
@@ -27923,13 +27923,13 @@ function b9(e103, A) {
   }
 }
 function T9(e103, A) {
-  if (e103 & 1 && (w(0, "div", 11)(1, "span"), F(2, "Colores r\xE1pidos"), I(), nA(3, b9, 3, 4, "label", null, MB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 11)(1, "span"), h(2, "Colores r\xE1pidos"), I(), nA(3, b9, 3, 4, "label", null, MB), I()), e103 & 2) {
     let B = a();
     Y(3), iA(B.quickColors);
   }
 }
 function v9(e103, A) {
-  if (e103 & 1 && (AA(), w(0, "text", 19), F(1, " \u2713 "), I()), e103 & 2) {
+  if (e103 & 1 && (AA(), w(0, "text", 19), h(1, " \u2713 "), I()), e103 & 2) {
     let B = a(), t = B.$implicit, g = B.$index, n = a(2);
     P("x", n.bandCenter(g, n.editor.favoriteColors.length))("fill", n.contrast(t));
   }
@@ -27951,7 +27951,7 @@ function W9(e103, A) {
   }
 }
 function P9(e103, A) {
-  e103 & 1 && (AA(), w(0, "text", 17), F(1, " Guarda un color para verlo aqu\xED. "), I());
+  e103 & 1 && (AA(), w(0, "text", 17), h(1, " Guarda un color para verlo aqu\xED. "), I());
 }
 function S9(e103, A) {
   if (e103 & 1 && (AA(), w(0, "svg", 13), nA(1, W9, 2, 6, null, null, ZB, false, P9, 2, 0, ":svg:text", 17), I()), e103 & 2) {
@@ -27968,7 +27968,7 @@ function L9(e103, A) {
     })("keydown", function(g) {
       let n = U(B).$implicit, i = a(3);
       return N(i.activateColor(g, n.hex));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(3);
@@ -27976,13 +27976,13 @@ function L9(e103, A) {
   }
 }
 function V9(e103, A) {
-  if (e103 & 1 && (w(0, "section", 23)(1, "h3"), F(2), I(), nA(3, L9, 2, 11, "button", 25, k9), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "section", 23)(1, "h3"), h(2), I(), nA(3, L9, 2, 11, "button", 25, k9), I()), e103 & 2) {
     let B = A.$implicit;
     P("aria-label", "Familia " + B.name), Y(2), cA(B.name), Y(), iA(B.colors);
   }
 }
 function z9(e103, A) {
-  e103 & 1 && (w(0, "span", 24), F(1, "No hay colores con ese c\xF3digo o nombre."), I());
+  e103 & 1 && (w(0, "span", 24), h(1, "No hay colores con ese c\xF3digo o nombre."), I());
 }
 function K9(e103, A) {
   if (e103 & 1) {
@@ -28003,7 +28003,7 @@ function K9(e103, A) {
 function O9(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label")(1, "span"), F(2), I(), w(3, "input", 27), G("input", function(g) {
+    w(0, "label")(1, "span"), h(2), I(), w(3, "input", 27), G("input", function(g) {
       let n = U(B).$index, i = a(2);
       return N(i.channelValue(n, +g.target.value));
     })("keydown", function(g) {
@@ -28058,8 +28058,8 @@ var TM = class e74 {
     return [...A].map(([B, t]) => ({ name: B, colors: t }));
   }
   bandPath(A, B, t = 0, g = 1, n = 600, i = 8) {
-    let r = i + t * 108 / g + 3, C = i + (t + 1) * 108 / g - 3, c = (l, u) => n / 2 + (l / B - 0.5) * (n - 24) * (0.82 + 0.18 * (u - i) / 108), E = c(A, r) + 3, s = c(A + 1, r) - 3, D = c(A + 1, C) - 3, h = c(A, C) + 3;
-    return `M ${E} ${r} H ${s} Q ${s} ${(r + C) / 2} ${D} ${C} H ${h} Q ${E} ${(r + C) / 2} ${E} ${r} Z`;
+    let r = i + t * 108 / g + 3, C = i + (t + 1) * 108 / g - 3, c = (l, u) => n / 2 + (l / B - 0.5) * (n - 24) * (0.82 + 0.18 * (u - i) / 108), E = c(A, r) + 3, s = c(A + 1, r) - 3, D = c(A + 1, C) - 3, F = c(A, C) + 3;
+    return `M ${E} ${r} H ${s} Q ${s} ${(r + C) / 2} ${D} ${C} H ${F} Q ${E} ${(r + C) / 2} ${E} ${r} Z`;
   }
   bandCenter(A, B, t = 600, g = 0.5) {
     return t / 2 + ((A + 0.5) / B - 0.5) * (t - 24) * (0.82 + 0.18 * g);
@@ -28413,7 +28413,7 @@ function _9(e103, A) {
   }
 }
 function $9(e103, A) {
-  if (e103 & 1 && (AA(), w(0, "text", 17), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (AA(), w(0, "text", 17), h(1), I()), e103 & 2) {
     let B = a().$implicit, t = a(2);
     P("transform", "translate(" + B.x + " " + B.y + ") rotate(" + B.angle + ")")("fill", t.labelColor(B.code, B.color))("font-size", B.font), Y(), CA(" ", B.label, " ");
   }
@@ -28430,7 +28430,7 @@ function A7(e103, A) {
     })("keydown.space", function(g) {
       let n = U(B).$implicit, i = a(2);
       return g.preventDefault(), N(i.chooseCopic(n.code));
-    }), w(1, "title"), F(2), I()(), b(3, $9, 2, 4, ":svg:text", 17);
+    }), w(1, "title"), h(2), I()(), b(3, $9, 2, 4, ":svg:text", 17);
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -28474,7 +28474,7 @@ function t7(e103, A) {
     })("keydown", function(g) {
       let n = U(B).$index, i = a(2);
       return N(i.channelKey(g, n));
-    }), w(3, "title"), F(4), I()(), $(5, "circle", 20);
+    }), w(3, "title"), h(4), I()(), $(5, "circle", 20);
   }
   if (e103 & 2) {
     let B = A.$implicit, t = A.$index, g = a(2);
@@ -28494,7 +28494,7 @@ function i7(e103, A) {
   e103 & 1 && (AA(), $(0, "path", 13));
 }
 function Q7(e103, A) {
-  if (e103 & 1 && (w(0, "span", 21), F(1, "Guarda un color para verlo aqu\xED."), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "span", 21), h(1, "Guarda un color para verlo aqu\xED."), I()), e103 & 2) {
     let B = a();
     hA("left", B.cx < 88 ? 8 : B.cx > B.width - 88 ? B.width - 168 : B.cx - 80, "px")("top", B.cy > B.inner + 36 ? B.cy - B.inner - 28 : 8, "px");
   }
@@ -28642,10 +28642,10 @@ var vM = class e76 {
       y < 360 && s.push(this.wedge(this.inner - 38, this.inner - 10, y, Math.min(360, y + Q))), y + Q > o && s.push(this.wedge(this.inner - 38, this.inner - 10, 0, y + Q - o));
     }
     this.emptyBands.push({ band: "grays", path: s.join("") });
-    let D = [...Oi.filter((p) => p.family === "special"), { code: "Blanco", name: "Blanco", hex: "#ffffff", family: "special" }, { code: "Negro", name: "Negro", hex: "#000000", family: "special" }, ...["FV", "FB", "FBG", "FG", "FYG", "FY", "FYR", "FRV"].map((p) => Oi.find((y) => y.code === p))], h = Math.max(Q, t(this.inner - 62)), l = 90 + r, u = l + D.length * h;
+    let D = [...Oi.filter((p) => p.family === "special"), { code: "Blanco", name: "Blanco", hex: "#ffffff", family: "special" }, { code: "Negro", name: "Negro", hex: "#000000", family: "special" }, ...["FV", "FB", "FBG", "FG", "FYG", "FY", "FYR", "FRV"].map((p) => Oi.find((y) => y.code === p))], F = Math.max(Q, t(this.inner - 62)), l = 90 + r, u = l + D.length * F;
     D.forEach((p, y) => {
-      let k = l + y * h;
-      E(p, this.inner - 76, this.inner - 48, k, k + h);
+      let k = l + y * F;
+      E(p, this.inner - 76, this.inner - 48, k, k + F);
     }), this.emptyBands.push({ band: "specials", path: this.wedge(this.inner - 76, this.inner - 48, u, l + 360) });
   }
   rotatePalette(A) {
@@ -28838,11 +28838,11 @@ var vM = class e76 {
         return t.paletteKey(n);
       })("click", function() {
         return t.setMode("palette");
-      }), F(5, " COPIC "), I(), w(6, "button", 4), G("click", function() {
+      }), h(5, " COPIC "), I(), w(6, "button", 4), G("click", function() {
         return t.setMode("hsl");
-      }), F(7, " HSL "), I(), w(8, "button", 4), G("click", function() {
+      }), h(7, " HSL "), I(), w(8, "button", 4), G("click", function() {
         return t.setMode("rgb");
-      }), F(9, " RGB "), I()(), w(10, "div", 5)(11, "button", 6), G("click", function() {
+      }), h(9, " RGB "), I()(), w(10, "div", 5)(11, "button", 6), G("click", function() {
         return t.editor.toggleColorPicker(), t.closed.emit();
       }), AA(), w(12, "svg", 7), $(13, "path", 8), I()(), jA(), w(14, "button", 9), G("click", function() {
         return t.setMode("favorites");
@@ -29131,7 +29131,7 @@ function D7(e103, A) {
   }
 }
 function Y7(e103, A) {
-  if (e103 & 1 && (w(0, "span", 44), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "span", 44), h(1), I()), e103 & 2) {
     let B = a(), t = B.$implicit, g = B.$index, n = a();
     hA("font-size", n.labelFont(t), "px")("left", n.labelPoint(g)[0], "px")("top", n.labelPoint(g)[1], "px"), HA("selected", n.active(t)), Y(), CA(" ", n.widthLabel(t), " ");
   }
@@ -29149,7 +29149,7 @@ function F7(e103, A) {
       U(B);
       let g = a();
       return N(g.editor.removeSelected());
-    }), F(1, " \xD7 "), I();
+    }), h(1, " \xD7 "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -29176,7 +29176,7 @@ function l7(e103, A) {
   }
 }
 function d7(e103, A) {
-  if (e103 & 1 && (w(0, "p", 55), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 55), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), cA(B.pasteError);
   }
@@ -29192,25 +29192,25 @@ function U7(e103, A) {
       U(B);
       let g = a();
       return N(g.pasteOpen = false);
-    }), w(1, "div", 49)(2, "strong"), F(3, "Pegar referencia"), I(), w(4, "button", 50), G("click", function() {
+    }), w(1, "div", 49)(2, "strong"), h(3, "Pegar referencia"), I(), w(4, "button", 50), G("click", function() {
       U(B);
       let g = a();
       return N(g.pasteOpen = false);
-    }), F(5, " \xD7 "), I()(), w(6, "button", 51), G("click", function() {
+    }), h(5, " \xD7 "), I()(), w(6, "button", 51), G("click", function() {
       U(B);
       let g = a();
       return N(g.paste());
-    }), F(7), I(), w(8, "button", 51), G("click", function() {
+    }), h(7), I(), w(8, "button", 51), G("click", function() {
       U(B);
       let g = a();
       return N(g.paste(false));
-    }), F(9, " Pegar solo texto o enlace "), I(), w(10, "p"), F(11, " Texto, enlaces, im\xE1genes o PDF. Los archivos se guardan en Recursos de este cuaderno. "), I(), w(12, "textarea", 52), G("paste", function(g) {
+    }), h(9, " Pegar solo texto o enlace "), I(), w(10, "p"), h(11, " Texto, enlaces, im\xE1genes o PDF. Los archivos se guardan en Recursos de este cuaderno. "), I(), w(12, "textarea", 52), G("paste", function(g) {
       U(B);
       let n = a();
       return N(n.receivePaste(g));
     })("keydown", function(g) {
       return g.key !== "Escape" && g.stopPropagation();
-    }), I(), w(13, "label", 53), F(14, "Elegir archivo "), w(15, "input", 54), G("change", function(g) {
+    }), I(), w(13, "label", 53), h(14, "Elegir archivo "), w(15, "input", 54), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.pasteFiles(g));
@@ -29280,11 +29280,11 @@ function G7(e103, A) {
       U(B);
       let g = a();
       return N(g.insertText());
-    }), AA(), w(2, "svg", 9), $(3, "path", 60), I(), F(4, "Texto "), I(), jA(), w(5, "button", 61), G("click", function() {
+    }), AA(), w(2, "svg", 9), $(3, "path", 60), I(), h(4, "Texto "), I(), jA(), w(5, "button", 61), G("click", function() {
       U(B);
       let g = a();
       return N(g.openPaste());
-    }), F(6, " Pegar referencia "), I()();
+    }), h(6, " Pegar referencia "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -29297,7 +29297,7 @@ function p7(e103, A) {
     w(0, "button", 51), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.setAdjustment(g));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -29369,15 +29369,15 @@ function R7(e103, A) {
       U(B);
       let g = a();
       return N(g.editing = null);
-    }), w(2, "div", 49)(3, "strong"), F(4), I(), w(5, "output", 63), F(6), I()(), w(7, "div", 64)(8, "button", 65), G("click", function() {
+    }), w(2, "div", 49)(3, "strong"), h(4), I(), w(5, "output", 63), h(6), I()(), w(7, "div", 64)(8, "button", 65), G("click", function() {
       U(B);
       let g = a();
       return N(g.nudgeAdjustment(-1));
-    }), F(9, " \u2212 "), I(), w(10, "div", 66), nA(11, p7, 2, 3, "button", 67, ZB), I(), w(13, "button", 65), G("click", function() {
+    }), h(9, " \u2212 "), I(), w(10, "div", 66), nA(11, p7, 2, 3, "button", 67, ZB), I(), w(13, "button", 65), G("click", function() {
       U(B);
       let g = a();
       return N(g.nudgeAdjustment(1));
-    }), F(14, " + "), I()(), b(15, m7, 1, 3, "input", 68)(16, x7, 1, 2, "input", 69)(17, f7, 1, 3, "input", 70), w(18, "div", 71), nA(19, y7, 1, 2, "span", 72, ZB), I()();
+    }), h(14, " + "), I()(), b(15, m7, 1, 3, "input", 68)(16, x7, 1, 2, "input", 69)(17, f7, 1, 3, "input", 70), w(18, "div", 71), nA(19, y7, 1, 2, "span", 72, ZB), I()();
   }
   if (e103 & 2) {
     let B = a(), t = qB(26);
@@ -29577,10 +29577,10 @@ var WM = class e77 {
       for (let c of A.elementsFromPoint?.(r, C) ?? []) {
         if (c.closest("era-tool-wheel")) continue;
         if (c.tagName === "CANVAS") {
-          let D = c, h = D.getBoundingClientRect();
-          if (!h.width || !h.height) continue;
+          let D = c, F = D.getBoundingClientRect();
+          if (!F.width || !F.height) continue;
           try {
-            let l = D.getContext("2d")?.getImageData(Math.floor((r - h.left) * D.width / h.width), Math.floor((C - h.top) * D.height / h.height), 1, 1).data;
+            let l = D.getContext("2d")?.getImageData(Math.floor((r - F.left) * D.width / F.width), Math.floor((C - F.top) * D.height / F.height), 1, 1).data;
             if (l && l[3] > 200) return Ic(Ai([...l].slice(0, 3)));
           } catch {
           }
@@ -29694,19 +29694,19 @@ var WM = class e77 {
         return t.editing = null, t.colorsOpen = false, t.pasteOpen = false, t.plusOpen = false;
       }), B & 2 && (hA("height", t.horizontal ? "auto" : "292px")("width", t.horizontal ? "100%" : "292px"), HA("colors-open", t.colorsOpen || t.pasteOpen)("compact-horizontal", t.horizontal && !!t.editor.pdfReader && !t.editor.pdfFullscreen));
     }, inputs: { horizontal: "horizontal", editor: "editor", appearanceOpen: "appearanceOpen", readingPdf: "readingPdf" }, outputs: { appearance: "appearance" }, decls: 44, vars: 45, consts: [["colorButton", ""], ["aria-label", "Herramientas de dibujo", 1, "wheel"], [1, "wheel-face"], ["role", "group", "aria-label", "Herramientas principales", 1, "wheel-main"], ["data-era-horizontal-drag", "", "tabindex", "0", "aria-label", "Mover barra de herramientas", "aria-description", "Arrastra fuera o pulsa flecha abajo para recuperar la rueda.", "title", "Arrastra fuera para recuperar la rueda", 1, "wheel-horizontal-grip"], ["role", "group", "aria-label", "Rueda de herramientas", 1, "wheel-ring"], ["aria-hidden", "true", 1, "wheel-brush-values"], ["aria-label", "Historial", 1, "wheel-history"], ["eraTouchActivate", "", "type", "button", "aria-label", "Deshacer", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "M8 4 3 9l5 5M3 9h10a7 7 0 0 1 7 7v4"], ["eraTouchActivate", "", "type", "button", "aria-label", "Rehacer", 3, "click", "disabled"], ["d", "m16 4 5 5-5 5M21 9H11a7 7 0 0 0-7 7v4"], ["eraTouchActivate", "", "type", "button", "aria-label", "Eliminar selecci\xF3n", 1, "wheel-delete", 3, "disabled"], ["data-era-controls-drag", "", "role", "group", 1, "wheel-hub"], ["eraTouchActivate", "", "type", "button", "aria-label", "Ajustar grosor", 1, "wheel-width", 3, "click", "disabled"], ["d", "M3 8h18M3 16h18"], ["eraTouchActivate", "", "type", "button", "aria-label", "Colores favoritos", "data-era-tooltip", "Colores favoritos", 1, "wheel-color", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "wheel-smoothing", 3, "click", "disabled"], ["viewBox", "0 0 32 32", "aria-hidden", "true"], ["d", "M3 18c4 0 4-12 8-12s4 12 8 12 4-12 8-12"], ["eraTouchActivate", "", "type", "button", "aria-label", "Ajustar opacidad", 1, "wheel-opacity", 3, "click", "disabled"], ["cx", "16", "cy", "16", "r", "10"], ["d", "M16 6a10 10 0 0 1 0 20Z", 1, "opacity-half"], ["role", "group", "aria-label", "Tres colores r\xE1pidos", 1, "wheel-quick-colors"], ["role", "dialog", "aria-label", "Pegar referencia", "eraDismissible", "[data-era-text-menu], .plain-note, .text-citation", 1, "wheel-paste", 3, "eraAnchoredPopup", "eraPopupPoint"], [3, "editor", "anchor", "quickColors"], [3, "editor", "anchor"], ["role", "dialog", "aria-label", "Insertar en el Lienzo", "eraDismissible", "[data-era-insert-menu]", 1, "wheel-insert", 3, "eraAnchoredPopup"], ["eraTouchActivate", "", "type", "button", 3, "held", "click", "dblclick", "keydown", "eraHold", "disabled"], ["aria-hidden", "true"], [1, "sector"], [1, "slot-color-strip", 3, "fill"], [1, "mini-brush", 3, "fill", "stroke"], [1, "glyph"], ["eraTouchActivate", "", "aria-label", "Marcador", "data-era-tooltip", "Marcador", 1, "wheel-quick-brush", 3, "selected", "disabled"], ["eraTouchActivate", "", "aria-label", "Flecha", "data-era-tooltip", "Flecha", 1, "wheel-quick-brush", 3, "selected", "disabled"], ["eraTouchActivate", "", "aria-label", "Marcador", "data-era-tooltip", "Marcador", 1, "wheel-quick-brush", 3, "click", "disabled"], ["d", "m5 15 10-10 5 5-10 10H5v-5Zm3-3 5 5M15 5l2-2 5 5-2 2M4 21h8", 1, "glyph"], ["eraTouchActivate", "", "aria-label", "Flecha", "data-era-tooltip", "Flecha", 1, "wheel-quick-brush", 3, "click", "disabled"], ["d", "M4 20 20 4M8 4h12v12", 1, "glyph"], [1, "slot-color-strip"], [1, "mini-brush"], [1, "slot-width", 3, "selected", "font-size", "left", "top"], [1, "slot-width"], ["eraTouchActivate", "", "type", "button", "aria-label", "Eliminar selecci\xF3n", 1, "wheel-delete", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "wheel-quick-color", 3, "background-color", "disabled"], ["eraTouchActivate", "", 1, "wheel-quick-color", 3, "click", "disabled"], ["role", "dialog", "aria-label", "Pegar referencia", "eraDismissible", "[data-era-text-menu], .plain-note, .text-citation", 1, "wheel-paste", 3, "dismissed", "popupDismissed", "eraAnchoredPopup", "eraPopupPoint"], [1, "adjustment-heading"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cerrar pegar", 3, "click"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["aria-label", "Pegar desde el sistema", "placeholder", "Mant\xE9n pulsado aqu\xED y elige Pegar, o usa Ctrl+V", 3, "paste", "keydown", "disabled"], [1, "paste-file"], ["type", "file", "aria-label", "Importar archivo como referencia", "multiple", "", "accept", ".pdf,.png,.jpg,.jpeg,.webp,.md,.txt", 3, "change", "disabled"], ["role", "alert"], [3, "quickColorChanged", "modeChanged", "closed", "editor", "anchor", "quickColors"], [3, "modeChanged", "closed", "editor", "anchor"], ["role", "dialog", "aria-label", "Insertar en el Lienzo", "eraDismissible", "[data-era-insert-menu]", 1, "wheel-insert", 3, "dismissed", "popupDismissed", "eraAnchoredPopup"], ["eraTouchActivate", "", "type", "button", "aria-label", "A\xF1adir texto", 3, "held", "click", "eraHold"], ["d", "M4 5h16M12 5v15M8 20h8"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["eraDismissible", ".wheel-width, .wheel-opacity, .wheel-smoothing", 1, "wheel-adjustment", 3, "popupDismissed", "dismissed", "eraAnchoredPopup"], ["aria-live", "polite", "aria-atomic", "true"], [1, "adjustment-actions"], ["eraTouchActivate", "", "type", "button", 1, "adjustment-step", 3, "click", "disabled"], [1, "adjustment-presets"], ["eraTouchActivate", "", "type", "button", 3, "disabled"], ["type", "range", "step", "1", "aria-label", "Grosor de la rueda", "min", "0", "max", "1000", 3, "value", "disabled"], ["type", "range", "min", "1", "max", "100", "step", "1", "aria-label", "Opacidad del pincel", 3, "value", "disabled"], ["type", "range", "min", "0", "max", "100", "step", "1", 3, "value", "disabled"], ["aria-hidden", "true", 1, "adjustment-scale"], [3, "left"], ["type", "range", "step", "1", "aria-label", "Grosor de la rueda", "min", "0", "max", "1000", 3, "keydown", "input", "value", "disabled"], ["type", "range", "min", "1", "max", "100", "step", "1", "aria-label", "Opacidad del pincel", 3, "keydown", "input", "value", "disabled"], ["type", "range", "min", "0", "max", "100", "step", "1", 3, "keydown", "input", "value", "disabled"]], template: function(B, t) {
-      B & 1 && (w(0, "nav", 1)(1, "div", 2)(2, "div", 3)(3, "button", 4), F(4, " \u283F "), I(), w(5, "div", 5), nA(6, D7, 8, 21, null, null, m4), I(), w(8, "div", 6), nA(9, M7, 1, 1, null, null, m4), I(), w(11, "div", 7)(12, "button", 8), G("click", function() {
+      B & 1 && (w(0, "nav", 1)(1, "div", 2)(2, "div", 3)(3, "button", 4), h(4, " \u283F "), I(), w(5, "div", 5), nA(6, D7, 8, 21, null, null, m4), I(), w(8, "div", 6), nA(9, M7, 1, 1, null, null, m4), I(), w(11, "div", 7)(12, "button", 8), G("click", function() {
         return t.editor.paletteHistory(false);
       }), AA(), w(13, "svg", 9), $(14, "path", 10), I()(), jA(), w(15, "button", 11), G("click", function() {
         return t.editor.paletteHistory(true);
       }), AA(), w(16, "svg", 9), $(17, "path", 12), I()()(), b(18, F7, 2, 1, "button", 13), I(), jA(), w(19, "div", 14)(20, "button", 15), G("click", function() {
         return t.edit("width");
-      }), AA(), w(21, "svg", 9), $(22, "path", 16), I(), jA(), w(23, "span"), F(24), I()(), w(25, "button", 17, 0), G("click", function() {
+      }), AA(), w(21, "svg", 9), $(22, "path", 16), I(), jA(), w(23, "span"), h(24), I()(), w(25, "button", 17, 0), G("click", function() {
         return t.toggleColors();
       }), I(), w(27, "button", 18), G("click", function() {
         return t.edit("smoothing");
-      }), AA(), w(28, "svg", 19), $(29, "path", 20), I(), jA(), w(30, "span"), F(31), I()(), w(32, "button", 21), G("click", function() {
+      }), AA(), w(28, "svg", 19), $(29, "path", 20), I(), jA(), w(30, "span"), h(31), I()(), w(32, "button", 21), G("click", function() {
         return t.edit("opacity");
-      }), AA(), w(33, "svg", 19), $(34, "circle", 22)(35, "path", 23), I(), jA(), w(36, "span"), F(37), I()(), b(38, l7, 3, 0, "div", 24), I()(), b(39, U7, 17, 8, "section", 25), b(40, N7, 1, 3, "era-linear-color", 26), b(41, u7, 1, 2, "era-radial-color", 27), b(42, G7, 7, 2, "section", 28), b(43, R7, 21, 11), I()), B & 2 && (hA("--wheel-color", t.editor.color), HA("wheel-movable", !t.editor.pickingColor), Y(6), iA(t.slots), Y(3), iA(t.slots), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[0]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanUndo), P("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Deshacer en PDF" : "Deshacer en Lienzo"), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[1]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanRedo), P("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Rehacer en PDF" : "Rehacer en Lienzo"), Y(3), T((t.editor.selected >= 0 || t.editor.selectedObjects.size || t.editor.selectedConnection !== null) && !t.readingPdf ? 18 : -1), Y(), HA("wheel-settings-hidden", t.horizontal && t.editor.tool !== "draw"), P("tabindex", t.editor.pickingColor ? null : 0)("aria-label", t.horizontal ? "Ajustes de escritura" : "Centro de la rueda")("aria-description", "En un borde, arrastra para girar toda la rueda. Arrastra la bolita de color para moverla. Alt y flechas izquierda/derecha giran; Alt y flecha arriba acopla la barra horizontal; Inicio restablece.")("data-era-tooltip", "Gira la rueda en el borde; mueve desde la bolita de color"), Y(), x("disabled", !t.editor.acceptingInput || !!t.editor.active), P("aria-description", t.toolWidthLabel)("data-era-tooltip", "Grosor \xB7 " + t.toolWidthLabel)("aria-expanded", t.editing === "width"), Y(4), cA(t.toolWidthLabel), Y(), hA("background-color", t.editor.color), x("disabled", !t.editor.acceptingInput || !!t.editor.active), P("aria-expanded", t.colorsOpen), Y(2), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), P("aria-label", t.editor.inkMode === "write" ? "Ajustar sensibilidad" : "Ajustar suavizado")("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : t.editor.inkMode === "write" ? "Sensibilidad \xB7 " + t.editor.writingStrength + "%" : "Suavizado \xB7 " + t.editor.smoothing + "%")("aria-expanded", t.editing === "smoothing"), Y(4), te("", t.editor.tool === "erase" ? 0 : t.editor.inkMode === "write" ? t.editor.writingAssist ? t.editor.writingStrength : 0 : t.editor.smoothing, "", t.horizontal ? "" : "%"), Y(), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), P("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : "Opacidad \xB7 " + t.editor.opacityPercent + "%")("aria-expanded", t.editing === "opacity"), Y(5), te("", t.editor.tool === "erase" ? 100 : t.editor.opacityPercent, "", t.horizontal ? "" : "%"), Y(), T(t.horizontal ? 38 : -1), Y(), T(t.pasteOpen ? 39 : -1), Y(), T(t.colorsOpen && t.horizontal ? 40 : -1), Y(), T(t.colorsOpen && !t.horizontal ? 41 : -1), Y(), T(t.plusOpen ? 42 : -1), Y(), T(t.editing ? 43 : -1));
+      }), AA(), w(33, "svg", 19), $(34, "circle", 22)(35, "path", 23), I(), jA(), w(36, "span"), h(37), I()(), b(38, l7, 3, 0, "div", 24), I()(), b(39, U7, 17, 8, "section", 25), b(40, N7, 1, 3, "era-linear-color", 26), b(41, u7, 1, 2, "era-radial-color", 27), b(42, G7, 7, 2, "section", 28), b(43, R7, 21, 11), I()), B & 2 && (hA("--wheel-color", t.editor.color), HA("wheel-movable", !t.editor.pickingColor), Y(6), iA(t.slots), Y(3), iA(t.slots), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[0]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanUndo), P("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Deshacer en PDF" : "Deshacer en Lienzo"), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[1]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanRedo), P("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Rehacer en PDF" : "Rehacer en Lienzo"), Y(3), T((t.editor.selected >= 0 || t.editor.selectedObjects.size || t.editor.selectedConnection !== null) && !t.readingPdf ? 18 : -1), Y(), HA("wheel-settings-hidden", t.horizontal && t.editor.tool !== "draw"), P("tabindex", t.editor.pickingColor ? null : 0)("aria-label", t.horizontal ? "Ajustes de escritura" : "Centro de la rueda")("aria-description", "En un borde, arrastra para girar toda la rueda. Arrastra la bolita de color para moverla. Alt y flechas izquierda/derecha giran; Alt y flecha arriba acopla la barra horizontal; Inicio restablece.")("data-era-tooltip", "Gira la rueda en el borde; mueve desde la bolita de color"), Y(), x("disabled", !t.editor.acceptingInput || !!t.editor.active), P("aria-description", t.toolWidthLabel)("data-era-tooltip", "Grosor \xB7 " + t.toolWidthLabel)("aria-expanded", t.editing === "width"), Y(4), cA(t.toolWidthLabel), Y(), hA("background-color", t.editor.color), x("disabled", !t.editor.acceptingInput || !!t.editor.active), P("aria-expanded", t.colorsOpen), Y(2), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), P("aria-label", t.editor.inkMode === "write" ? "Ajustar sensibilidad" : "Ajustar suavizado")("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : t.editor.inkMode === "write" ? "Sensibilidad \xB7 " + t.editor.writingStrength + "%" : "Suavizado \xB7 " + t.editor.smoothing + "%")("aria-expanded", t.editing === "smoothing"), Y(4), te("", t.editor.tool === "erase" ? 0 : t.editor.inkMode === "write" ? t.editor.writingAssist ? t.editor.writingStrength : 0 : t.editor.smoothing, "", t.horizontal ? "" : "%"), Y(), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), P("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : "Opacidad \xB7 " + t.editor.opacityPercent + "%")("aria-expanded", t.editing === "opacity"), Y(5), te("", t.editor.tool === "erase" ? 100 : t.editor.opacityPercent, "", t.horizontal ? "" : "%"), Y(), T(t.horizontal ? 38 : -1), Y(), T(t.pasteOpen ? 39 : -1), Y(), T(t.colorsOpen && t.horizontal ? 40 : -1), Y(), T(t.colorsOpen && !t.horizontal ? 41 : -1), Y(), T(t.plusOpen ? 42 : -1), Y(), T(t.editing ? 43 : -1));
     }, dependencies: [ut, YB, Xg, vM, TM, bM], styles: [`[_nghost-%COMP%] {
   display: block;
   width: 292px;
@@ -30645,7 +30645,7 @@ function J7(e103, A) {
     w(0, "button", 8), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.updateMath("style", g.value));
-    }), AA(), w(1, "svg", 9), $(2, "path"), I(), jA(), w(3, "strong"), F(4), I(), w(5, "span"), F(6), I()();
+    }), AA(), w(1, "svg", 9), $(2, "path"), I(), jA(), w(3, "strong"), h(4), I(), w(5, "span"), h(6), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -30655,7 +30655,7 @@ function J7(e103, A) {
 function k7(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1), w(2, "input", 10), G("input", function(g) {
+    w(0, "label"), h(1), w(2, "input", 10), G("input", function(g) {
       U(B);
       let n = a(2);
       return N(n.strength(g));
@@ -30671,7 +30671,7 @@ function k7(e103, A) {
       U(B);
       let n = a(2);
       return N(n.updateMath("operators", g.target.checked));
-    }), I(), F(5, "Regularizar operadores, ra\xEDces y desigualdades"), I();
+    }), I(), h(5, "Regularizar operadores, ra\xEDces y desigualdades"), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -30681,11 +30681,11 @@ function k7(e103, A) {
 function j7(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "fieldset", 1)(1, "legend"), F(2, "Escritura de matem\xE1ticas"), I(), w(3, "p", 3), F(4, " Da forma a tus s\xEDmbolos sin cambiar lo que escribiste. Conserva letras griegas, fracciones y exponentes en su posici\xF3n. "), I(), w(5, "label", 4)(6, "input", 5), G("change", function(g) {
+    w(0, "fieldset", 1)(1, "legend"), h(2, "Escritura de matem\xE1ticas"), I(), w(3, "p", 3), h(4, " Da forma a tus s\xEDmbolos sin cambiar lo que escribiste. Conserva letras griegas, fracciones y exponentes en su posici\xF3n. "), I(), w(5, "label", 4)(6, "input", 5), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.updateMath("transcribe", g.target.checked));
-    }), I(), F(7, "Convertir ecuaciones"), I(), w(8, "div", 6), nA(9, J7, 7, 6, "button", 7, zM), I(), b(11, k7, 6, 5), w(12, "p", 3), F(13, " Tras una pausa, convierte la f\xF3rmula sin cambiar su posici\xF3n. Volver a trazos recupera los originales para corregirlos. No resuelve operaciones. Se guarda en esta p\xE1gina. "), I()();
+    }), I(), h(7, "Convertir ecuaciones"), I(), w(8, "div", 6), nA(9, J7, 7, 6, "button", 7, zM), I(), b(11, k7, 6, 5), w(12, "p", 3), h(13, " Tras una pausa, convierte la f\xF3rmula sin cambiar su posici\xF3n. Volver a trazos recupera los originales para corregirlos. No resuelve operaciones. Se guarda en esta p\xE1gina. "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -30698,7 +30698,7 @@ function b7(e103, A) {
     w(0, "button", 20), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.update("handwriting_language", g.value));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -30711,7 +30711,7 @@ function T7(e103, A) {
     w(0, "button", 20), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.browseGroup(g.value));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -30724,7 +30724,7 @@ function v7(e103, A) {
     w(0, "button", 8), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.chooseFont(g.value));
-    }), AA(), w(1, "svg", 21), $(2, "path"), I(), jA(), w(3, "strong"), F(4), I(), w(5, "span", 22), F(6), I(), w(7, "span"), F(8), I()();
+    }), AA(), w(1, "svg", 21), $(2, "path"), I(), jA(), w(3, "strong"), h(4), I(), w(5, "span", 22), h(6), I(), w(7, "span"), h(8), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -30734,7 +30734,7 @@ function v7(e103, A) {
 function W7(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1), w(2, "input", 23), G("input", function(g) {
+    w(0, "label"), h(1), w(2, "input", 23), G("input", function(g) {
       U(B);
       let n = a(2);
       return N(n.strength(g));
@@ -30754,23 +30754,23 @@ function W7(e103, A) {
   }
 }
 function P7(e103, A) {
-  e103 & 1 && (w(0, "p", 3), F(1, " La palabra aparece en el mismo lugar con esta fuente. Puedes corregirla con doble clic usando Selecci\xF3n, deshacer o volver a los trazos originales. "), I());
+  e103 & 1 && (w(0, "p", 3), h(1, " La palabra aparece en el mismo lugar con esta fuente. Puedes corregirla con doble clic usando Selecci\xF3n, deshacer o volver a los trazos originales. "), I());
 }
 function S7(e103, A) {
-  e103 & 1 && (w(0, "p", 3), F(1, " No hay un servicio de reconocimiento conectado en este dispositivo. Mi letra permite mejorar los trazos sin transcribirlos. "), I());
+  e103 & 1 && (w(0, "p", 3), h(1, " No hay un servicio de reconocimiento conectado en este dispositivo. Mi letra permite mejorar los trazos sin transcribirlos. "), I());
 }
 function L7(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "fieldset", 2)(1, "legend"), F(2, "Mejoramiento de la letra"), I(), w(3, "p", 3), F(4, " Se aplica a los nuevos trazos con Reconocimiento de escritura activado. "), I(), w(5, "p", 3), F(6, "Idioma del reconocimiento"), I(), w(7, "div", 12), nA(8, b7, 2, 4, "button", 13, zM), I(), w(10, "p", 3), F(11, " Mi letra conserva tus trazos. Los otros estilos convierten las palabras en texto editable tras un segundo de pausa. "), I(), w(12, "div", 14), nA(13, T7, 2, 3, "button", 13, zM), I(), w(15, "div", 15)(16, "button", 16), G("click", function() {
+    w(0, "fieldset", 2)(1, "legend"), h(2, "Mejoramiento de la letra"), I(), w(3, "p", 3), h(4, " Se aplica a los nuevos trazos con Reconocimiento de escritura activado. "), I(), w(5, "p", 3), h(6, "Idioma del reconocimiento"), I(), w(7, "div", 12), nA(8, b7, 2, 4, "button", 13, zM), I(), w(10, "p", 3), h(11, " Mi letra conserva tus trazos. Los otros estilos convierten las palabras en texto editable tras un segundo de pausa. "), I(), w(12, "div", 14), nA(13, T7, 2, 3, "button", 13, zM), I(), w(15, "div", 15)(16, "button", 16), G("click", function() {
       U(B);
       let g = a();
       return N(g.browseFont(g.fontIndex - 1));
-    }), F(17, " \u2039 "), I(), w(18, "output", 17), F(19), I(), w(20, "button", 18), G("click", function() {
+    }), h(17, " \u2039 "), I(), w(18, "output", 17), h(19), I(), w(20, "button", 18), G("click", function() {
       U(B);
       let g = a();
       return N(g.browseFont(g.fontIndex + 1));
-    }), F(21, " \u203A "), I()(), w(22, "div", 19, 0), G("scroll", function() {
+    }), h(21, " \u203A "), I()(), w(22, "div", 19, 0), G("scroll", function() {
       U(B);
       let g = a();
       return N(g.carouselScrolled());
@@ -30778,7 +30778,7 @@ function L7(e103, A) {
       U(B);
       let n = a();
       return N(n.carouselKey(g));
-    }), nA(24, v7, 9, 12, "button", 7, zM), I(), b(26, W7, 3, 3, "label")(27, P7, 2, 0, "p", 3), b(28, S7, 2, 0, "p", 3), w(29, "p", 3), F(30, " Se guarda autom\xE1ticamente en esta p\xE1gina. La tinta anterior conserva su aspecto. "), I()();
+    }), nA(24, v7, 9, 12, "button", 7, zM), I(), b(26, W7, 3, 3, "label")(27, P7, 2, 0, "p", 3), b(28, S7, 2, 0, "p", 3), w(29, "p", 3), h(30, " Se guarda autom\xE1ticamente en esta p\xE1gina. La tinta anterior conserva su aspecto. "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -31347,10 +31347,10 @@ ${C}` : C;
         if (E?.type === "code" || E?.type === "heading" || E?.type === "hr" || E?.type === "html") break;
         if (E?.type === "blockquote") {
           let s = E, D = B.join(`
-`), h = s.raw + `
-` + D.replace(this.rules.other.blockquoteSetextReplace2, ""), l = this.blockquote(h);
+`), F = s.raw + `
+` + D.replace(this.rules.other.blockquoteSetextReplace2, ""), l = this.blockquote(F);
           n[n.length - 1] = l;
-          let u = h.substring(l.raw.length).replace(/^\n/, ""), p = u ? u.split(`
+          let u = F.substring(l.raw.length).replace(/^\n/, ""), p = u ? u.split(`
 `).length : 0, y = p ? B.slice(0, -p) : B;
           y.length > 0 && (t = `${t}
 ${y.join(`
@@ -31359,8 +31359,8 @@ ${y.join(`
         } else if (E?.type === "list") {
           let s = E, D = s.raw + `
 ` + B.join(`
-`), h = this.list(D);
-          n[n.length - 1] = h, t = t.substring(0, t.length - E.raw.length) + h.raw, g = g.substring(0, g.length - s.raw.length) + h.raw, B = D.substring(n.at(-1).raw.length).split(`
+`), F = this.list(D);
+          n[n.length - 1] = F, t = t.substring(0, t.length - E.raw.length) + F.raw, g = g.substring(0, g.length - s.raw.length) + F.raw, B = D.substring(n.at(-1).raw.length).split(`
 `);
           continue;
         }
@@ -31380,9 +31380,9 @@ ${y.join(`
         let E = t();
         e103 = e103.substring(A[0].length);
         let s = A[2].split(`
-`, 1)[0], D = A[1].length, h = this.options.pedantic ? Ru(s, D) : s.replace(this.rules.other.leadingSpaceTab, (k) => Ru(k, D)), l = e103.split(`
-`, 1)[0], u = !h.trim(), p = 0;
-        if (this.options.pedantic ? (p = 2, c = h.trimStart()) : u ? p = D + 1 : (p = h.search(this.rules.other.nonSpaceChar), p = p > 4 ? 1 : p, c = h.slice(p), p += D), u && this.rules.other.blankLine.test(l) && (e103 = e103.substring(l.length + 1), C = true), !C) {
+`, 1)[0], D = A[1].length, F = this.options.pedantic ? Ru(s, D) : s.replace(this.rules.other.leadingSpaceTab, (k) => Ru(k, D)), l = e103.split(`
+`, 1)[0], u = !F.trim(), p = 0;
+        if (this.options.pedantic ? (p = 2, c = F.trimStart()) : u ? p = D + 1 : (p = F.search(this.rules.other.nonSpaceChar), p = p > 4 ? 1 : p, c = F.slice(p), p += D), u && this.rules.other.blankLine.test(l) && (e103 = e103.substring(l.length + 1), C = true), !C) {
           let k = this.rules.other.nextBulletRegex(p), H = this.rules.other.hrRegex(p), v = this.rules.other.fencesBeginRegex(p), z = this.rules.other.headingBeginRegex(p), W = this.rules.other.htmlBeginRegex(p), K = this.rules.other.blockquoteBeginRegex(p);
           for (; e103; ) {
             let BA = e103.split(`
@@ -31391,11 +31391,11 @@ ${y.join(`
             if (q.search(this.rules.other.nonSpaceChar) >= p || !l.trim()) c += `
 ` + q.slice(p);
             else {
-              if (u || h.replace(this.rules.other.tabCharGlobal, "    ").search(this.rules.other.nonSpaceChar) >= 4 || v.test(h) || z.test(h) || H.test(h)) break;
+              if (u || F.replace(this.rules.other.tabCharGlobal, "    ").search(this.rules.other.nonSpaceChar) >= 4 || v.test(F) || z.test(F) || H.test(F)) break;
               c += `
 ` + l;
             }
-            u = !l.trim(), e103 = e103.substring(BA.length + 1), h = q.slice(p);
+            u = !l.trim(), e103 = e103.substring(BA.length + 1), F = q.slice(p);
           }
         }
         let y = B.slice(E, t());
@@ -31548,8 +31548,8 @@ ${y.join(`
         i = Math.min(i, i + Q + o);
         let E = [...t[0]][0].length, s = e103.slice(0, g + t.index + E + i);
         if (Math.min(g, i) % 2) {
-          let h = s.slice(1, -1);
-          return { type: "em", raw: s, text: h, tokens: this.lexer.inlineTokens(h) };
+          let F = s.slice(1, -1);
+          return { type: "em", raw: s, text: F, tokens: this.lexer.inlineTokens(F) };
         }
         let D = s.slice(2, -2);
         return { type: "strong", raw: s, text: D, tokens: this.lexer.inlineTokens(D) };
@@ -33829,8 +33829,8 @@ var x6 = function(A, B, t) {
 var DF = function(A, B) {
   var t = A.type === "mathord" ? "mathord" : "textord", g = A.mode, n = A.text, i = ["mord"], Q = B.font, o = B.fontFamily, r = B.fontWeight, C = B.fontShape, c = g === "math" || g === "text" && !!Q, E = c ? Q : o, s = "", D = "";
   if (n.charCodeAt(0) === 55349) {
-    var h = m6(n);
-    s = h.font, D = h[g + "Class"];
+    var F = m6(n);
+    s = F.font, D = F[g + "Class"];
   }
   if (s) return Vt(n, s, g, B, i.concat(D));
   if (E) {
@@ -33940,8 +33940,8 @@ var LB = function(A, B) {
   i += 2;
   var C = IA(["pstrut"], []);
   C.style.height = lA(i);
-  for (var c = [], E = n, s = n, D = n, h = 0; h < g.length; h++) {
-    var l = g[h];
+  for (var c = [], E = n, s = n, D = n, F = 0; F < g.length; F++) {
+    var l = g[F];
     if (l.type === "kern") D += l.size;
     else {
       var u = l.elem, p = l.wrapperClasses || [], y = l.wrapperStyle || {}, k = IA(p, [C, u], void 0, y);
@@ -34033,11 +34033,11 @@ var _e = function(A, B, t, g) {
     C.type === "sizing" ? r = B.havingSize(C.size) : C.type === "styling" && (r = B.havingStyle(b6[C.style]));
   }
   var c = IA([g[0] || "leftmost"], [], B), E = IA([g[1] || "rightmost"], [], B), s = t === "root";
-  return aG(n, (D, h) => {
-    var l = h.classes[0], u = D.classes[0];
-    l === "mbin" && j6.has(u) ? h.classes[0] = "mord" : u === "mbin" && k6.has(l) && (D.classes[0] = "mord");
-  }, { node: c }, E, s), aG(n, (D, h) => {
-    var l, u, p = DG(h), y = DG(D), k = p && y ? D.hasClass("mtight") ? (l = J6[p]) == null ? void 0 : l[y] : (u = H6[p]) == null ? void 0 : u[y] : null;
+  return aG(n, (D, F) => {
+    var l = F.classes[0], u = D.classes[0];
+    l === "mbin" && j6.has(u) ? F.classes[0] = "mord" : u === "mbin" && k6.has(l) && (D.classes[0] = "mord");
+  }, { node: c }, E, s), aG(n, (D, F) => {
+    var l, u, p = DG(F), y = DG(D), k = p && y ? D.hasClass("mtight") ? (l = J6[p]) == null ? void 0 : l[y] : (u = H6[p]) == null ? void 0 : u[y] : null;
     if (k) return T1(k, r);
   }, { node: c }, E, s), n;
 };
@@ -34397,7 +34397,7 @@ var MF = function(A, B) {
         var D = [1, 1, 2, 2, 3, 3][C];
         r === "widehat" || r === "widecheck" ? (o = [0, 1062, 2364, 2364, 2364][D], c = [0, 239, 300, 360, 420][D], s = [0, 0.24, 0.3, 0.3, 0.36, 0.42][D], E = r + D) : (o = [0, 600, 1033, 2339, 2340][D], c = [0, 260, 286, 306, 312][D], s = [0, 0.26, 0.286, 0.3, 0.306, 0.34][D], E = "tilde" + D);
       }
-      var h = new ii(E), l = new un([h], { width: "100%", height: lA(s), viewBox: "0 0 " + o + " " + c, preserveAspectRatio: "none" });
+      var F = new ii(E), l = new un([F], { width: "100%", height: lA(s), viewBox: "0 0 " + o + " " + c, preserveAspectRatio: "none" });
       return { span: VQ([], [l], B), minWidth: 0, height: s };
     } else {
       var u = [], p = K6[r];
@@ -34479,10 +34479,10 @@ var O1 = (e103, A) => {
   else {
     var s, D;
     t.label === "\\vec" ? (s = W1("vec", A), D = v1.vec[1]) : (s = DF({ type: "textord", mode: t.mode, text: t.label }, A), s = l6(s), s.italic = 0, D = s.width, C && (c += s.depth)), E = IA(["accent-body"], [s]);
-    var h = t.label === "\\textcircled";
-    h && (E.classes.push("accent-full"), c = n.height);
+    var F = t.label === "\\textcircled";
+    F && (E.classes.push("accent-full"), c = n.height);
     var l = Q;
-    h || (l -= D / 2), E.style.left = lA(l), t.label === "\\textcircled" && (E.style.top = ".2em"), E = LB({ positionType: "firstBaseline", children: [{ type: "elem", elem: n }, { type: "kern", size: -c }, { type: "elem", elem: E }] });
+    F || (l -= D / 2), E.style.left = lA(l), t.label === "\\textcircled" && (E.style.top = ".2em"), E = LB({ positionType: "firstBaseline", children: [{ type: "elem", elem: n }, { type: "kern", size: -c }, { type: "elem", elem: E }] });
   }
   var u = IA(["mord", "katex-accent"], [E], A);
   return g ? (g.children[0] = u, g.height = Math.max(u.height, g.height), g.classes[0] = "mord", g) : u;
@@ -34635,8 +34635,8 @@ function oq(e103) {
         if (E) throw new MA("Missing a " + r + " character to complete a CD arrow.", i[o]);
       }
       else throw new MA('Expected one of "<>AV=|." after @', i[o]);
-      var D = Qq(r, C, e103), h = { type: "styling", body: [D], mode: "math", style: "display", resetFont: true };
-      t.push(h), Q = r1();
+      var D = Qq(r, C, e103), F = { type: "styling", body: [D], mode: "math", style: "display", resetFont: true };
+      t.push(F), Q = r1();
     }
     n % 2 === 0 ? t.push(Q) : t.shift(), t = [], g.push(t);
   }
@@ -34789,23 +34789,23 @@ var $1 = function(A, B, t, g, n, i) {
   Q = r = C = A, o = null;
   var s = "Size1-Regular";
   A === "\\uparrow" ? r = C = "\u23D0" : A === "\\Uparrow" ? r = C = "\u2016" : A === "\\downarrow" ? Q = r = "\u23D0" : A === "\\Downarrow" ? Q = r = "\u2016" : A === "\\updownarrow" ? (Q = "\\uparrow", r = "\u23D0", C = "\\downarrow") : A === "\\Updownarrow" ? (Q = "\\Uparrow", r = "\u2016", C = "\\Downarrow") : sq.has(A) ? (r = "\u2223", c = "vert", E = 333) : aq.has(A) ? (r = "\u2225", c = "doublevert", E = 556) : A === "[" || A === "\\lbrack" ? (Q = "\u23A1", r = "\u23A2", C = "\u23A3", s = "Size4-Regular", c = "lbrack", E = 667) : A === "]" || A === "\\rbrack" ? (Q = "\u23A4", r = "\u23A5", C = "\u23A6", s = "Size4-Regular", c = "rbrack", E = 667) : A === "\\lfloor" || A === "\u230A" ? (r = Q = "\u23A2", C = "\u23A3", s = "Size4-Regular", c = "lfloor", E = 667) : A === "\\lceil" || A === "\u2308" ? (Q = "\u23A1", r = C = "\u23A2", s = "Size4-Regular", c = "lceil", E = 667) : A === "\\rfloor" || A === "\u230B" ? (r = Q = "\u23A5", C = "\u23A6", s = "Size4-Regular", c = "rfloor", E = 667) : A === "\\rceil" || A === "\u2309" ? (Q = "\u23A4", r = C = "\u23A5", s = "Size4-Regular", c = "rceil", E = 667) : A === "(" || A === "\\lparen" ? (Q = "\u239B", r = "\u239C", C = "\u239D", s = "Size4-Regular", c = "lparen", E = 875) : A === ")" || A === "\\rparen" ? (Q = "\u239E", r = "\u239F", C = "\u23A0", s = "Size4-Regular", c = "rparen", E = 875) : A === "\\{" || A === "\\lbrace" ? (Q = "\u23A7", o = "\u23A8", C = "\u23A9", r = "\u23AA", s = "Size4-Regular") : A === "\\}" || A === "\\rbrace" ? (Q = "\u23AB", o = "\u23AC", C = "\u23AD", r = "\u23AA", s = "Size4-Regular") : A === "\\lgroup" || A === "\u27EE" ? (Q = "\u23A7", C = "\u23A9", r = "\u23AA", s = "Size4-Regular") : A === "\\rgroup" || A === "\u27EF" ? (Q = "\u23AB", C = "\u23AD", r = "\u23AA", s = "Size4-Regular") : A === "\\lmoustache" || A === "\u23B0" ? (Q = "\u23A7", C = "\u23AD", r = "\u23AA", s = "Size4-Regular") : (A === "\\rmoustache" || A === "\u23B1") && (Q = "\u23AB", C = "\u23A9", r = "\u23AA", s = "Size4-Regular");
-  var D = Gs(Q, s, n), h = D.height + D.depth, l = Gs(r, s, n), u = l.height + l.depth, p = Gs(C, s, n), y = p.height + p.depth, k = 0, H = 1;
+  var D = Gs(Q, s, n), F = D.height + D.depth, l = Gs(r, s, n), u = l.height + l.depth, p = Gs(C, s, n), y = p.height + p.depth, k = 0, H = 1;
   if (o !== null) {
     var v = Gs(o, s, n);
     k = v.height + v.depth, H = 2;
   }
-  var z = h + y + k, W = Math.max(0, Math.ceil((B - z) / (H * u))), K = z + W * H * u, BA = g.fontMetrics().axisHeight;
+  var z = F + y + k, W = Math.max(0, Math.ceil((B - z) / (H * u))), K = z + W * H * u, BA = g.fontMetrics().axisHeight;
   t && (BA *= g.sizeMultiplier);
   var q = K / 2 - BA, _ = [];
   if (c.length > 0) {
-    var YA = K - h - y, rA = Math.round(K * 1e3), dA = D6(c, Math.round(YA * 1e3)), mA = new ii(c, dA), DA = lA(E / 1e3), LA = lA(rA / 1e3), uB = new un([mA], { width: DA, height: LA, viewBox: "0 0 " + E + " " + rA }), le = VQ([], [uB], g);
+    var YA = K - F - y, rA = Math.round(K * 1e3), dA = D6(c, Math.round(YA * 1e3)), mA = new ii(c, dA), DA = lA(E / 1e3), LA = lA(rA / 1e3), uB = new un([mA], { width: DA, height: LA, viewBox: "0 0 " + E + " " + rA }), le = VQ([], [uB], g);
     le.height = rA / 1e3, le.style.width = DA, le.style.height = LA, _.push({ type: "elem", elem: le });
   } else {
     if (_.push(qu(C, s, n, g)), _.push(iF), o === null) {
-      var OB = K - h - y + 2 * FG;
+      var OB = K - F - y + 2 * FG;
       _.push(_u(r, OB, g));
     } else {
-      var Qe = (K - h - y - k) / 2 + 2 * FG;
+      var Qe = (K - F - y - k) / 2 + 2 * FG;
       _.push(_u(r, Qe, g)), _.push(iF), _.push(qu(o, s, n, g)), _.push(iF), _.push(_u(r, Qe, g));
     }
     _.push(iF), _.push(qu(Q, s, n, g));
@@ -34960,8 +34960,8 @@ var lq = (e103, A) => {
     n = VQ(["hide-tail"], [D], A), n.style.height = lA(c), i = B.depth + o + r;
   } else {
     /cancel/.test(t) ? Q || B.classes.push("cancel-pad") : t === "angl" ? B.classes.push("anglpad") : B.classes.push("boxpad");
-    var h, l, u = 0;
-    /box/.test(t) ? (u = Math.max(A.fontMetrics().fboxrule, A.minRuleThickness), h = A.fontMetrics().fboxsep + (t === "colorbox" ? 0 : u), l = h) : t === "angl" ? (u = Math.max(A.fontMetrics().defaultRuleThickness, A.minRuleThickness), h = 4 * u, l = Math.max(0, 0.25 - B.depth)) : (h = Q ? 0.2 : 0, l = h), n = X6(B, t, h, l, A), /fbox|boxed|fcolorbox/.test(t) ? (n.style.borderStyle = "solid", n.style.borderWidth = lA(u)) : t === "angl" && u !== 0.049 && (n.style.borderTopWidth = lA(u), n.style.borderRightWidth = lA(u)), i = B.depth + l, e103.backgroundColor && (n.style.backgroundColor = e103.backgroundColor, e103.borderColor && (n.style.borderColor = e103.borderColor));
+    var F, l, u = 0;
+    /box/.test(t) ? (u = Math.max(A.fontMetrics().fboxrule, A.minRuleThickness), F = A.fontMetrics().fboxsep + (t === "colorbox" ? 0 : u), l = F) : t === "angl" ? (u = Math.max(A.fontMetrics().defaultRuleThickness, A.minRuleThickness), F = 4 * u, l = Math.max(0, 0.25 - B.depth)) : (F = Q ? 0.2 : 0, l = F), n = X6(B, t, F, l, A), /fbox|boxed|fcolorbox/.test(t) ? (n.style.borderStyle = "solid", n.style.borderWidth = lA(u)) : t === "angl" && u !== 0.049 && (n.style.borderTopWidth = lA(u), n.style.borderRightWidth = lA(u)), i = B.depth + l, e103.backgroundColor && (n.style.backgroundColor = e103.backgroundColor, e103.borderColor && (n.style.borderColor = e103.borderColor));
   }
   var p;
   if (e103.backgroundColor) p = LB({ positionType: "individualShift", children: [{ type: "elem", elem: n, shift: i }, { type: "elem", elem: B, shift: 0 }] });
@@ -35079,7 +35079,7 @@ function KQ(e103, A, B) {
     else if (i = parseFloat(s), !i || i < 0) throw new MA("Invalid \\arraystretch: " + s);
   }
   e103.gullet.beginGroup();
-  var D = [], h = [D], l = [], u = [], p = o != null ? [] : void 0;
+  var D = [], F = [D], l = [], u = [], p = o != null ? [] : void 0;
   function y() {
     o && e103.gullet.macros.set("\\@eqnsw", "1", true);
   }
@@ -35099,15 +35099,15 @@ function KQ(e103, A, B) {
       }
       e103.consume();
     } else if (z === "\\end") {
-      k(), D.length === 1 && v.type === "styling" && v.body.length === 1 && v.body[0].type === "ordgroup" && v.body[0].body.length === 0 && (h.length > 1 || !C) && !Array.isArray(p?.[p.length - 1]) && !(o && p?.[p.length - 1] === true) && h.pop(), u.length < h.length + 1 && u.push([]);
+      k(), D.length === 1 && v.type === "styling" && v.body.length === 1 && v.body[0].type === "ordgroup" && v.body[0].body.length === 0 && (F.length > 1 || !C) && !Array.isArray(p?.[p.length - 1]) && !(o && p?.[p.length - 1] === true) && F.pop(), u.length < F.length + 1 && u.push([]);
       break;
     } else if (z === "\\\\") {
       e103.consume();
       var W = void 0;
-      e103.gullet.future().text !== " " && (W = e103.parseSizeGroup(true)), l.push(W ? W.value : null), k(), u.push(s1(e103)), D = [], h.push(D), y();
+      e103.gullet.future().text !== " " && (W = e103.parseSizeGroup(true)), l.push(W ? W.value : null), k(), u.push(s1(e103)), D = [], F.push(D), y();
     } else throw new MA("Expected & or \\\\ or \\cr or \\end", e103.nextToken);
   }
-  return e103.gullet.endGroup(), e103.gullet.endGroup(), { type: "array", mode: e103.mode, addJot: g, arraystretch: i, body: h, cols: n, rowGaps: l, hskipBeforeAndAfter: t, hLinesBeforeRow: u, colSeparationType: Q, tags: p, leqno: E };
+  return e103.gullet.endGroup(), e103.gullet.endGroup(), { type: "array", mode: e103.mode, addJot: g, arraystretch: i, body: F, cols: n, rowGaps: l, hskipBeforeAndAfter: t, hLinesBeforeRow: u, colSeparationType: Q, tags: p, leqno: E };
 }
 function kG(e103) {
   return e103.slice(0, 1) === "d" ? "display" : "text";
@@ -35118,7 +35118,7 @@ var oi = function(A, B) {
     var s = B.havingStyle(cB.SCRIPT).sizeMultiplier;
     E = 0.2778 * (s / B.sizeMultiplier);
   }
-  var D = A.colSeparationType === "CD" ? Ge({ number: 3, unit: "ex" }, B) : 12 * c, h = 3 * c, l = A.arraystretch * D, u = 0.7 * l, p = 0.3 * l, y = 0;
+  var D = A.colSeparationType === "CD" ? Ge({ number: 3, unit: "ex" }, B) : 12 * c, F = 3 * c, l = A.arraystretch * D, u = 0.7 * l, p = 0.3 * l, y = 0;
   function k(Bg) {
     for (var Wg = 0; Wg < Bg.length; ++Wg) Wg > 0 && (y += 0.25), r.push({ pos: y, isDashed: Bg[Wg] });
   }
@@ -35131,7 +35131,7 @@ var oi = function(A, B) {
       z < K.depth && (z = K.depth), v < K.height && (v = K.height), W.cells[g] = K;
     }
     var BA = A.rowGaps[t], q = 0;
-    BA && (q = Ge(BA, B), q > 0 && (q += p, z < q && (z = q), q = 0)), A.addJot && t < A.body.length - 1 && (z += h), W.height = v, W.depth = z, y += v, W.pos = y, y += z + q, o[t] = W, k(i[t + 1]);
+    BA && (q = Ge(BA, B), q > 0 && (q += p, z < q && (z = q), q = 0)), A.addJot && t < A.body.length - 1 && (z += F), W.height = v, W.depth = z, y += v, W.pos = y, y += z + q, o[t] = W, k(i[t + 1]);
   }
   var _ = y / 2 + B.fontMetrics().axisHeight, YA = A.cols || [], rA = [], dA, mA, DA = [];
   if (A.tags && A.tags.some((Bg) => Bg)) for (t = 0; t < n; ++t) {
@@ -35192,13 +35192,13 @@ var ri = function(A, B) {
   C.setAttribute("rowspacing", lA(c));
   var E = "", s = "";
   if (A.cols && A.cols.length > 0) {
-    var D = A.cols, h = "", l = false, u = 0, p = D.length;
+    var D = A.cols, F = "", l = false, u = 0, p = D.length;
     D[0].type === "separator" && (E += "top ", u = 1), D[D.length - 1].type === "separator" && (E += "bottom ", p -= 1);
     for (var y = u; y < p; y++) {
       var k = D[y];
-      k.type === "align" ? (s += Nq[k.align], l && (h += "none "), l = true) : k.type === "separator" && l && (h += k.separator === "|" ? "solid " : "dashed ", l = false);
+      k.type === "align" ? (s += Nq[k.align], l && (F += "none "), l = true) : k.type === "separator" && l && (F += k.separator === "|" ? "solid " : "dashed ", l = false);
     }
-    C.setAttribute("columnalign", s.trim()), /[sd]/.test(h) && C.setAttribute("columnlines", h.trim());
+    C.setAttribute("columnalign", s.trim()), /[sd]/.test(F) && C.setAttribute("columnlines", F.trim());
   }
   if (A.colSeparationType === "align") {
     for (var H = A.cols || [], v = "", z = 1; z < H.length; z++) v += z % 2 ? "0em " : "1em ";
@@ -35218,15 +35218,15 @@ var Q2 = function(A, B) {
     i = Number(C), Q = i * 2;
   }
   var c = !Q;
-  n.body.forEach(function(h) {
-    for (var l = 1; l < h.length; l += 2) {
-      var u = dB(h[l], "styling"), p = dB(u.body[0], "ordgroup");
+  n.body.forEach(function(F) {
+    for (var l = 1; l < F.length; l += 2) {
+      var u = dB(F[l], "styling"), p = dB(u.body[0], "ordgroup");
       p.body.unshift(o);
     }
-    if (c) Q < h.length && (Q = h.length);
+    if (c) Q < F.length && (Q = F.length);
     else {
-      var y = h.length / 2;
-      if (i < y) throw new MA("Too many math in a row: " + ("expected " + i + ", but got " + y), h[0]);
+      var y = F.length / 2;
+      if (i < y) throw new MA("Too many math in a row: " + ("expected " + i + ", but got " + y), F[0]);
     }
   });
   for (var E = 0; E < Q; ++E) {
@@ -35343,17 +35343,17 @@ var pq = (e103, A) => {
   n = A.havingStyle(g);
   var r = vB(e103.denom, n, A), C, c, E;
   e103.hasBarLine ? (e103.barSize ? (c = Ge(e103.barSize, A), C = dc("frac-line", A, c)) : C = dc("frac-line", A), c = C.height, E = C.height) : (C = null, c = 0, E = A.fontMetrics().defaultRuleThickness);
-  var s, D, h;
-  B.size === cB.DISPLAY.size ? (s = A.fontMetrics().num1, c > 0 ? D = 3 * E : D = 7 * E, h = A.fontMetrics().denom1) : (c > 0 ? (s = A.fontMetrics().num2, D = E) : (s = A.fontMetrics().num3, D = 3 * E), h = A.fontMetrics().denom2);
+  var s, D, F;
+  B.size === cB.DISPLAY.size ? (s = A.fontMetrics().num1, c > 0 ? D = 3 * E : D = 7 * E, F = A.fontMetrics().denom1) : (c > 0 ? (s = A.fontMetrics().num2, D = E) : (s = A.fontMetrics().num3, D = 3 * E), F = A.fontMetrics().denom2);
   var l;
   if (C) {
     var p = A.fontMetrics().axisHeight;
-    s - i.depth - (p + 0.5 * c) < D && (s += D - (s - i.depth - (p + 0.5 * c))), p - 0.5 * c - (r.height - h) < D && (h += D - (p - 0.5 * c - (r.height - h)));
+    s - i.depth - (p + 0.5 * c) < D && (s += D - (s - i.depth - (p + 0.5 * c))), p - 0.5 * c - (r.height - F) < D && (F += D - (p - 0.5 * c - (r.height - F)));
     var y = -(p - 0.5 * c);
-    l = LB({ positionType: "individualShift", children: [{ type: "elem", elem: r, shift: h }, { type: "elem", elem: C, shift: y }, { type: "elem", elem: i, shift: -s }] });
+    l = LB({ positionType: "individualShift", children: [{ type: "elem", elem: r, shift: F }, { type: "elem", elem: C, shift: y }, { type: "elem", elem: i, shift: -s }] });
   } else {
-    var u = s - i.depth - (r.height - h);
-    u < D && (s += 0.5 * (D - u), h += 0.5 * (D - u)), l = LB({ positionType: "individualShift", children: [{ type: "elem", elem: r, shift: h }, { type: "elem", elem: i, shift: -s }] });
+    var u = s - i.depth - (r.height - F);
+    u < D && (s += 0.5 * (D - u), F += 0.5 * (D - u)), l = LB({ positionType: "individualShift", children: [{ type: "elem", elem: r, shift: F }, { type: "elem", elem: i, shift: -s }] });
   }
   n = A.havingStyle(B), l.height *= n.sizeMultiplier / A.sizeMultiplier, l.depth *= n.sizeMultiplier / A.sizeMultiplier;
   var k;
@@ -35539,8 +35539,8 @@ GA({ type: "html", names: ["\\htmlClass", "\\htmlId", "\\htmlStyle", "\\htmlData
       for (var E = 0; E < r.length; E++) {
         var s = r[E], D = s.indexOf("=");
         if (D < 0) throw new MA("\\htmlData key/value '" + s + "' missing equals sign");
-        var h = s.slice(0, D), l = s.slice(D + 1);
-        Q["data-" + h.trim()] = l;
+        var F = s.slice(0, D), l = s.slice(D + 1);
+        Q["data-" + F.trim()] = l;
       }
       i = { command: "\\htmlData", attributes: Q };
       break;
@@ -35700,8 +35700,8 @@ var C2 = (e103, A, B, t, g, n, i) => {
     var D = e103.height - i;
     E = LB({ positionType: "top", positionData: D, children: [{ type: "kern", size: t.fontMetrics().bigOpSpacing5 }, { type: "elem", elem: o.elem, marginLeft: lA(-n) }, { type: "kern", size: o.kern }, { type: "elem", elem: e103 }] });
   } else if (r) {
-    var h = e103.depth + i;
-    E = LB({ positionType: "bottom", positionData: h, children: [{ type: "elem", elem: e103 }, { type: "kern", size: r.kern }, { type: "elem", elem: r.elem, marginLeft: lA(n) }, { type: "kern", size: t.fontMetrics().bigOpSpacing5 }] });
+    var F = e103.depth + i;
+    E = LB({ positionType: "bottom", positionData: F, children: [{ type: "elem", elem: e103 }, { type: "kern", size: r.kern }, { type: "elem", elem: r.elem, marginLeft: lA(n) }, { type: "kern", size: t.fontMetrics().bigOpSpacing5 }] });
   } else return e103;
   var l = [E];
   if (o && n !== 0 && !Q) {
@@ -35727,7 +35727,7 @@ var E2 = (e103, A) => {
     var s = _e(n.body, A, true);
     s.length === 1 && s[0] instanceof Kt ? (o = s[0], o.classes[0] = "mop") : o = IA(["mop"], s, A);
   } else {
-    for (var D = [], h = 1; h < n.name.length; h++) D.push(mG(n.name[h], n.mode, A));
+    for (var D = [], F = 1; F < n.name.length; F++) D.push(mG(n.name[F], n.mode, A));
     o = IA(["mop"], D, A);
   }
   var l = 0, u = 0;
@@ -35951,7 +35951,7 @@ GA({ type: "sqrt", names: ["\\sqrt"], numArgs: 1, numOptionalArgs: 1, handler(e1
   B.style.paddingLeft = lA(c);
   var D = LB({ positionType: "firstBaseline", children: [{ type: "elem", elem: B, wrapperClasses: ["svg-align"] }, { type: "kern", size: -(B.height + s) }, { type: "elem", elem: r }, { type: "kern", size: C }] });
   if (e103.index) {
-    var h = A.havingStyle(cB.SCRIPTSCRIPT), l = vB(e103.index, h, A), u = 0.6 * (D.height - D.depth), p = LB({ positionType: "shift", positionData: -u, children: [{ type: "elem", elem: l }] }), y = IA(["katex-root"], [p]);
+    var F = A.havingStyle(cB.SCRIPTSCRIPT), l = vB(e103.index, F, A), u = 0.6 * (D.height - D.depth), p = LB({ positionType: "shift", positionData: -u, children: [{ type: "elem", elem: l }] }), y = IA(["katex-root"], [p]);
     return IA(["mord", "sqrt"], [y, D], A);
   } else return IA(["mord", "sqrt"], [D], A);
 }, mathmlBuilder(e103, A) {
@@ -36004,8 +36004,8 @@ Yr({ type: "supsub", htmlBuilder(e103, A) {
     var D = A.havingStyle(A.style.sub());
     o = vB(n, D, A), E || (c = i.depth + D.fontMetrics().subDrop * D.sizeMultiplier / A.sizeMultiplier);
   }
-  var h;
-  A.style === cB.DISPLAY ? h = r.sup1 : A.style.cramped ? h = r.sup3 : h = r.sup2;
+  var F;
+  A.style === cB.DISPLAY ? F = r.sup1 : A.style.cramped ? F = r.sup3 : F = r.sup2;
   var l = A.sizeMultiplier, u = lA(0.5 / r.ptPerEm / l), p = null;
   if (o) {
     var y = e103.base && e103.base.type === "op" && e103.base.name && (e103.base.name === "\\oiint" || e103.base.name === "\\oiiint");
@@ -36016,7 +36016,7 @@ Yr({ type: "supsub", htmlBuilder(e103, A) {
   }
   var H;
   if (Q && o) {
-    C = Math.max(C, h, Q.depth + 0.25 * r.xHeight), c = Math.max(c, r.sub2);
+    C = Math.max(C, F, Q.depth + 0.25 * r.xHeight), c = Math.max(c, r.sub2);
     var v = r.defaultRuleThickness, z = 4 * v;
     if (C - Q.depth - (o.height - c) < z) {
       c = z - (C - Q.depth) + o.height;
@@ -36029,7 +36029,7 @@ Yr({ type: "supsub", htmlBuilder(e103, A) {
     c = Math.max(c, r.sub1, o.height - 0.8 * r.xHeight);
     var BA = [{ type: "elem", elem: o, marginLeft: p, marginRight: u }];
     H = LB({ positionType: "shift", positionData: c, children: BA });
-  } else if (Q) C = Math.max(C, h, Q.depth + 0.25 * r.xHeight), H = LB({ positionType: "shift", positionData: -C, children: [{ type: "elem", elem: Q, marginRight: u }] });
+  } else if (Q) C = Math.max(C, F, Q.depth + 0.25 * r.xHeight), H = LB({ positionType: "shift", positionData: -C, children: [{ type: "elem", elem: Q, marginRight: u }] });
   else throw new Error("supsub must have either sup or sub.");
   var q = DG(i, "right") || "mord";
   return IA([q], [i, IA(["msupsub"], [H])], A);
@@ -37284,7 +37284,7 @@ function e_(e103, A) {
   }
 }
 function t_(e103, A) {
-  if (e103 & 1 && (w(0, "strong"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "strong"), h(1), I()), e103 & 2) {
     let B = a(4);
     Y(), cA(B.editor.recognizedText);
   }
@@ -37301,7 +37301,7 @@ function n_(e103, A) {
     w(0, "button", 15), G("click", function() {
       let g = U(B).$implicit, n = a().$implicit, i = a(3);
       return N(i.editor.useHandwritingReading(n.id, g));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -37309,7 +37309,7 @@ function n_(e103, A) {
   }
 }
 function i_(e103, A) {
-  if (e103 & 1 && (w(0, "details", 12)(1, "summary"), F(2), I(), nA(3, n_, 2, 3, "button", 14, ZB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "details", 12)(1, "summary"), h(2), I(), nA(3, n_, 2, 3, "button", 14, ZB), I()), e103 & 2) {
     let B = A.$implicit;
     Y(2), CA("Otras lecturas de \xAB", B.text, "\xBB"), Y(), iA(B.values);
   }
@@ -37328,13 +37328,13 @@ function Q_(e103, A) {
   }
 }
 function o_(e103, A) {
-  if (e103 & 1 && (w(0, "details", 12)(1, "summary"), F(2, "Otras lecturas"), I(), nA(3, Q_, 2, 3, "button", 14, ZB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "details", 12)(1, "summary"), h(2, "Otras lecturas"), I(), nA(3, Q_, 2, 3, "button", 14, ZB), I()), e103 & 2) {
     let B = a(3);
     Y(3), iA(B.editor.mathAlternatives);
   }
 }
 function r_(e103, A) {
-  if (e103 & 1 && (b(0, g_, 2, 1), w(1, "span", 11), F(2), I(), nA(3, i_, 5, 1, "details", 12, $q), b(5, o_, 5, 0, "details", 12)), e103 & 2) {
+  if (e103 & 1 && (b(0, g_, 2, 1), w(1, "span", 11), h(2), I(), nA(3, i_, 5, 1, "details", 12, $q), b(5, o_, 5, 0, "details", 12)), e103 & 2) {
     let B = a(2);
     T(B.editor.recognizedText ? 0 : -1), Y(2), cA(B.editor.recognitionIndicator), Y(), iA(B.editor.handwritingReadings), Y(2), T(B.editor.mathAlternatives.length && B.editor.resourceActions.typesetMath ? 5 : -1);
   }
@@ -37342,7 +37342,7 @@ function r_(e103, A) {
 function C_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 7)(1, "div", 8)(2, "span", 9), F(3), I(), w(4, "button", 10), G("click", function() {
+    w(0, "div", 7)(1, "div", 8)(2, "span", 9), h(3), I(), w(4, "button", 10), G("click", function() {
       U(B);
       let g = a();
       return N(g.previewMinimized = !g.previewMinimized);
@@ -37354,16 +37354,16 @@ function C_(e103, A) {
   }
 }
 function c_(e103, A) {
-  e103 & 1 && (w(0, "p", 17), F(1, " El ajuste y la gu\xEDa tienen prioridad sobre los reconocimientos. "), I());
+  e103 & 1 && (w(0, "p", 17), h(1, " El ajuste y la gu\xEDa tienen prioridad sobre los reconocimientos. "), I());
 }
 function E_(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1), I()), e103 & 2) {
     let B = a(3);
     Y(), CA(" ", B.editor.historyGesture === "double-tap" ? "Doble toque" : "Un toque", " con dos dedos: deshacer. Con tres dedos: rehacer. ");
   }
 }
 function w_(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, " Desliza tres dedos a la izquierda para deshacer o a la derecha para rehacer. "), I());
+  e103 & 1 && (w(0, "p"), h(1, " Desliza tres dedos a la izquierda para deshacer o a la derecha para rehacer. "), I());
 }
 function s_(e103, A) {
   if (e103 & 1) {
@@ -37372,19 +37372,19 @@ function s_(e103, A) {
       U(B);
       let g = a(2);
       return N(g.editor.toggleScratchOut());
-    }), I(), F(3, "Borrar tachando"), I(), w(4, "p"), F(5, " Garabatea varias veces sobre tinta de la capa activa para borrarla. Deshacer la recupera. "), I(), w(6, "label"), F(7, "Acci\xF3n de un dedo "), w(8, "select", 30), G("change", function(g) {
+    }), I(), h(3, "Borrar tachando"), I(), w(4, "p"), h(5, " Garabatea varias veces sobre tinta de la capa activa para borrarla. Deshacer la recupera. "), I(), w(6, "label"), h(7, "Acci\xF3n de un dedo "), w(8, "select", 30), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.editor.setTouchAction(g.target.value));
-    }), w(9, "option", 31), F(10, "Autom\xE1tico \xB7 prioridad al l\xE1piz"), I(), w(11, "option", 32), F(12, "Dibujar con dedo"), I(), w(13, "option", 33), F(14, "Mover con dedo"), I()()(), w(15, "p"), F(16, " En Autom\xE1tico, despu\xE9s de usar un l\xE1piz, un dedo mueve el Lienzo. El l\xE1piz conserva la herramienta seleccionada y la presi\xF3n disponible. "), I(), w(17, "label"), F(18, "Deshacer y rehacer "), w(19, "select", 34), G("change", function(g) {
+    }), w(9, "option", 31), h(10, "Autom\xE1tico \xB7 prioridad al l\xE1piz"), I(), w(11, "option", 32), h(12, "Dibujar con dedo"), I(), w(13, "option", 33), h(14, "Mover con dedo"), I()()(), w(15, "p"), h(16, " En Autom\xE1tico, despu\xE9s de usar un l\xE1piz, un dedo mueve el Lienzo. El l\xE1piz conserva la herramienta seleccionada y la presi\xF3n disponible. "), I(), w(17, "label"), h(18, "Deshacer y rehacer "), w(19, "select", 34), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.editor.setHistoryGesture(g.target.value));
-    }), w(20, "option", 35), F(21, "Un toque con dos o tres dedos"), I(), w(22, "option", 36), F(23, " Doble toque con dos o tres dedos "), I(), w(24, "option", 37), F(25, "Deslizar tres dedos"), I(), w(26, "option", 38), F(27, "Desactivado"), I()()(), b(28, E_, 2, 1, "p")(29, w_, 2, 0, "p"), w(30, "label", 28)(31, "input", 39), G("change", function(g) {
+    }), w(20, "option", 35), h(21, "Un toque con dos o tres dedos"), I(), w(22, "option", 36), h(23, " Doble toque con dos o tres dedos "), I(), w(24, "option", 37), h(25, "Deslizar tres dedos"), I(), w(26, "option", 38), h(27, "Desactivado"), I()()(), b(28, E_, 2, 1, "p")(29, w_, 2, 0, "p"), w(30, "label", 28)(31, "input", 39), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.editor.setFocusGesture(g.target.checked));
-    }), I(), F(32, " Cuatro dedos: expandir o volver "), I(), w(33, "p"), F(34, " Pellizca con dos dedos para zoom o arrastra para mover el Lienzo. "), I()();
+    }), I(), h(32, " Cuatro dedos: expandir o volver "), I(), w(33, "p"), h(34, " Pellizca con dos dedos para zoom o arrastra para mover el Lienzo. "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -37394,15 +37394,15 @@ function s_(e103, A) {
 function a_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 17)(1, "p"), F(2, " Los puntos se ajustan a las intersecciones de la cuadr\xEDcula, con la separaci\xF3n configurada. "), I(), w(3, "button", 40), G("click", function() {
+    w(0, "div", 17)(1, "p"), h(2, " Los puntos se ajustan a las intersecciones de la cuadr\xEDcula, con la separaci\xF3n configurada. "), I(), w(3, "button", 40), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.settings.emit());
-    }), F(4, " Cambiar separaci\xF3n "), I()();
+    }), h(4, " Cambiar separaci\xF3n "), I()();
   }
 }
 function I_(e103, A) {
-  if (e103 & 1 && (w(0, "p", 42), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 42), h(1), I()), e103 & 2) {
     let B = a(3);
     Y(), cA(B.radiusError);
   }
@@ -37410,7 +37410,7 @@ function I_(e103, A) {
 function D_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 17)(1, "label"), F(2), w(3, "input", 41), G("change", function(g) {
+    w(0, "div", 17)(1, "label"), h(2), w(3, "input", 41), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.radius(g));
@@ -37418,7 +37418,7 @@ function D_(e103, A) {
       U(B);
       let g = a(2);
       return N(g.editor.centerGuide());
-    }), F(6, " Centrar en la vista "), I(), w(7, "p"), F(8, " Arrastra la cruz para mover la gu\xEDa y el punto para cambiar el radio. "), I()();
+    }), h(6, " Centrar en la vista "), I(), w(7, "p"), h(8, " Arrastra la cruz para mover la gu\xEDa y el punto para cambiar el radio. "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -37443,7 +37443,7 @@ function F_(e103, A) {
     w(0, "label", 28)(1, "input", 48), G("change", function() {
       let g = U(B).$implicit, n = a(5);
       return N(n.editor.setRecognitionKind(g.mask));
-    }), I(), F(2), I();
+    }), I(), h(2), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(5);
@@ -37451,7 +37451,7 @@ function F_(e103, A) {
   }
 }
 function h_(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1, " Dibuja una figura y mant\xE9n el l\xE1piz quieto medio segundo. Despu\xE9s mu\xE9velo para cambiar el tama\xF1o y rotar; suelta para confirmar. Puedes dibujar la l\xEDnea y la punta de una flecha en dos o tres trazos seguidos y mantener al terminar la punta. "), I(), w(2, "p"), F(3, " Las flechas tienen la misma curva y punta que los conectores. Si sus extremos llegan a dos objetos, quedan conectados y los acompa\xF1an al moverlos. "), I(), nA(4, F_, 3, 3, "label", 28, B_)), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1, " Dibuja una figura y mant\xE9n el l\xE1piz quieto medio segundo. Despu\xE9s mu\xE9velo para cambiar el tama\xF1o y rotar; suelta para confirmar. Puedes dibujar la l\xEDnea y la punta de una flecha en dos o tres trazos seguidos y mantener al terminar la punta. "), I(), w(2, "p"), h(3, " Las flechas tienen la misma curva y punta que los conectores. Si sus extremos llegan a dos objetos, quedan conectados y los acompa\xF1an al moverlos. "), I(), nA(4, F_, 3, 3, "label", 28, B_)), e103 & 2) {
     let B = a(4);
     Y(4), iA(B.recognitionKinds);
   }
@@ -37468,10 +37468,10 @@ function d_(e103, A) {
     w(0, "div", 43)(1, "button", 44), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.editor.selectRecognitionProfile(g.value));
-    }), $(2, "span", 21), w(3, "strong"), F(4), I()(), w(5, "button", 45), G("click", function() {
+    }), $(2, "span", 21), w(3, "strong"), h(4), I()(), w(5, "button", 45), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.edit(g.value));
-    }), F(6, " Opciones "), I()(), b(7, l_, 4, 1, "div", 17);
+    }), h(6, " Opciones "), I()(), b(7, l_, 4, 1, "div", 17);
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -37479,7 +37479,7 @@ function d_(e103, A) {
   }
 }
 function U_(e103, A) {
-  e103 & 1 && (w(0, "p", 27), F(1, " Regulariza operadores, ra\xEDces y desigualdades. Conserva fracciones, exponentes y letras griegas en su posici\xF3n. "), I());
+  e103 & 1 && (w(0, "p", 27), h(1, " Regulariza operadores, ra\xEDces y desigualdades. Conserva fracciones, exponentes y letras griegas en su posici\xF3n. "), I());
 }
 function N_(e103, A) {
   if (e103 & 1) {
@@ -37488,31 +37488,31 @@ function N_(e103, A) {
       U(B);
       let g = a();
       return N(g.edit("input"));
-    }), F(3, " Dedos y gestos "), I(), b(4, s_, 35, 6, "div", 17), w(5, "div", 19)(6, "button", 20), G("click", function() {
+    }), h(3, " Dedos y gestos "), I(), b(4, s_, 35, 6, "div", 17), w(5, "div", 19)(6, "button", 20), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.toggleSnap());
-    }), $(7, "span", 21), w(8, "strong"), F(9, "Ajustar"), I()(), w(10, "button", 22), G("click", function() {
+    }), $(7, "span", 21), w(8, "strong"), h(9, "Ajustar"), I()(), w(10, "button", 22), G("click", function() {
       U(B);
       let g = a();
       return N(g.edit("snap"));
-    }), F(11, " Opciones "), I()(), b(12, a_, 5, 0, "div", 17), w(13, "div", 19)(14, "button", 23), G("click", function() {
+    }), h(11, " Opciones "), I()(), b(12, a_, 5, 0, "div", 17), w(13, "div", 19)(14, "button", 23), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.toggleStrokeMeasurements());
-    }), $(15, "span", 21), w(16, "strong"), F(17, "Medir"), I()(), w(18, "button", 24), G("click", function() {
+    }), $(15, "span", 21), w(16, "strong"), h(17, "Medir"), I()(), w(18, "button", 24), G("click", function() {
       U(B);
       let g = a();
       return N(g.settings.emit());
-    }), F(19), I()(), w(20, "div", 19)(21, "button", 25), G("click", function() {
+    }), h(19), I()(), w(20, "div", 19)(21, "button", 25), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.toggleGuide());
-    }), $(22, "span", 21), w(23, "strong"), F(24, "Gu\xEDa"), I()(), w(25, "button", 26), G("click", function() {
+    }), $(22, "span", 21), w(23, "strong"), h(24, "Gu\xEDa"), I()(), w(25, "button", 26), G("click", function() {
       U(B);
       let g = a();
       return N(g.edit("guide"));
-    }), F(26, " Arco "), I()(), b(27, D_, 9, 5, "div", 17), nA(28, d_, 8, 7, null, null, A_), b(30, U_, 2, 0, "p", 27), w(31, "p", 27), F(32, " Activa un reconocimiento a la vez. Ajustar, Medir, Gu\xEDa y los gestos siguen disponibles. "), I()();
+    }), h(26, " Arco "), I()(), b(27, D_, 9, 5, "div", 17), nA(28, d_, 8, 7, null, null, A_), b(30, U_, 2, 0, "p", 27), w(31, "p", 27), h(32, " Activa un reconocimiento a la vez. Ajustar, Medir, Gu\xEDa y los gestos siguen disponibles. "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -37550,7 +37550,7 @@ var uF = class e85 {
         return t.open = false, t.options = null;
       }), w(1, "div", 1), b(2, C_, 8, 7, "div", 2), tM(3), I(), w(4, "button", 3), G("click", function() {
         return t.toggle();
-      }), AA(), w(5, "svg", 4), $(6, "path", 5), I(), jA(), w(7, "strong"), F(8, "Ayudas"), I()(), b(9, N_, 33, 18, "div", 6), I()), B & 2 && (Y(2), T(t.editor.recognitionEnabled && !t.editor.expanded ? 2 : -1), Y(2), P("aria-expanded", t.open), Y(5), T(t.open ? 9 : -1));
+      }), AA(), w(5, "svg", 4), $(6, "path", 5), I(), jA(), w(7, "strong"), h(8, "Ayudas"), I()(), b(9, N_, 33, 18, "div", 6), I()), B & 2 && (Y(2), T(t.editor.recognitionEnabled && !t.editor.expanded ? 2 : -1), Y(2), P("aria-expanded", t.open), Y(5), T(t.open ? 9 : -1));
     }, dependencies: [YB, ut, KM, uc], styles: [`[_nghost-%COMP%] {
   display: block;
   max-width: 100%;
@@ -37897,7 +37897,7 @@ function x_(e103, A) {
     w(0, "div", 18)(1, "button", 19), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return n.editor.organizeLayers({ action: "select", id: g.id }), n.renaming = false, N(n.confirming = false);
-    }), AA(), w(2, "svg", 20), b(3, G_, 3, 1, ":svg:g")(4, p_, 1, 4, ":svg:path", 21), I(), jA(), w(5, "span", 22)(6, "strong"), F(7), I(), w(8, "small"), F(9), I()()(), w(10, "button", 23), G("click", function() {
+    }), AA(), w(2, "svg", 20), b(3, G_, 3, 1, ":svg:g")(4, p_, 1, 4, ":svg:path", 21), I(), jA(), w(5, "span", 22)(6, "strong"), h(7), I(), w(8, "small"), h(9), I()()(), w(10, "button", 23), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.editor.organizeLayers({ action: "toggle_visibility", id: g.id }));
     }), AA(), w(11, "svg", 3), $(12, "path", 24)(13, "circle", 25), b(14, m_, 1, 0, ":svg:path", 26), I()(), jA(), w(15, "button", 23), G("click", function() {
@@ -37921,7 +37921,7 @@ function f_(e103, A) {
       U(B);
       let n = a(2);
       return N(n.name = n.value(g));
-    }), I(), w(2, "button", 30), F(3, " Guardar "), I()();
+    }), I(), w(2, "button", 30), h(3, " Guardar "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -37931,19 +37931,19 @@ function f_(e103, A) {
 function y_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 16)(1, "p"), F(2, "\xBFEliminar la capa activa y su contenido?"), I(), w(3, "button", 31), G("click", function() {
+    w(0, "div", 16)(1, "p"), h(2, "\xBFEliminar la capa activa y su contenido?"), I(), w(3, "button", 31), G("click", function() {
       U(B);
       let g = a(2), n = Pi(0);
       return g.editor.organizeLayers({ action: "delete", id: n.active_layer }), N(g.confirming = false);
-    }), F(4, " Eliminar capa y contenido"), I(), w(5, "button", 31), G("click", function() {
+    }), h(4, " Eliminar capa y contenido"), I(), w(5, "button", 31), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.confirming = false);
-    }), F(6, " Cancelar "), I()();
+    }), h(6, " Cancelar "), I()();
   }
 }
 function R_(e103, A) {
-  if (e103 & 1 && (w(0, "option", 34), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 34), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     x("value", B.id)("disabled", B.locked || !B.visible), Y(), CA(" ", B.name, " ");
   }
@@ -37951,11 +37951,11 @@ function R_(e103, A) {
 function H_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label", 17), F(1, "Mover trazo a capa"), w(2, "select", 32), G("change", function(g) {
+    w(0, "label", 17), h(1, "Mover trazo a capa"), w(2, "select", 32), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.editor.organizeLayers({ action: "move_stroke", id: +n.value(g), stroke: n.editor.selected }));
-    }), w(3, "option", 33), F(4, "Elegir capa"), I(), nA(5, R_, 2, 3, "option", 34, U2), I()();
+    }), w(3, "option", 33), h(4, "Elegir capa"), I(), nA(5, R_, 2, 3, "option", 34, U2), I()();
   }
   if (e103 & 2) {
     a(2);
@@ -37970,31 +37970,31 @@ function J_(e103, A) {
       U(B);
       let g = a();
       return N(g.open = false);
-    }), w(1, "header")(2, "strong"), F(3, "Capas"), I(), w(4, "button", 7), G("click", function() {
+    }), w(1, "header")(2, "strong"), h(3, "Capas"), I(), w(4, "button", 7), G("click", function() {
       U(B);
       let g = a();
       return N(g.open = false);
-    }), F(5, " \xD7 "), I()(), w(6, "div", 8), nA(7, x_, 19, 17, "div", 9, U2), I(), w(9, "div", 10)(10, "button", 11), G("click", function() {
+    }), h(5, " \xD7 "), I()(), w(6, "div", 8), nA(7, x_, 19, 17, "div", 9, U2), I(), w(9, "div", 10)(10, "button", 11), G("click", function() {
       U(B);
       let g = a();
       return g.editor.organizeLayers({ action: "create" }), g.renaming = false, N(g.confirming = false);
-    }), F(11, " + Capa "), I(), w(12, "button", 12), G("click", function() {
+    }), h(11, " + Capa "), I(), w(12, "button", 12), G("click", function() {
       U(B);
       let g = a(), n = Pi(0);
       return N(g.editor.organizeLayers({ action: "move", id: n.active_layer, offset: 1 }));
-    }), F(13, " \u2191 "), I(), w(14, "button", 13), G("click", function() {
+    }), h(13, " \u2191 "), I(), w(14, "button", 13), G("click", function() {
       U(B);
       let g = a(), n = Pi(0);
       return N(g.editor.organizeLayers({ action: "move", id: n.active_layer, offset: -1 }));
-    }), F(15, " \u2193 "), I(), w(16, "button", 14), G("click", function() {
+    }), h(15, " \u2193 "), I(), w(16, "button", 14), G("click", function() {
       U(B);
       let g = a();
       return N(g.rename());
-    }), F(17, " Nombre "), I(), w(18, "button", 15), G("click", function() {
+    }), h(17, " Nombre "), I(), w(18, "button", 15), G("click", function() {
       U(B);
       let g = a();
       return g.confirming = true, N(g.renaming = false);
-    }), F(19, " \xD7 "), I()(), b(20, f_, 4, 2, "form"), b(21, y_, 7, 0, "div", 16), b(22, H_, 7, 0, "label", 17), I();
+    }), h(19, " \xD7 "), I()(), b(20, f_, 4, 2, "form"), b(21, y_, 7, 0, "div", 16), b(22, H_, 7, 0, "label", 17), I();
   }
   if (e103 & 2) {
     let B, t = a(), g = qB(3), n = Pi(0);
@@ -38031,8 +38031,8 @@ var GF = class e86 {
     for (let g of B.strokes) t.set(g.layer ?? 1, g);
     for (let [g, n] of t) {
       if (n.outline) {
-        let { min: s, max: D } = n.outline.bounds, h = Math.min(36 / Math.max(1, D.x - s.x), 24 / Math.max(1, D.y - s.y)), { origin: l, contours: u } = n.outline, p = u.map((y) => y.map((k, H) => `${H ? "L" : "M"}${6 + (k.x + l.x - s.x) * h} ${4 + (k.y + l.y - s.y) * h}`).join(" ") + "Z").join(" ");
-        this.previews.set(g, { path: p, color: `rgb(${n.color.join(",")})`, filled: true, opacity: n.opacity ?? 1, parts: n.outline.parts?.map((y) => ({ path: y.contours.map((k) => k.map((H, v) => `${v ? "L" : "M"}${6 + (H.x + l.x - s.x) * h} ${4 + (H.y + l.y - s.y) * h}`).join(" ") + "Z").join(" "), color: `rgb(${y.color.join(",")})`, opacity: y.opacity, rule: y.even_odd ? "evenodd" : "nonzero" })) });
+        let { min: s, max: D } = n.outline.bounds, F = Math.min(36 / Math.max(1, D.x - s.x), 24 / Math.max(1, D.y - s.y)), { origin: l, contours: u } = n.outline, p = u.map((y) => y.map((k, H) => `${H ? "L" : "M"}${6 + (k.x + l.x - s.x) * F} ${4 + (k.y + l.y - s.y) * F}`).join(" ") + "Z").join(" ");
+        this.previews.set(g, { path: p, color: `rgb(${n.color.join(",")})`, filled: true, opacity: n.opacity ?? 1, parts: n.outline.parts?.map((y) => ({ path: y.contours.map((k) => k.map((H, v) => `${v ? "L" : "M"}${6 + (H.x + l.x - s.x) * F} ${4 + (H.y + l.y - s.y) * F}`).join(" ") + "Z").join(" "), color: `rgb(${y.color.join(",")})`, opacity: y.opacity, rule: y.even_odd ? "evenodd" : "nonzero" })) });
         continue;
       }
       let i = n.samples.reduce((s, D) => ({ minX: Math.min(s.minX, D.point.x), minY: Math.min(s.minY, D.point.y), maxX: Math.max(s.maxX, D.point.x), maxY: Math.max(s.maxY, D.point.y) }), { minX: 1 / 0, minY: 1 / 0, maxX: -1 / 0, maxY: -1 / 0 }), { minX: Q, minY: o } = i, r = i.maxX - Q, C = i.maxY - o, c = Math.min(36 / Math.max(1, r), 24 / Math.max(1, C)), E = n.samples.filter((s, D) => D % Math.ceil(n.samples.length / 128) === 0 || D === n.samples.length - 1).map((s, D) => `${D ? "L" : "M"}${6 + (s.point.x - Q) * c} ${4 + (s.point.y - o) * c}`).join(" ");
@@ -38062,7 +38062,7 @@ var GF = class e86 {
           return U(g), t.open = false, t.renaming = false, N(t.confirming = false);
         }), w(2, "button", 2, 0), G("click", function() {
           return t.toggle();
-        }), AA(), w(4, "svg", 3), $(5, "path", 4), I(), jA(), w(6, "strong"), F(7, "Capas"), I()(), b(8, J_, 23, 9, "div", 5), I();
+        }), AA(), w(4, "svg", 3), $(5, "path", 4), I(), jA(), w(6, "strong"), h(7, "Capas"), I()(), b(8, J_, 23, 9, "div", 5), I();
       }
       B & 2 && (gM(t.editor.layerState), Y(2), P("aria-expanded", t.open), Y(6), T(t.open ? 8 : -1));
     }, dependencies: [YB, ut, Xg], styles: [`[_nghost-%COMP%] {
@@ -38373,8 +38373,8 @@ var pF = class e87 {
     A = Math.max(i, Math.min(g.maxX, A)), B = Math.max(g.minY, Math.min(g.maxY, B)), t && (A < i + 64 ? A = i : A > g.maxX - 64 && (A = g.maxX), B < g.minY + 64 ? B = g.minY : B > g.maxY - 64 && (B = g.maxY)), this.position = { xRatio: (A - i) / (g.maxX - i || 1), yRatio: (B - g.minY) / (g.maxY - g.minY || 1) }, this.panel.style.left = `${A}px`, this.panel.style.top = `${B}px`, this.panel.style.bottom = "auto", this.host.classList.contains("era-controls-moved") || this.host.classList.add("era-controls-moved");
     let Q = this.panel.querySelector(".wheel")?.getBoundingClientRect(), o = Q?.width ? Q.width / 2 : 102, r = A + n / 2, C = B + this.panel.getBoundingClientRect().height / 2, c = r < g.left + o - 0.5 || r > g.left + g.width - o + 0.5, E = C < g.top + o - 0.5 || C > g.top + g.height - o + 0.5, s = c || E;
     s || (this.stopRotation(), this.setRotation(0)), this.panel.classList.toggle("era-wheel-docked", s), this.panel.classList.toggle("era-wheel-corner", c && E), this.panel.dataset.wheelDocked = String(s);
-    for (let [D, h] of [["brush", 348], ["settings", 364]]) {
-      let l = Math.min(h, g.width - 16), u = A + n + 12, p = u + l <= g.width - 8 ? u : A - l - 12 >= 8 ? A - l - 12 : Math.max(8, g.width - l - 8);
+    for (let [D, F] of [["brush", 348], ["settings", 364]]) {
+      let l = Math.min(F, g.width - 16), u = A + n + 12, p = u + l <= g.width - 8 ? u : A - l - 12 >= 8 ? A - l - 12 : Math.max(8, g.width - l - 8);
       this.host.style.setProperty(`--era-${D}-popup-x`, `${p}px`);
     }
     this.host.style.setProperty("--era-controls-popup-y", `${Math.max(8, Math.min(B, g.height - 336))}px`);
@@ -38390,7 +38390,7 @@ var pF = class e87 {
     if (!this.position) {
       if (this.eraFloatingControls.pdfReader && !this.eraFloatingControls.pdfFullscreen) {
         let o = this.area();
-        this.apply(o.left + Math.min(146, o.width / 2) - 146, o.top + 66);
+        this.apply(o.left + Math.min(146, o.width / 2) - 146, this.toolsTop(o.top + 80));
       }
       return;
     }
@@ -38524,9 +38524,15 @@ var pF = class e87 {
   ngOnDestroy() {
     this.destroyed = true, this.release(), this.abort?.abort(), this.observer?.disconnect(), this.mutation?.disconnect(), this.clearStyles(), this.host.style.removeProperty("--era-dock-popup-height"), this.host.style.removeProperty("--era-dock-popup-width"), this.host.style.removeProperty("--era-lettering-popup-width"), this.host.style.removeProperty("--era-page-navigation-bottom");
   }
+  toolsTop(A) {
+    let B = this.host.getBoundingClientRect(), t = this.host.querySelector(".era-header")?.getBoundingClientRect();
+    return t?.height ? Math.max(A, t.bottom - B.top + 12) : A;
+  }
   layoutHorizontal() {
     let A = this.host.getBoundingClientRect(), B = this.area(), t = Math.max(100, Math.min(this.eraFloatingControls.pdfReader && !this.eraFloatingControls.pdfFullscreen ? B.width < 900 ? 340 : 380 : 400, B.width - (B.width < 900 ? 128 : 24))), g = this.host.querySelector(".era-wheel-dock-hint")?.getBoundingClientRect();
-    this.stopRotation(), this.setRotation(0), this.panel.classList.remove("era-wheel-docked", "era-wheel-corner"), this.panel.classList.add("era-wheel-horizontal"), this.panel.dataset.wheelDocked = "false", this.panel.style.width = `${t}px`, this.panel.style.left = `${B.left + (B.width - t) / 2}px`, this.panel.style.top = `${g ? g.top - A.top : 80}px`, this.panel.style.bottom = "auto", this.host.classList.contains("era-controls-moved") || this.host.classList.add("era-controls-moved"), this.host.style.setProperty("--era-controls-popup-y", `${(g ? g.bottom - A.top : 140) + 12}px`), this.host.style.setProperty("--era-brush-popup-x", `${Math.max(8, (A.width - 348) / 2)}px`), this.host.style.setProperty("--era-settings-popup-x", `${Math.max(8, (A.width - 364) / 2)}px`);
+    this.stopRotation(), this.setRotation(0), this.panel.classList.remove("era-wheel-docked", "era-wheel-corner"), this.panel.classList.add("era-wheel-horizontal"), this.panel.dataset.wheelDocked = "false", this.panel.style.width = `${t}px`, this.panel.style.left = `${B.left + (B.width - t) / 2}px`;
+    let n = this.toolsTop(g ? g.top - A.top : B.top + 80);
+    this.panel.style.top = `${n}px`, this.panel.style.bottom = "auto", this.host.classList.contains("era-controls-moved") || this.host.classList.add("era-controls-moved"), this.host.style.setProperty("--era-controls-popup-y", `${n + this.panel.getBoundingClientRect().height + 12}px`), this.host.style.setProperty("--era-brush-popup-x", `${Math.max(8, (A.width - 348) / 2)}px`), this.host.style.setProperty("--era-settings-popup-x", `${Math.max(8, (A.width - 364) / 2)}px`);
   }
   area() {
     let A = this.host.getBoundingClientRect(), B = this.host.querySelector(".era-canvas-workspace")?.getBoundingClientRect();
@@ -38555,14 +38561,14 @@ function PG(e103, A) {
   if (e103.grid === "graph" || e103.grid === "dots") return { x: B + Math.round(i / g) * g, y: t + Math.round(Q / g) * g };
   let o = g * Math.sqrt(3) / 2, r = Math.round(Q / o), C = A, c = 1 / 0;
   for (let E = r - 1; E <= r + 1; E++) {
-    let s = (Math.round(i / g - E / 2) + E / 2) * g, D = E * o, h = n ? { x: B + D, y: t + s } : { x: B + s, y: t + D }, l = Math.hypot(h.x - A.x, h.y - A.y);
-    l < c && (C = h, c = l);
+    let s = (Math.round(i / g - E / 2) + E / 2) * g, D = E * o, F = n ? { x: B + D, y: t + s } : { x: B + s, y: t + D }, l = Math.hypot(F.x - A.x, F.y - A.y);
+    l < c && (C = F, c = l);
   }
   return C;
 }
 function SG(e103, A, B = 1) {
-  let { left: t, top: g, width: n, height: i } = A, Q = t + n, o = g + i, r = [], C = (c, E, s, D, h = false) => {
-    let l = h ? 0 : -1 / 0, u = 1 / 0;
+  let { left: t, top: g, width: n, height: i } = A, Q = t + n, o = g + i, r = [], C = (c, E, s, D, F = false) => {
+    let l = F ? 0 : -1 / 0, u = 1 / 0;
     for (let [p, y, k, H] of [[c, s, t, Q], [E, D, g, o]]) if (Math.abs(y) < 1e-10) {
       if (p < k || p > H) return;
     } else {
@@ -38572,7 +38578,7 @@ function SG(e103, A, B = 1) {
     l <= u && r.push([c + s * l, E + D * l, c + s * u, E + D * u]);
   };
   if (e103.grid === "triangle" || e103.grid === "isometric") {
-    let c = e103.grid_spacing_px, E = c * Math.sqrt(3) / 2, s = e103.artboard === "infinite" ? 0 : e103.artboard_x ?? 0, D = e103.artboard === "infinite" ? 0 : e103.artboard_y ?? 0, h = e103.grid === "isometric", l = h ? g - D : t - s, u = h ? o - D : Q - s, p = h ? t - s : g - D, y = h ? Q - s : o - D, k = (H, v, z, W) => h ? C(s + v, D + H, W, z) : C(s + H, D + v, z, W);
+    let c = e103.grid_spacing_px, E = c * Math.sqrt(3) / 2, s = e103.artboard === "infinite" ? 0 : e103.artboard_x ?? 0, D = e103.artboard === "infinite" ? 0 : e103.artboard_y ?? 0, F = e103.grid === "isometric", l = F ? g - D : t - s, u = F ? o - D : Q - s, p = F ? t - s : g - D, y = F ? Q - s : o - D, k = (H, v, z, W) => F ? C(s + v, D + H, W, z) : C(s + H, D + v, z, W);
     for (let H = Math.floor(p / E) * E, v = 0; H <= y && v < 4096; H += E, v++) k(0, H, 1, 0);
     for (let H of [Math.sqrt(3), -Math.sqrt(3)]) {
       let v = p - H * (H > 0 ? u : l), z = y - H * (H > 0 ? l : u), W = c * Math.sqrt(3);
@@ -38581,11 +38587,11 @@ function SG(e103, A, B = 1) {
   } else if (e103.grid.startsWith("perspective_")) {
     let c = Xi(e103) ?? { width: 1e3, height: 700 }, E = c.width, s = c.height, D = e103.grid === "perspective_1" ? [[E / 2, s * 0.38]] : [[0, s * 0.3], [E, s * 0.3]];
     e103.grid === "perspective_3" && D.push([E / 2, s * 1.25]);
-    let h = Math.max(24, Math.min(180, Math.round(Math.PI * Math.min(E, s) / e103.grid_spacing_px)));
+    let F = Math.max(24, Math.min(180, Math.round(Math.PI * Math.min(E, s) / e103.grid_spacing_px)));
     for (let [l, u] of D) {
       let p = l + (e103.artboard_x ?? 0), y = u + (e103.artboard_y ?? 0);
-      for (let k = 0; k < h; k++) {
-        let H = k * Math.PI * 2 / h;
+      for (let k = 0; k < F; k++) {
+        let H = k * Math.PI * 2 / F;
         C(p, y, Math.cos(H), Math.sin(H), true);
       }
     }
@@ -38608,7 +38614,7 @@ function k_(e103, A) {
     w(0, "button", 28), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.update("background", g.value));
-    }), w(1, "span", 29), AA(), w(2, "svg", 30), $(3, "path", 31), I()(), jA(), w(4, "span"), F(5), I()();
+    }), w(1, "span", 29), AA(), w(2, "svg", 30), $(3, "path", 31), I()(), jA(), w(4, "span"), h(5), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -38618,7 +38624,7 @@ function k_(e103, A) {
 function j_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1, "Color "), w(2, "input", 32), G("change", function(g) {
+    w(0, "label"), h(1, "Color "), w(2, "input", 32), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.update("custom_color", n.value(g)));
@@ -38635,7 +38641,7 @@ function b_(e103, A) {
     w(0, "button", 28), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.update("grid", g.value));
-    }), w(1, "span", 33), AA(), w(2, "svg", 34), $(3, "path"), I()(), jA(), w(4, "span"), F(5), I()();
+    }), w(1, "span", 33), AA(), w(2, "svg", 34), $(3, "path"), I()(), jA(), w(4, "span"), h(5), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -38645,7 +38651,7 @@ function b_(e103, A) {
 function T_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1), w(2, "input", 35), G("change", function(g) {
+    w(0, "label"), h(1), w(2, "input", 35), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setGridSpacing(g));
@@ -38671,7 +38677,7 @@ function P_(e103, A) {
     w(0, "button", 28), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.update("artboard", g.value));
-    }), w(1, "span", 36), b(2, v_, 2, 0, ":svg:svg", 37)(3, W_, 1, 4, "span", 38), I(), w(4, "span"), F(5), I()();
+    }), w(1, "span", 36), b(2, v_, 2, 0, ":svg:svg", 37)(3, W_, 1, 4, "span", 38), I(), w(4, "span"), h(5), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -38679,7 +38685,7 @@ function P_(e103, A) {
   }
 }
 function S_(e103, A) {
-  if (e103 & 1 && (w(0, "option", 13), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 13), h(1), I()), e103 & 2) {
     let B = A.$implicit, t = a(2);
     x("value", B.value)("selected", B.value === t.settings.artboard_unit), Y(), CA(" ", B.label, " ");
   }
@@ -38687,15 +38693,15 @@ function S_(e103, A) {
 function L_(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1, "Unidad del \xE1rea "), w(2, "select", 41), G("change", function(g) {
+    w(0, "label"), h(1, "Unidad del \xE1rea "), w(2, "select", 41), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setArtboardUnit(n.value(g)));
-    }), nA(3, S_, 2, 3, "option", 13, bs), I()(), w(5, "div", 14)(6, "label"), F(7, "Ancho"), w(8, "input", 42), G("change", function(g) {
+    }), nA(3, S_, 2, 3, "option", 13, bs), I()(), w(5, "div", 14)(6, "label"), h(7, "Ancho"), w(8, "input", 42), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setArtboardDimension("custom_width_px", g));
-    }), I()(), w(9, "label"), F(10, "Alto"), w(11, "input", 43), G("change", function(g) {
+    }), I()(), w(9, "label"), h(10, "Alto"), w(11, "input", 43), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setArtboardDimension("custom_height_px", g));
@@ -38707,16 +38713,16 @@ function L_(e103, A) {
   }
 }
 function V_(e103, A) {
-  e103 & 1 && (w(0, "p", 10), F(1, " Lo que quede fuera de la hoja se oculta sin borrarse. Usa \xABMover hoja\xBB en la barra superior para elegir otra zona del dibujo. "), I());
+  e103 & 1 && (w(0, "p", 10), h(1, " Lo que quede fuera de la hoja se oculta sin borrarse. Usa \xABMover hoja\xBB en la barra superior para elegir otra zona del dibujo. "), I());
 }
 function z_(e103, A) {
-  if (e103 & 1 && (w(0, "option", 13), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 13), h(1), I()), e103 & 2) {
     let B = A.$implicit, t = a();
     x("value", B.value)("selected", B.value === t.settings.unit), Y(), CA(" ", B.label, " ");
   }
 }
 function K_(e103, A) {
-  if (e103 & 1 && (w(0, "p", 27), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 27), h(1), I()), e103 & 2) {
     let B = a();
     Y(), cA(B.message);
   }
@@ -38817,21 +38823,21 @@ var mF = class e88 {
   }
   static {
     this.\u0275cmp = BB({ type: e88, selectors: [["era-canvas-settings"]], inputs: { editor: "editor", save: "save" }, outputs: { closed: "closed" }, decls: 76, vars: 23, consts: [["aria-label", "Configuraci\xF3n del lienzo"], ["eraTouchActivate", "", "aria-label", "Cerrar configuraci\xF3n del lienzo", "data-era-tooltip", "Cerrar configuraci\xF3n", 1, "close", 3, "click"], ["aria-label", "Vista previa del lienzo", 1, "canvas-preview", "grid-preview"], ["viewBox", "0 0 300 90", "fill", "none", "stroke", "#6692cd", "stroke-width", "2.5", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "M22 28h112M22 40h84M22 52h102M178 58c16-51 33 22 61-22M190 66h72"], ["viewBox", "0 0 300 90", "preserveAspectRatio", "none", "aria-hidden", "true", 1, "special-grid-preview"], ["role", "group", "aria-label", "Tipo de fondo", 1, "option-grid"], ["eraTouchActivate", "", 1, "option-card", 3, "disabled"], ["role", "group", "aria-label", "Tipo de cuadr\xEDcula", 1, "option-grid"], ["role", "group", "aria-label", "Tama\xF1o del lienzo", 1, "option-grid"], [1, "artboard-hint"], ["aria-label", "Medidas del lienzo", 1, "canvas-measurement"], ["aria-label", "Unidad de medida", 3, "change", "value", "disabled"], [3, "value", "selected"], [1, "dimensions"], ["type", "number", "aria-label", "Escala del dibujo", "min", "0.001", "max", "100000", "step", "any", 3, "change", "value", "disabled"], ["aria-label", "Precisi\xF3n de medidas", 3, "change", "value", "disabled"], ["value", "0"], ["value", "1"], ["value", "2"], ["value", "3"], ["value", "4"], [1, "help"], [1, "settings-footer"], ["role", "group", "aria-label", "Aplicar configuraci\xF3n a", 1, "settings-scope"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "save-settings", 3, "click", "disabled"], ["role", "status", 1, "save-message"], ["eraTouchActivate", "", 1, "option-card", 3, "click", "disabled"], [1, "option-preview"], ["viewBox", "0 0 80 48", "fill", "none", "stroke-width", "2", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "M14 18h35M14 25h50M14 32h24M45 34c8-18 12 9 20-6"], ["type", "color", "aria-label", "Color del lienzo", 3, "change", "value", "disabled"], ["aria-hidden", "true", 1, "option-preview", "grid-preview"], ["viewBox", "0 0 80 48", "preserveAspectRatio", "none"], ["type", "number", "aria-label", "Separaci\xF3n de cuadr\xEDcula", "min", "0.0001", "step", "any", 3, "change", "value", "disabled"], ["aria-hidden", "true", 1, "option-preview", "size-preview"], ["viewBox", "0 0 80 48", "fill", "none", "stroke", "currentColor", "stroke-width", "2"], [1, "mini-sheet", 3, "landscape", "custom-sheet"], ["d", "M40 24c-15-23-32-7-24 4 9 14 24-4 24-4s15-18 24-4c8 11-9 27-24 4Z"], [1, "mini-sheet"], ["aria-label", "Unidad del \xE1rea de dibujo", 3, "change", "value", "disabled"], ["type", "number", "aria-label", "Ancho del lienzo", "step", "any", 3, "change", "min", "max", "value", "disabled"], ["type", "number", "aria-label", "Alto del lienzo", "step", "any", 3, "change", "min", "max", "value", "disabled"]], template: function(B, t) {
-      B & 1 && (w(0, "section", 0)(1, "header")(2, "div")(3, "h2"), F(4, "Lienzo y medidas"), I(), w(5, "p"), F(6, " Los cambios se guardan en esta p\xE1gina al salir o empezar a escribir. "), I()(), w(7, "button", 1), G("click", function() {
+      B & 1 && (w(0, "section", 0)(1, "header")(2, "div")(3, "h2"), h(4, "Lienzo y medidas"), I(), w(5, "p"), h(6, " Los cambios se guardan en esta p\xE1gina al salir o empezar a escribir. "), I()(), w(7, "button", 1), G("click", function() {
         return t.closed.emit();
-      }), F(8, " \xD7 "), I()(), w(9, "div", 2), AA(), w(10, "svg", 3), $(11, "path", 4), I(), w(12, "svg", 5), $(13, "path"), I(), jA(), w(14, "span"), F(15), I()(), w(16, "fieldset")(17, "legend"), F(18, "Fondo"), I(), w(19, "div", 6), nA(20, k_, 6, 7, "button", 7, bs), I(), b(22, j_, 3, 2, "label"), I(), w(23, "fieldset")(24, "legend"), F(25, "Cuadr\xEDcula"), I(), w(26, "div", 8), nA(27, b_, 6, 6, "button", 7, bs), I(), b(29, T_, 3, 3, "label"), I(), w(30, "fieldset")(31, "legend"), F(32, "Tama\xF1o del lienzo"), I(), w(33, "div", 9), nA(34, P_, 6, 5, "button", 7, bs), I(), b(36, L_, 12, 10), b(37, V_, 2, 0, "p", 10), w(38, "output", 11), F(39), I()(), w(40, "fieldset")(41, "legend"), F(42, "Medidas"), I(), w(43, "label"), F(44, "Unidad para medir "), w(45, "select", 12), G("change", function(n) {
+      }), h(8, " \xD7 "), I()(), w(9, "div", 2), AA(), w(10, "svg", 3), $(11, "path", 4), I(), w(12, "svg", 5), $(13, "path"), I(), jA(), w(14, "span"), h(15), I()(), w(16, "fieldset")(17, "legend"), h(18, "Fondo"), I(), w(19, "div", 6), nA(20, k_, 6, 7, "button", 7, bs), I(), b(22, j_, 3, 2, "label"), I(), w(23, "fieldset")(24, "legend"), h(25, "Cuadr\xEDcula"), I(), w(26, "div", 8), nA(27, b_, 6, 6, "button", 7, bs), I(), b(29, T_, 3, 3, "label"), I(), w(30, "fieldset")(31, "legend"), h(32, "Tama\xF1o del lienzo"), I(), w(33, "div", 9), nA(34, P_, 6, 5, "button", 7, bs), I(), b(36, L_, 12, 10), b(37, V_, 2, 0, "p", 10), w(38, "output", 11), h(39), I()(), w(40, "fieldset")(41, "legend"), h(42, "Medidas"), I(), w(43, "label"), h(44, "Unidad para medir "), w(45, "select", 12), G("change", function(n) {
         return t.update("unit", t.value(n));
-      }), nA(46, z_, 2, 3, "option", 13, bs), I()(), w(48, "div", 14)(49, "label"), F(50, "Escala \xB7 1 : "), w(51, "input", 15), G("change", function(n) {
+      }), nA(46, z_, 2, 3, "option", 13, bs), I()(), w(48, "div", 14)(49, "label"), h(50, "Escala \xB7 1 : "), w(51, "input", 15), G("change", function(n) {
         return t.update("scale", t.number(n));
-      }), I()(), w(52, "label"), F(53, "Decimales "), w(54, "select", 16), G("change", function(n) {
+      }), I()(), w(52, "label"), h(53, "Decimales "), w(54, "select", 16), G("change", function(n) {
         return t.update("precision", t.number(n));
-      }), w(55, "option", 17), F(56, "0"), I(), w(57, "option", 18), F(58, "1"), I(), w(59, "option", 19), F(60, "2"), I(), w(61, "option", 20), F(62, "3"), I(), w(63, "option", 21), F(64, "4"), I()()()(), w(65, "p", 22), F(66, " La escala cambia las medidas mostradas; los trazos conservan su tama\xF1o. "), I()(), w(67, "footer", 23)(68, "div", 24)(69, "button", 25), G("click", function() {
+      }), w(55, "option", 17), h(56, "0"), I(), w(57, "option", 18), h(58, "1"), I(), w(59, "option", 19), h(60, "2"), I(), w(61, "option", 20), h(62, "3"), I(), w(63, "option", 21), h(64, "4"), I()()()(), w(65, "p", 22), h(66, " La escala cambia las medidas mostradas; los trazos conservan su tama\xF1o. "), I()(), w(67, "footer", 23)(68, "div", 24)(69, "button", 25), G("click", function() {
         return t.setScope("page");
-      }), F(70, " Esta p\xE1gina "), I(), w(71, "button", 25), G("click", function() {
+      }), h(70, " Esta p\xE1gina "), I(), w(71, "button", 25), G("click", function() {
         return t.setScope("notebook");
-      }), F(72, " Todo el cuaderno "), I()(), w(73, "button", 26), G("click", function() {
+      }), h(72, " Todo el cuaderno "), I()(), w(73, "button", 26), G("click", function() {
         return t.saveSettings();
-      }), F(74), I(), b(75, K_, 2, 1, "p", 27), I()()), B & 2 && (Y(9), hA("background-color", t.backgroundColor), P("data-grid", t.settings.grid), Y(4), P("d", t.gridPreview(t.settings.grid, 300, 90)), Y(2), cA(t.artboardDescription), Y(5), iA(t.backgrounds), Y(2), T(t.settings.background === "custom" ? 22 : -1), Y(5), iA(t.grids), Y(2), T(t.settings.grid !== "none" ? 29 : -1), Y(5), iA(t.artboards), Y(2), T(t.settings.artboard === "custom" ? 36 : -1), Y(), T(t.settings.artboard !== "infinite" ? 37 : -1), Y(2), cA(t.artboardDescription), Y(6), x("value", t.settings.unit)("disabled", !t.editor.acceptingInput || t.saving), Y(), iA(t.units), Y(5), x("value", t.settings.scale)("disabled", !t.editor.acceptingInput || t.saving), Y(3), x("value", t.settings.precision)("disabled", !t.editor.acceptingInput || t.saving), Y(15), x("disabled", t.saving), P("aria-pressed", t.scope === "page"), Y(2), x("disabled", t.saving), P("aria-pressed", t.scope === "notebook"), Y(2), x("disabled", t.saving || !t.editor.acceptingInput || !!t.validationError), Y(), CA(" ", t.saving ? "Guardando\u2026" : t.scope === "notebook" ? "Guardar en todo el cuaderno" : "Guardar en esta p\xE1gina", " "), Y(), T(t.message ? 75 : -1));
+      }), h(74), I(), b(75, K_, 2, 1, "p", 27), I()()), B & 2 && (Y(9), hA("background-color", t.backgroundColor), P("data-grid", t.settings.grid), Y(4), P("d", t.gridPreview(t.settings.grid, 300, 90)), Y(2), cA(t.artboardDescription), Y(5), iA(t.backgrounds), Y(2), T(t.settings.background === "custom" ? 22 : -1), Y(5), iA(t.grids), Y(2), T(t.settings.grid !== "none" ? 29 : -1), Y(5), iA(t.artboards), Y(2), T(t.settings.artboard === "custom" ? 36 : -1), Y(), T(t.settings.artboard !== "infinite" ? 37 : -1), Y(2), cA(t.artboardDescription), Y(6), x("value", t.settings.unit)("disabled", !t.editor.acceptingInput || t.saving), Y(), iA(t.units), Y(5), x("value", t.settings.scale)("disabled", !t.editor.acceptingInput || t.saving), Y(3), x("value", t.settings.precision)("disabled", !t.editor.acceptingInput || t.saving), Y(15), x("disabled", t.saving), P("aria-pressed", t.scope === "page"), Y(2), x("disabled", t.saving), P("aria-pressed", t.scope === "notebook"), Y(2), x("disabled", t.saving || !t.editor.acceptingInput || !!t.validationError), Y(), CA(" ", t.saving ? "Guardando\u2026" : t.scope === "notebook" ? "Guardar en todo el cuaderno" : "Guardar en esta p\xE1gina", " "), Y(), T(t.message ? 75 : -1));
     }, dependencies: [YB], styles: [`[_nghost-%COMP%] {
   position: absolute;
   z-index: 12;
@@ -39283,8 +39289,8 @@ async function G2(e103, A, B, t) {
     let s = B.name.replace(/[\\/:*?"<>|\x00-\x1f]/g, "_");
     if (r = await Ts(c, s), !Q()) return;
     if (o = A.importResource ? await A.importResource(B) : E === "pdf" && A.importPdf ? await A.importPdf(B) : s, !A.importResource && !(E === "pdf" && A.importPdf)) {
-      let D = s.lastIndexOf("."), h = 2;
-      for (; e103.resources.resources.some((l) => l.path === o); ) o = `${s.slice(0, D)} ${h++}${s.slice(D)}`;
+      let D = s.lastIndexOf("."), F = 2;
+      for (; e103.resources.resources.some((l) => l.path === o); ) o = `${s.slice(0, D)} ${F++}${s.slice(D)}`;
     }
     if (!Q()) return;
     if (E === "pdf") {
@@ -39309,7 +39315,7 @@ function q_(e103, A) {
       U(B);
       let g = a();
       return N(g.selectRoot());
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -39323,7 +39329,7 @@ function __(e103, A) {
       U(B);
       let g = a(3);
       return N(g.pick());
-    }), F(1, " Desde el Vault "), I();
+    }), h(1, " Desde el Vault "), I();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -39337,7 +39343,7 @@ function $_(e103, A) {
       U(B), a();
       let g = qB(8), n = a();
       return g.click(), N(n.menu = false);
-    }), F(3, " Desde el equipo "), I()();
+    }), h(3, " Desde el equipo "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -39345,15 +39351,15 @@ function $_(e103, A) {
   }
 }
 function A$(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, " Selecciona el PDF original con su nombre o ubicaci\xF3n actual. Se conservar\xE1n sus citas y objetos. "), I());
+  e103 & 1 && (w(0, "p"), h(1, " Selecciona el PDF original con su nombre o ubicaci\xF3n actual. Se conservar\xE1n sus citas y objetos. "), I());
 }
 function B$(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "span", 6), F(1, "\u203A"), I(), w(2, "button", 32), G("click", function() {
+    w(0, "span", 6), h(1, "\u203A"), I(), w(2, "button", 32), G("click", function() {
       let g = U(B).$implicit, n = a(3);
       return N(n.openVaultFolder(g.path));
-    }), F(3), I();
+    }), h(3), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(3);
@@ -39363,15 +39369,15 @@ function B$(e103, A) {
 function e$(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 27)(1, "span"), F(2, "Resultados en todo el Vault"), I(), w(3, "button", 32), G("click", function() {
+    w(0, "div", 27)(1, "span"), h(2, "Resultados en todo el Vault"), I(), w(3, "button", 32), G("click", function() {
       U(B);
       let g = a(3);
       return N(g.openVaultFolder(g.vaultPath));
-    }), F(4, " Ver carpetas "), I()();
+    }), h(4, " Ver carpetas "), I()();
   }
 }
 function t$(e103, A) {
-  e103 & 1 && (w(0, "p", 18), F(1, "Cargando archivos\u2026"), I());
+  e103 & 1 && (w(0, "p", 18), h(1, "Cargando archivos\u2026"), I());
 }
 function g$(e103, A) {
   if (e103 & 1) {
@@ -39379,7 +39385,7 @@ function g$(e103, A) {
     w(0, "button", 33), G("click", function() {
       let g = U(B).$implicit, n = a(3);
       return N(n.openVaultFolder(g.path));
-    }), w(1, "span", 34), F(2, "\u25B1"), I(), w(3, "span", 35), F(4), I(), w(5, "span", 6), F(6, "\u203A"), I()();
+    }), w(1, "span", 34), h(2, "\u25B1"), I(), w(3, "span", 35), h(4), I(), w(5, "span", 6), h(6, "\u203A"), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit;
@@ -39387,7 +39393,7 @@ function g$(e103, A) {
   }
 }
 function n$(e103, A) {
-  if (e103 & 1 && (w(0, "small"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "small"), h(1), I()), e103 & 2) {
     let B = a().$implicit, t = a(3);
     Y(), cA(t.vaultFileFolder(B) || "Vault");
   }
@@ -39398,7 +39404,7 @@ function i$(e103, A) {
     w(0, "button", 36), G("click", function() {
       let g = U(B).$implicit, n = a(3);
       return N(n.chooseVaultFile(g));
-    }), w(1, "span", 34), F(2, "\u25A4"), I(), w(3, "span", 35), F(4), b(5, n$, 2, 1, "small"), I()();
+    }), w(1, "span", 34), h(2, "\u25A4"), I(), w(3, "span", 35), h(4), b(5, n$, 2, 1, "small"), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(3);
@@ -39406,7 +39412,7 @@ function i$(e103, A) {
   }
 }
 function Q$(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1), I()), e103 & 2) {
     let B = a(3);
     Y(), CA(" ", B.vaultQuery.trim() ? "No hay archivos compatibles con esta b\xFAsqueda." : "No hay archivos compatibles en esta carpeta.", " ");
   }
@@ -39418,7 +39424,7 @@ function o$(e103, A) {
       U(B);
       let g = a(3);
       return N(g.vaultLimit = g.vaultLimit + 100);
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -39428,11 +39434,11 @@ function o$(e103, A) {
 function r$(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 12)(1, "div", 21)(2, "strong"), F(3), I(), w(4, "button", 22), G("click", function() {
+    w(0, "div", 12)(1, "div", 21)(2, "strong"), h(3), I(), w(4, "button", 22), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.closeVaultPicker());
-    }), F(5, " \xD7 "), I()(), b(6, A$, 2, 0, "p"), w(7, "label"), F(8, " Buscar por nombre "), w(9, "input", 23, 2), G("input", function(g) {
+    }), h(5, " \xD7 "), I()(), b(6, A$, 2, 0, "p"), w(7, "label"), h(8, " Buscar por nombre "), w(9, "input", 23, 2), G("input", function(g) {
       U(B);
       let n = a(2);
       return N(n.searchVault(g));
@@ -39442,11 +39448,11 @@ function r$(e103, A) {
       U(B);
       let g = a(2);
       return N(g.openVaultFolder(g.vaultParent));
-    }), F(13, " \u2191 "), I(), w(14, "button", 26), G("click", function() {
+    }), h(13, " \u2191 "), I(), w(14, "button", 26), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.openVaultFolder(""));
-    }), F(15, " Vault "), I(), nA(16, B$, 4, 3, null, null, p2), I(), b(18, e$, 5, 0, "div", 27), w(19, "div", 28), b(20, t$, 2, 0, "p", 18), nA(21, g$, 7, 2, "button", 29, p2), nA(23, i$, 6, 3, "button", 30, ZB), b(25, Q$, 2, 1, "p"), I(), b(26, o$, 2, 2, "button", 31), I();
+    }), h(15, " Vault "), I(), nA(16, B$, 4, 3, null, null, p2), I(), b(18, e$, 5, 0, "div", 27), w(19, "div", 28), b(20, t$, 2, 0, "p", 18), nA(21, g$, 7, 2, "button", 29, p2), nA(23, i$, 6, 3, "button", 30, ZB), b(25, Q$, 2, 1, "p"), I(), b(26, o$, 2, 2, "button", 31), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -39460,11 +39466,11 @@ function C$(e103, A) {
       U(B);
       let g = a().$implicit, n = a(2);
       return N(n.toggleFolder(g.id));
-    }), F(1), I(), w(2, "button", 41), G("click", function() {
+    }), h(1), I(), w(2, "button", 41), G("click", function() {
       U(B);
       let g = a().$implicit, n = a(2);
       return N(n.selectFolder(g.id));
-    }), w(3, "span", 42), F(4, "\u25B1"), I(), F(5), I();
+    }), w(3, "span", 42), h(4, "\u25B1"), I(), h(5), I();
   }
   if (e103 & 2) {
     let B = a().$implicit, t = a(2);
@@ -39478,7 +39484,7 @@ function c$(e103, A) {
       U(B);
       let n = a().$implicit, i = a(2);
       return N(i.openOptions(n, g));
-    }), w(2, "span", 42), F(3), I(), F(4), I();
+    }), w(2, "span", 42), h(3), I(), h(4), I();
   }
   if (e103 & 2) {
     let B = a().$implicit, t = a(2);
@@ -39531,7 +39537,7 @@ function w$(e103, A) {
     }), b(1, C$, 6, 5)(2, c$, 5, 5), b(3, E$, 3, 3, "button", 38), w(4, "button", 39), G("click", function(g) {
       let n = U(B).$implicit, i = a(2);
       return N(i.openOptions(n, g));
-    }), F(5, " \u22EF "), I()();
+    }), h(5, " \u22EF "), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = A.$index, g = a(2);
@@ -39539,7 +39545,7 @@ function w$(e103, A) {
   }
 }
 function s$(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, "Importa PDFs, im\xE1genes, Markdown o texto."), I());
+  e103 & 1 && (w(0, "p"), h(1, "Importa PDFs, im\xE1genes, Markdown o texto."), I());
 }
 function a$(e103, A) {
   if (e103 & 1) {
@@ -39547,7 +39553,7 @@ function a$(e103, A) {
     w(0, "button", 51), G("click", function() {
       let g = U(B).$implicit, n = a(2), i = a(2);
       return N(i.openPdfAt(n, g.value));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -39555,7 +39561,7 @@ function a$(e103, A) {
   }
 }
 function I$(e103, A) {
-  if (e103 & 1 && (w(0, "strong", 49), F(1, "Abrir PDF en\u2026"), I(), nA(2, a$, 2, 3, "button", 50, X_)), e103 & 2) {
+  if (e103 & 1 && (w(0, "strong", 49), h(1, "Abrir PDF en\u2026"), I(), nA(2, a$, 2, 3, "button", 50, X_)), e103 & 2) {
     let B = a(3);
     Y(2), iA(B.pdfLocations);
   }
@@ -39567,7 +39573,7 @@ function D$(e103, A) {
       U(B);
       let g = a(2), n = a(2);
       return N(n.pick(g.id));
-    }), F(1, " Desde el Vault "), I();
+    }), h(1, " Desde el Vault "), I();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -39583,7 +39589,7 @@ function Y$(e103, A) {
       a();
       let n = qB(10), i = a();
       return N(i.pickRelinkFile(g.id, n));
-    }), F(1, " Desde el equipo "), I();
+    }), h(1, " Desde el equipo "), I();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -39597,7 +39603,7 @@ function M$(e103, A) {
       U(B);
       let g = a(3);
       return N(g.relinking = null);
-    }), F(1, " \u2039 Volver "), I(), w(2, "strong", 49), F(3, "Volver a vincular"), I(), b(4, D$, 2, 1, "button", 50), b(5, Y$, 2, 1, "button", 50);
+    }), h(1, " \u2039 Volver "), I(), w(2, "strong", 49), h(3, "Volver a vincular"), I(), b(4, D$, 2, 1, "button", 50), b(5, Y$, 2, 1, "button", 50);
   }
   if (e103 & 2) {
     let B = a(3);
@@ -39610,7 +39616,7 @@ function F$(e103, A) {
     w(0, "button", 51), G("click", function() {
       let g = U(B).$implicit, n = a(2), i = a(2);
       return N(i.finishMove(n, g.id));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2), g = a(2);
@@ -39624,11 +39630,11 @@ function h$(e103, A) {
       U(B);
       let g = a(3);
       return N(g.moving = null);
-    }), F(1, " \u2039 Volver "), I(), w(2, "strong", 49), F(3, "Mover a carpeta"), I(), w(4, "div", 53)(5, "button", 54), G("click", function() {
+    }), h(1, " \u2039 Volver "), I(), w(2, "strong", 49), h(3, "Mover a carpeta"), I(), w(4, "div", 53)(5, "button", 54), G("click", function() {
       U(B);
       let g = a(), n = a(2);
       return N(n.finishMove(g, null));
-    }), F(6, " Sin carpeta "), I(), nA(7, F$, 2, 3, "button", 50, Z_), I();
+    }), h(6, " Sin carpeta "), I(), nA(7, F$, 2, 3, "button", 50, Z_), I();
   }
   if (e103 & 2) {
     let B = a(), t = a(2);
@@ -39642,7 +39648,7 @@ function l$(e103, A) {
       U(B);
       let g = a(3), n = a(2);
       return N(n.relinking = g);
-    }), F(1, " Volver a vincular "), I();
+    }), h(1, " Volver a vincular "), I();
   }
   if (e103 & 2) {
     let B = a(5);
@@ -39656,7 +39662,7 @@ function d$(e103, A) {
       U(B);
       let g = a(2), n = a(2);
       return N(n.placeEntry(g));
-    }), F(1, " Agregar a la p\xE1gina "), I(), b(2, l$, 2, 1, "button", 50);
+    }), h(1, " Agregar a la p\xE1gina "), I(), b(2, l$, 2, 1, "button", 50);
   }
   if (e103 & 2) {
     let B = a(2), t = a(2);
@@ -39670,7 +39676,7 @@ function U$(e103, A) {
       U(B);
       let g = a(2), n = a(2);
       return N(n.newChild(g.id));
-    }), F(1, " Nueva subcarpeta "), I();
+    }), h(1, " Nueva subcarpeta "), I();
   }
 }
 function N$(e103, A) {
@@ -39680,15 +39686,15 @@ function N$(e103, A) {
       U(B);
       let g = a(), n = a(2);
       return N(n.startRename(g));
-    }), F(3, " Renombrar "), I(), w(4, "button", 56), G("click", function() {
+    }), h(3, " Renombrar "), I(), w(4, "button", 56), G("click", function() {
       U(B);
       let g = a(), n = a(2);
       return N(n.startMove(g));
-    }), F(5, " Mover a carpeta\u2026 "), I(), w(6, "button", 51), G("click", function() {
+    }), h(5, " Mover a carpeta\u2026 "), I(), w(6, "button", 51), G("click", function() {
       U(B);
       let g = a(), n = a(2);
       return N(n.removeEntry(g));
-    }), F(7), I();
+    }), h(7), I();
   }
   if (e103 & 2) {
     let B = a(), t = a(2);
@@ -39714,7 +39720,7 @@ function u$(e103, A) {
   }
 }
 function G$(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, " Tambi\xE9n cambia el nombre del archivo en el Vault y actualiza los cuadernos que lo usan. Se conserva la extensi\xF3n. "), I());
+  e103 & 1 && (w(0, "p"), h(1, " Tambi\xE9n cambia el nombre del archivo en el Vault y actualiza los cuadernos que lo usan. Se conserva la extensi\xF3n. "), I());
 }
 function p$(e103, A) {
   if (e103 & 1) {
@@ -39723,15 +39729,15 @@ function p$(e103, A) {
       U(B);
       let n = a(2);
       return N(n.saveName(g));
-    }), w(1, "label"), F(2), I(), w(3, "input", 59), G("input", function(g) {
+    }), w(1, "label"), h(2), I(), w(3, "input", 59), G("input", function(g) {
       U(B);
       let n = a(2);
       return N(n.draft = n.value(g));
-    }), I(), b(4, G$, 2, 0, "p"), w(5, "div", 60)(6, "button", 61), F(7, " Guardar"), I(), w(8, "button", 32), G("click", function() {
+    }), I(), b(4, G$, 2, 0, "p"), w(5, "div", 60)(6, "button", 61), h(7, " Guardar"), I(), w(8, "button", 32), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.form = null);
-    }), F(9, " Cancelar "), I()()();
+    }), h(9, " Cancelar "), I()()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -39739,13 +39745,13 @@ function p$(e103, A) {
   }
 }
 function m$(e103, A) {
-  if (e103 & 1 && (w(0, "p", 18), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 18), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), CA(" ", B.editor.resourceRenameBusy ? "Renombrando recurso\u2026" : "Importando archivos\u2026", " ");
   }
 }
 function x$(e103, A) {
-  if (e103 & 1 && (w(0, "p", 19), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 19), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), cA(B.editor.importError);
   }
@@ -39757,11 +39763,11 @@ function f$(e103, A) {
       U(B);
       let g = a();
       return g.menu = !g.menu, N(g.options = null);
-    }), F(2, " Importar "), I(), w(3, "button", 10), G("click", function() {
+    }), h(2, " Importar "), I(), w(3, "button", 10), G("click", function() {
       U(B);
       let g = a();
       return N(g.startFolder());
-    }), F(4, " Nueva carpeta "), I()(), b(5, $_, 4, 2, "div", 11), b(6, r$, 27, 9, "div", 12), w(7, "input", 13, 0), G("change", function(g) {
+    }), h(4, " Nueva carpeta "), I()(), b(5, $_, 4, 2, "div", 11), b(6, r$, 27, 9, "div", 12), w(7, "input", 13, 0), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.importFiles(g));
@@ -40061,7 +40067,7 @@ var yF = class e90 {
         return t.drop(n, null);
       }), w(1, "div", 4)(2, "button", 5), G("click", function() {
         return t.toggle();
-      }), w(3, "span", 6), F(4), I(), w(5, "strong"), F(6, "Recursos"), I()(), b(7, q_, 2, 2, "button", 7), I(), b(8, f$, 19, 11), I()), B & 2 && (Y(2), P("aria-expanded", t.open), Y(2), cA(t.open ? "\u2304" : "\u203A"), Y(3), T(t.open && t.activeFolder ? 7 : -1), Y(), T(t.open ? 8 : -1));
+      }), w(3, "span", 6), h(4), I(), w(5, "strong"), h(6, "Recursos"), I()(), b(7, q_, 2, 2, "button", 7), I(), b(8, f$, 19, 11), I()), B & 2 && (Y(2), P("aria-expanded", t.open), Y(2), cA(t.open ? "\u2304" : "\u203A"), Y(3), T(t.open && t.activeFolder ? 7 : -1), Y(), T(t.open ? 8 : -1));
     }, dependencies: [YB, Gc, Xg, ut], styles: [`[_nghost-%COMP%] {
       display: block;
     }
@@ -40382,7 +40388,7 @@ async function m2(e103, A) {
 }
 var K$ = (e103, A) => A.object;
 function O$(e103, A) {
-  e103 & 1 && (w(0, "small"), F(1, "Capa oculta \xB7 se mostrar\xE1 al abrir"), I());
+  e103 & 1 && (w(0, "small"), h(1, "Capa oculta \xB7 se mostrar\xE1 al abrir"), I());
 }
 function X$(e103, A) {
   if (e103 & 1) {
@@ -40390,7 +40396,7 @@ function X$(e103, A) {
     w(0, "button", 3), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.chosen.emit(g));
-    }), w(1, "strong"), F(2), I(), w(3, "span"), F(4), I(), b(5, O$, 2, 0, "small"), I();
+    }), w(1, "strong"), h(2), I(), w(3, "span"), h(4), I(), b(5, O$, 2, 0, "small"), I();
   }
   if (e103 & 2) {
     let B = A.$implicit;
@@ -40427,9 +40433,9 @@ var xc = class e91 {
         return t.outside(n);
       }, Ue);
     }, inputs: { links: "links" }, outputs: { chosen: "chosen", dismissed: "dismissed" }, decls: 7, vars: 0, consts: [["role", "dialog", "aria-label", "Citas extra\xEDdas"], ["eraTouchActivate", "", "aria-label", "Cerrar citas extra\xEDdas", 3, "click"], ["eraTouchActivate", "", 1, "destination"], ["eraTouchActivate", "", 1, "destination", 3, "click"]], template: function(B, t) {
-      B & 1 && (w(0, "div", 0)(1, "header"), F(2, " Citas extra\xEDdas"), w(3, "button", 1), G("click", function() {
+      B & 1 && (w(0, "div", 0)(1, "header"), h(2, " Citas extra\xEDdas"), w(3, "button", 1), G("click", function() {
         return t.dismissed.emit();
-      }), F(4, " \xD7 "), I()(), nA(5, X$, 6, 3, "button", 2, K$), I()), B & 2 && (Y(5), iA(t.links));
+      }), h(4, " \xD7 "), I()(), nA(5, X$, 6, 3, "button", 2, K$), I()), B & 2 && (Y(5), iA(t.links));
     }, dependencies: [YB], styles: [`[_nghost-%COMP%] {
       position: absolute;
       z-index: 12;
@@ -40494,7 +40500,7 @@ function Z$(e103, A) {
       U(B);
       let g = a();
       return N(g.chosen.emit("pdf"));
-    }), F(1, "PDF"), I();
+    }), h(1, "PDF"), I();
   }
 }
 function q$(e103, A) {
@@ -40504,7 +40510,7 @@ function q$(e103, A) {
       U(B);
       let g = a();
       return N(g.copyRequested.emit("text"));
-    }), F(1, " Copiar texto "), I();
+    }), h(1, " Copiar texto "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -40518,11 +40524,11 @@ function _$(e103, A) {
       U(B);
       let g = a();
       return N(g.annotateText.emit());
-    }), F(1, " Anotar texto "), I();
+    }), h(1, " Anotar texto "), I();
   }
 }
 function $$(e103, A) {
-  e103 & 1 && (w(0, "small"), F(1, "Esta regi\xF3n no contiene texto seleccionable."), I());
+  e103 & 1 && (w(0, "small"), h(1, "Esta regi\xF3n no contiene texto seleccionable."), I());
 }
 var fc = class e93 {
   constructor() {
@@ -40556,13 +40562,13 @@ var fc = class e93 {
     }, inputs: { hasText: "hasText", canExtractPdf: "canExtractPdf", canAnnotate: "canAnnotate", copyBusy: "copyBusy" }, outputs: { copyRequested: "copyRequested", annotateText: "annotateText", chosen: "chosen", dismissed: "dismissed" }, decls: 17, vars: 7, consts: [["role", "dialog", "aria-label", "Extraer selecci\xF3n del PDF"], ["eraTouchActivate", "", "aria-label", "Cancelar extracci\xF3n", 1, "close", 3, "click"], [1, "choices"], ["eraTouchActivate", "", 3, "click", "disabled"], ["eraTouchActivate", "", 3, "click"], ["eraTouchActivate", ""], [1, "choices", "copy-choices"], ["eraTouchActivate", "", "aria-label", "Copiar selecci\xF3n como imagen", 3, "click", "disabled"], ["eraTouchActivate", "", 3, "disabled"], ["eraTouchActivate", "", 1, "annotate"], ["eraTouchActivate", "", 1, "annotate", 3, "click"]], template: function(B, t) {
       B & 1 && (w(0, "div", 0)(1, "button", 1), G("click", function() {
         return t.dismissed.emit();
-      }), F(2, " \xD7 "), I(), w(3, "p"), F(4, "\xBFQu\xE9 quieres extraer?"), I(), w(5, "div", 2)(6, "button", 3), G("click", function() {
+      }), h(2, " \xD7 "), I(), w(3, "p"), h(4, "\xBFQu\xE9 quieres extraer?"), I(), w(5, "div", 2)(6, "button", 3), G("click", function() {
         return t.chosen.emit("text");
-      }), F(7, " Texto "), I(), w(8, "button", 4), G("click", function() {
+      }), h(7, " Texto "), I(), w(8, "button", 4), G("click", function() {
         return t.chosen.emit("image");
-      }), F(9, "Imagen"), I(), b(10, Z$, 2, 0, "button", 5), I(), w(11, "div", 6)(12, "button", 7), G("click", function() {
+      }), h(9, "Imagen"), I(), b(10, Z$, 2, 0, "button", 5), I(), w(11, "div", 6)(12, "button", 7), G("click", function() {
         return t.copyRequested.emit("image");
-      }), F(13), I(), b(14, q$, 2, 1, "button", 8), I(), b(15, _$, 2, 0, "button", 9), b(16, $$, 2, 0, "small"), I()), B & 2 && (Y(6), x("disabled", !t.hasText), Y(4), T(t.canExtractPdf ? 10 : -1), Y(2), x("disabled", t.copyBusy), Y(), CA(" ", t.copyBusy ? "Copiando\u2026" : "Copiar", " "), Y(), T(t.hasText ? 14 : -1), Y(), T(t.canAnnotate && t.hasText ? 15 : -1), Y(), T(t.hasText ? -1 : 16));
+      }), h(13), I(), b(14, q$, 2, 1, "button", 8), I(), b(15, _$, 2, 0, "button", 9), b(16, $$, 2, 0, "small"), I()), B & 2 && (Y(6), x("disabled", !t.hasText), Y(4), T(t.canExtractPdf ? 10 : -1), Y(2), x("disabled", t.copyBusy), Y(), CA(" ", t.copyBusy ? "Copiando\u2026" : "Copiar", " "), Y(), T(t.hasText ? 14 : -1), Y(), T(t.canAnnotate && t.hasText ? 15 : -1), Y(), T(t.hasText ? -1 : 16));
     }, dependencies: [YB], styles: [`[_nghost-%COMP%] {
       position: absolute;
       z-index: 8;
@@ -40666,7 +40672,7 @@ function RF(e103, A, B, t, g, n, i, Q, o) {
       c = { kind: "pdf_fragment", data: o, preview: k, citation: B };
     } else c = { kind: "image", data: k, citation: B };
   }
-  let D = Q ?? e103.resources.objects.find((y) => y.content.kind === "pdf" && y.content.resource === A.id), h = D ? { x: D.x + D.width + 20, y: D.y } : e103.resourcePlacement(), l = e103.resources.objects.filter((y) => y.content.kind !== "pdf" && Math.abs(y.x - h.x) < 24), u = Math.max(h.y, ...l.map((y) => y.y + y.height + 16)), p = e103.resourceCommand({ action: "extract", content: c, x: h.x, y: u, width: E, height: s });
+  let D = Q ?? e103.resources.objects.find((y) => y.content.kind === "pdf" && y.content.resource === A.id), F = D ? { x: D.x + D.width + 20, y: D.y } : e103.resourcePlacement(), l = e103.resources.objects.filter((y) => y.content.kind !== "pdf" && Math.abs(y.x - F.x) < 24), u = Math.max(F.y, ...l.map((y) => y.y + y.height + 16)), p = e103.resourceCommand({ action: "extract", content: c, x: F.x, y: u, width: E, height: s });
   return p && (e103.setTool("select"), e103.selectObject(e103.resources.objects.at(-1).id)), p;
 }
 var AAA = ["raster"];
@@ -40705,11 +40711,11 @@ function nAA(e103, A) {
 function iAA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "span", 22), F(1, "Selecciona el destino"), I(), w(2, "button", 23), G("click", function() {
+    w(0, "span", 22), h(1, "Selecciona el destino"), I(), w(2, "button", 23), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.editor.cancelConnection());
-    }), F(3, " \xD7 "), I();
+    }), h(3, " \xD7 "), I();
   }
 }
 function QAA(e103, A) {
@@ -40719,7 +40725,7 @@ function QAA(e103, A) {
       U(B);
       let g = a(3);
       return N(g.editor.resourceCommand({ action: "disconnect_object", id: g.object.id }));
-    }), F(1, " Desconectar "), I();
+    }), h(1, " Desconectar "), I();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -40733,7 +40739,7 @@ function oAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.editor.startConnection(g.object.id));
-    }), F(1, " \u2197 Conectar "), I(), b(2, QAA, 2, 1, "button", 25);
+    }), h(1, " \u2197 Conectar "), I(), b(2, QAA, 2, 1, "button", 25);
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40747,7 +40753,7 @@ function rAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.origin.emit(g.citation));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40761,7 +40767,7 @@ function CAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.editor.restoreHandwritingBlock(g.object.id));
-    }), F(1, " Volver a trazos "), I();
+    }), h(1, " Volver a trazos "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40775,7 +40781,7 @@ function cAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.saveFragment());
-    }), F(1, " Guardar PDF "), I();
+    }), h(1, " Guardar PDF "), I();
   }
 }
 function EAA(e103, A) {
@@ -40785,7 +40791,7 @@ function EAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.createStudyCard());
-    }), F(1, " Crear tarjeta "), I();
+    }), h(1, " Crear tarjeta "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40799,7 +40805,7 @@ function wAA(e103, A) {
       U(B);
       let n = a(2);
       return N(n.setAppearance(g));
-    }), w(1, "option", 32), F(2, "Autom\xE1tico"), I(), w(3, "option", 33), F(4, "Claro"), I(), w(5, "option", 34), F(6, "Oscuro"), I()();
+    }), w(1, "option", 32), h(2, "Autom\xE1tico"), I(), w(3, "option", 33), h(4, "Claro"), I(), w(5, "option", 34), h(6, "Oscuro"), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40815,11 +40821,11 @@ function sAA(e103, A) {
       U(B);
       let g = a();
       return N(g.editor.copySelection(g.object.id));
-    }), F(2), I(), w(3, "button", 15), G("click", function() {
+    }), h(2), I(), w(3, "button", 15), G("click", function() {
       U(B);
       let g = a();
       return N(g.toggleLock());
-    }), $(4, "era-lock-icon", 16), F(5), I(), b(6, iAA, 4, 0)(7, oAA, 3, 2), b(8, rAA, 2, 3, "button", 17), b(9, CAA, 2, 1, "button", 18), b(10, cAA, 2, 0, "button", 19), b(11, EAA, 2, 1, "button", 20), b(12, wAA, 7, 2, "select", 21), I();
+    }), $(4, "era-lock-icon", 16), h(5), I(), b(6, iAA, 4, 0)(7, oAA, 3, 2), b(8, rAA, 2, 3, "button", 17), b(9, CAA, 2, 1, "button", 18), b(10, cAA, 2, 0, "button", 19), b(11, EAA, 2, 1, "button", 20), b(12, wAA, 7, 2, "select", 21), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -40833,19 +40839,19 @@ function aAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.page(-1));
-    }), F(1, " \u2039 "), I(), w(2, "input", 39), G("change", function(g) {
+    }), h(1, " \u2039 "), I(), w(2, "input", 39), G("change", function(g) {
       U(B);
       let n = a(2);
       return N(n.goPage(g));
-    }), I(), w(3, "span", 40), F(4), I(), w(5, "button", 41), G("click", function() {
+    }), I(), w(3, "span", 40), h(4), I(), w(5, "button", 41), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.page(1));
-    }), F(6, " \u203A "), I(), w(7, "button", 42), G("click", function() {
+    }), h(6, " \u203A "), I(), w(7, "button", 42), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.editor.openPdfReader(g.resource.id, g.pdfPage, g.object.id));
-    }), F(8, " \u26F6 "), I();
+    }), h(8, " \u26F6 "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40859,7 +40865,7 @@ function IAA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.remove());
-    }), F(1, " \xD7 "), I();
+    }), h(1, " \xD7 "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -40885,7 +40891,7 @@ function DAA(e103, A) {
       U(B);
       let n = a();
       return N(n.endMove(g, false));
-    }), w(1, "span", 36), F(2), I(), b(3, aAA, 9, 6), b(4, IAA, 2, 1, "button", 37), I();
+    }), w(1, "span", 36), h(2), I(), b(3, aAA, 9, 6), b(4, IAA, 2, 1, "button", 37), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -40965,7 +40971,7 @@ function dAA(e103, A) {
       U(B);
       let n = a().$implicit, i = a(2);
       return N(i.showExcerpts(n, g));
-    }), w(1, "title"), F(2, "Ver citas extra\xEDdas"), I()();
+    }), w(1, "title"), h(2, "Ver citas extra\xEDdas"), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a().$implicit, g = a(2);
@@ -40979,14 +40985,14 @@ function UAA(e103, A) {
   }
 }
 function NAA(e103, A) {
-  e103 & 1 && (w(0, "div", 50), F(1, "Abriendo p\xE1gina\u2026"), I());
+  e103 & 1 && (w(0, "div", 50), h(1, "Abriendo p\xE1gina\u2026"), I());
 }
 function uAA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 51)(1, "span"), F(2), I(), w(3, "button", 54), G("click", function(g) {
+    w(0, "div", 51)(1, "span"), h(2), I(), w(3, "button", 54), G("click", function(g) {
       return U(B), a(2).retry(), N(g.stopPropagation());
-    }), F(4, " Reintentar "), I()();
+    }), h(4, " Reintentar "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -42194,8 +42200,8 @@ function Ws(e103, A, B, t) {
   let g = e103.x + e103.width / 2, n = e103.y + e103.height / 2, i = A.x + A.width / 2, Q = A.y + A.height / 2, o = Math.abs(i - g) >= Math.abs(Q - n), r = (o ? i - g : Q - n) >= 0, C = o ? r ? ["right", "left"] : ["left", "right"] : r ? ["bottom", "top"] : ["top", "bottom"], c = (y, k) => {
     let [H, v] = { top: [0, -1], right: [1, 0], bottom: [0, 1], left: [-1, 0] }[k];
     return { x: y.x + (1 + H) * y.width / 2, y: y.y + (1 + v) * y.height / 2, dx: H, dy: v };
-  }, E = c(e103, B ?? C[0]), s = c(A, t ?? C[1]), D = { x: E.x, y: E.y }, h = { x: s.x, y: s.y }, l = Math.min(240, Math.max(24, Math.hypot(h.x - D.x, h.y - D.y) * 0.5)), u = { x: D.x + E.dx * l, y: D.y + E.dy * l }, p = { x: h.x + s.dx * l, y: h.y + s.dy * l };
-  return { a: D, b: h, c1: u, c2: p };
+  }, E = c(e103, B ?? C[0]), s = c(A, t ?? C[1]), D = { x: E.x, y: E.y }, F = { x: s.x, y: s.y }, l = Math.min(240, Math.max(24, Math.hypot(F.x - D.x, F.y - D.y) * 0.5)), u = { x: D.x + E.dx * l, y: D.y + E.dy * l }, p = { x: F.x + s.dx * l, y: F.y + s.dy * l };
+  return { a: D, b: F, c1: u, c2: p };
 }
 function Ps(e103) {
   let { a: A, b: B, c1: t, c2: g } = e103;
@@ -42276,11 +42282,11 @@ function zAA(e103, A) {
       U(B);
       let g = a(), n = a();
       return N(n.toggleConnectionLock(g));
-    }), $(2, "era-lock-icon", 23), F(3), I(), w(4, "button", 24), G("click", function() {
+    }), $(2, "era-lock-icon", 23), h(3), I(), w(4, "button", 24), G("click", function() {
       U(B);
       let g = a(), n = a();
       return N(n.editor.resourceCommand({ action: "disconnect", id: g.id }));
-    }), F(5, " Desconectar "), I()();
+    }), h(5, " Desconectar "), I()();
   }
   if (e103 & 2) {
     let B = a(), t = a();
@@ -42983,7 +42989,7 @@ function ZAA(e103, A) {
     w(0, "button", 6), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.picked.emit(g));
-    }), $(1, "span", 7), w(2, "span")(3, "strong"), F(4), w(5, "small"), F(6), I()(), w(7, "span", 8), F(8), I()()();
+    }), $(1, "span", 7), w(2, "span")(3, "strong"), h(4), w(5, "small"), h(6), I()(), w(7, "span", 8), h(8), I()()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -42991,10 +42997,10 @@ function ZAA(e103, A) {
   }
 }
 function qAA(e103, A) {
-  e103 & 1 && (w(0, "p", 4), F(1, " Selecciona texto para resaltarlo o a\xF1adir un comentario. "), I());
+  e103 & 1 && (w(0, "p", 4), h(1, " Selecciona texto para resaltarlo o a\xF1adir un comentario. "), I());
 }
 function _AA(e103, A) {
-  e103 & 1 && (w(0, "p", 4), F(1, "Esta anotaci\xF3n est\xE1 bloqueada."), I());
+  e103 & 1 && (w(0, "p", 4), h(1, "Esta anotaci\xF3n est\xE1 bloqueada."), I());
 }
 function $AA(e103, A) {
   if (e103 & 1) {
@@ -43003,7 +43009,7 @@ function $AA(e103, A) {
       U(B);
       let g = a(), n = a();
       return N(n.patch.emit({ annotation: g, patch: { action: "contents", text: n.text } }));
-    }), F(1, " Guardar comentario "), I();
+    }), h(1, " Guardar comentario "), I();
   }
   if (e103 & 2) {
     let B = a(), t = a();
@@ -43013,20 +43019,20 @@ function $AA(e103, A) {
 function ABA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "p", 4), F(1, " Esta marca est\xE1 vinculada a una cita. Al borrar la cita del Lienzo, se quita la marca. "), I(), w(2, "button", 19), G("click", function() {
+    w(0, "p", 4), h(1, " Esta marca est\xE1 vinculada a una cita. Al borrar la cita del Lienzo, se quita la marca. "), I(), w(2, "button", 19), G("click", function() {
       U(B);
       let g = a(), n = a();
       return N(n.showCites.emit(g));
-    }), F(3, " Ver citas extra\xEDdas "), I();
+    }), h(3, " Ver citas extra\xEDdas "), I();
   }
 }
 function BBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 15)(1, "strong"), F(2), I(), w(3, "p"), F(4), I(), w(5, "button", 19), G("click", function() {
+    w(0, "div", 15)(1, "strong"), h(2), I(), w(3, "p"), h(4), I(), w(5, "button", 19), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.picked.emit(g));
-    }), F(6, " Editar comentario "), I()();
+    }), h(6, " Editar comentario "), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit;
@@ -43039,29 +43045,29 @@ function eBA(e103, A) {
     w(0, "button", 19), G("click", function() {
       let g = U(B), n = a(2);
       return N(n.picked.emit(g));
-    }), F(1, " Volver a la anotaci\xF3n "), I();
+    }), h(1, " Volver a la anotaci\xF3n "), I();
   }
 }
 function tBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 5)(1, "h3"), F(2), I(), b(3, _AA, 2, 0, "p", 4), w(4, "era-pdf-annotation-colors", 9), G("colorChange", function(g) {
+    w(0, "section", 5)(1, "h3"), h(2), I(), b(3, _AA, 2, 0, "p", 4), w(4, "era-pdf-annotation-colors", 9), G("colorChange", function(g) {
       U(B);
       let n = a();
       return N(n.color = g);
-    }), I(), w(5, "label", 10), F(6, "Opacidad "), w(7, "input", 11), G("input", function(g) {
+    }), I(), w(5, "label", 10), h(6, "Opacidad "), w(7, "input", 11), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.opacity = +g.target.value);
-    }), I(), w(8, "output"), F(9), I()(), w(10, "button", 12), G("click", function() {
+    }), I(), w(8, "output"), h(9), I()(), w(10, "button", 12), G("click", function() {
       U(B);
       let g = a();
       return N(g.applyStyle());
-    }), F(11, " Aplicar color "), I(), w(12, "label"), F(13, "Comentario"), w(14, "textarea", 13), G("input", function(g) {
+    }), h(11, " Aplicar color "), I(), w(12, "label"), h(13, "Comentario"), w(14, "textarea", 13), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.text = g.target.value);
-    }), I()(), b(15, $AA, 2, 1, "button", 14), b(16, ABA, 4, 0), nA(17, BBA, 7, 2, "div", 15, H2, true), w(19, "label"), F(20, "A\xF1adir comentario"), w(21, "textarea", 16), G("input", function(g) {
+    }), I()(), b(15, $AA, 2, 1, "button", 14), b(16, ABA, 4, 0), nA(17, BBA, 7, 2, "div", 15, H2, true), w(19, "label"), h(20, "A\xF1adir comentario"), w(21, "textarea", 16), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.replyText = g.target.value);
@@ -43069,10 +43075,10 @@ function tBA(e103, A) {
       U(B);
       let g = a();
       return N(g.addReply());
-    }), F(23, " A\xF1adir comentario "), I(), b(24, eBA, 2, 0, "button", 17), w(25, "button", 18), G("click", function() {
+    }), h(23, " A\xF1adir comentario "), I(), b(24, eBA, 2, 0, "button", 17), w(25, "button", 18), G("click", function() {
       let g = U(B), n = a();
       return N(n.patch.emit({ annotation: g, patch: { action: "delete" } }));
-    }), F(26, " Eliminar anotaci\xF3n "), I()();
+    }), h(26, " Eliminar anotaci\xF3n "), I()();
   }
   if (e103 & 2) {
     let B, t = A, g = a();
@@ -43118,9 +43124,9 @@ var bF = class e98 {
   }
   static {
     this.\u0275cmp = BB({ type: e98, selectors: [["era-pdf-annotation-panel"]], inputs: { annotations: "annotations", selected: "selected", busy: "busy" }, outputs: { picked: "picked", patch: "patch", closed: "closed", showCites: "showCites" }, features: [Pt], decls: 11, vars: 2, consts: [["aria-label", "Anotaciones del PDF"], ["eraTouchActivate", "", "aria-label", "Cerrar anotaciones", 3, "click"], ["aria-label", "Lista de anotaciones", 1, "list"], ["eraTouchActivate", "", 1, "annotation-row", 3, "active"], [1, "muted"], ["aria-label", "Editar anotaci\xF3n", 1, "inspector"], ["eraTouchActivate", "", 1, "annotation-row", 3, "click"], [1, "dot"], [1, "preview"], [3, "colorChange", "color", "disabled"], [1, "opacity"], ["aria-label", "Opacidad de la anotaci\xF3n", "type", "range", "min", "5", "max", "100", 3, "input", "value", "disabled"], ["eraTouchActivate", "", 1, "save", 3, "click", "disabled"], ["aria-label", "Comentario de la anotaci\xF3n", "maxlength", "100000", 3, "input", "value", "readOnly", "disabled"], ["eraTouchActivate", "", 1, "save", 3, "disabled"], [1, "reply"], ["aria-label", "Nuevo comentario en anotaci\xF3n", "maxlength", "100000", 3, "input", "value", "disabled"], ["eraTouchActivate", ""], ["eraTouchActivate", "", "aria-label", "Eliminar anotaci\xF3n del PDF", 1, "delete", 3, "click", "disabled"], ["eraTouchActivate", "", 3, "click"]], template: function(B, t) {
-      if (B & 1 && (w(0, "aside", 0)(1, "header")(2, "strong"), F(3, "Anotaciones"), I(), w(4, "button", 1), G("click", function() {
+      if (B & 1 && (w(0, "aside", 0)(1, "header")(2, "strong"), h(3, "Anotaciones"), I(), w(4, "button", 1), G("click", function() {
         return t.closed.emit();
-      }), F(5, " \xD7 "), I()(), w(6, "div", 2), nA(7, ZAA, 9, 7, "button", 3, H2, true, qAA, 2, 0, "p", 4), I(), b(10, tBA, 27, 19, "section", 5), I()), B & 2) {
+      }), h(5, " \xD7 "), I()(), w(6, "div", 2), nA(7, ZAA, 9, 7, "button", 3, H2, true, qAA, 2, 0, "p", 4), I(), b(10, tBA, 27, 19, "section", 5), I()), B & 2) {
         let g;
         Y(7), iA(t.roots), Y(3), T((g = t.selected) ? 10 : -1, g);
       }
@@ -43324,8 +43330,8 @@ function oBA(e103, A, B) {
 function rBA(e103, A, B) {
   let t = /* @__PURE__ */ new Map();
   for (let [n, i, Q, o, r, C, c, E] of B) {
-    let s = e103 === "es" && Q ? "es" : i ? "en" : "es", D = s === "en" ? i : Q, h = e103 === "en" ? r : o, l = e103 === "en" ? o : r, u = e103 === "es" && c.length ? c : C, p = t.get(n);
-    p || (p = { partOfSpeech: n, label: nBA[n] ?? "Otros usos", senses: [] }, t.set(n, p)), p.senses.push({ definition: D, definitionLanguage: s, translations: h, synonyms: l.filter((y) => y !== A), examples: u, exampleLanguage: e103 === "es" && c.length ? "es" : "en", source: E === "n" ? "WordNet" : "WikDict" });
+    let s = e103 === "es" && Q ? "es" : i ? "en" : "es", D = s === "en" ? i : Q, F = e103 === "en" ? r : o, l = e103 === "en" ? o : r, u = e103 === "es" && c.length ? c : C, p = t.get(n);
+    p || (p = { partOfSpeech: n, label: nBA[n] ?? "Otros usos", senses: [] }, t.set(n, p)), p.senses.push({ definition: D, definitionLanguage: s, translations: F, synonyms: l.filter((y) => y !== A), examples: u, exampleLanguage: e103 === "es" && c.length ? "es" : "en", source: E === "n" ? "WordNet" : "WikDict" });
   }
   let g = (n) => ZG.includes(n) ? ZG.indexOf(n) : ZG.length;
   return { language: e103, targetLanguage: e103 === "en" ? "es" : "en", lemma: A, groups: [...t.values()].sort((n, i) => g(n.partOfSpeech) - g(i.partOfSpeech)) };
@@ -43379,7 +43385,7 @@ function FBA(e103, A) {
       U(B);
       let g = a();
       return g.pdfViewMenuOpen = !g.pdfViewMenuOpen, N(g.pdfActionsMenuOpen = false);
-    }), F(1, " \u2630 "), I();
+    }), h(1, " \u2630 "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -43407,7 +43413,7 @@ function lBA(e103, A) {
       U(B);
       let g = a();
       return g.pdfActionsMenuOpen = !g.pdfActionsMenuOpen, N(g.pdfViewMenuOpen = false);
-    }), F(1, " \u2630 "), I();
+    }), h(1, " \u2630 "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -43421,7 +43427,7 @@ function dBA(e103, A) {
       U(B);
       let g = a();
       return N(g.dictionaryOpen ? g.closeDictionary() : g.openDictionary(g.selectedWord ?? ""));
-    }), F(1, " A\u2194A"), w(2, "span"), F(3, "Diccionario"), I()();
+    }), h(1, " A\u2194A"), w(2, "span"), h(3, "Diccionario"), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43435,15 +43441,15 @@ function UBA(e103, A) {
       U(B);
       let g = a();
       return N(g.go(g.page - 1));
-    }), F(3, " \u2039 "), I(), w(4, "input", 77), G("change", function(g) {
+    }), h(3, " \u2039 "), I(), w(4, "input", 77), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.inputPage(g));
-    }), I(), w(5, "span"), F(6), I(), w(7, "button", 78), G("click", function() {
+    }), I(), w(5, "span"), h(6), I(), w(7, "button", 78), G("click", function() {
       U(B);
       let g = a();
       return N(g.go(g.page + 1));
-    }), F(8, " \u203A "), I()(), w(9, "div", 79)(10, "button", 80), G("click", function() {
+    }), h(8, " \u203A "), I()(), w(9, "div", 79)(10, "button", 80), G("click", function() {
       U(B);
       let g = a();
       return N(g.toggleOutline());
@@ -43471,15 +43477,15 @@ function UBA(e103, A) {
       U(B);
       let g = a();
       return N(g.setZoom(g.zoom / 1.2));
-    }), F(30, " \u2212 "), I(), w(31, "output", 92), F(32), I(), w(33, "button", 93), G("click", function() {
+    }), h(30, " \u2212 "), I(), w(31, "output", 92), h(32), I(), w(33, "button", 93), G("click", function() {
       U(B);
       let g = a();
       return N(g.setZoom(g.zoom * 1.2));
-    }), F(34, " + "), I(), w(35, "button", 94), G("click", function() {
+    }), h(34, " + "), I(), w(35, "button", 94), G("click", function() {
       U(B);
       let g = a();
       return N(g.fit());
-    }), F(36, " Ajustar "), I()()();
+    }), h(36, " Ajustar "), I()()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43493,11 +43499,11 @@ function NBA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.changeReadingFont(-2));
-    }), F(2, " A\u2212 "), I(), w(3, "output"), F(4), I(), w(5, "button", 98), G("click", function() {
+    }), h(2, " A\u2212 "), I(), w(3, "output"), h(4), I(), w(5, "button", 98), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.changeReadingFont(2));
-    }), F(6, " A+ "), I()();
+    }), h(6, " A+ "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -43511,11 +43517,11 @@ function uBA(e103, A) {
       U(B);
       let g = a();
       return N(g.setReadingLayout("page"));
-    }), F(3, " P\xE1gina "), I(), w(4, "button", 42), G("click", function() {
+    }), h(3, " P\xE1gina "), I(), w(4, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return N(g.setReadingLayout("text"));
-    }), F(5, " Texto "), I()(), b(6, NBA, 7, 3, "div", 96), I();
+    }), h(5, " Texto "), I()(), b(6, NBA, 7, 3, "div", 96), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -43540,7 +43546,7 @@ function mBA(e103, A) {
     w(0, "button", 42), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.setEraserSize(g));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -43550,11 +43556,11 @@ function mBA(e103, A) {
 function xBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 47)(1, "div", 100)(2, "strong"), F(3, "Borrador"), I(), w(4, "button", 101), G("click", function() {
+    w(0, "section", 47)(1, "div", 100)(2, "strong"), h(3, "Borrador"), I(), w(4, "button", 101), G("click", function() {
       U(B);
       let g = a();
       return N(g.eraserPropertiesOpen = false);
-    }), F(5, " \xD7 "), I()(), w(6, "div", 102), $(7, "span"), w(8, "output"), F(9), I()(), w(10, "div", 103)(11, "label", 104), F(12, "Tama\xF1o "), w(13, "output"), F(14), I()(), w(15, "div", 105)(16, "input", 106), G("input", function(g) {
+    }), h(5, " \xD7 "), I()(), w(6, "div", 102), $(7, "span"), w(8, "output"), h(9), I()(), w(10, "div", 103)(11, "label", 104), h(12, "Tama\xF1o "), w(13, "output"), h(14), I()(), w(15, "div", 105)(16, "input", 106), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.setEraserSize(+g.target.value));
@@ -43566,15 +43572,15 @@ function xBA(e103, A) {
       U(B);
       let g = a();
       return N(g.setEraserSize(g.Math.max(1, g.eraserSize - 1)));
-    }), F(20, " \u2212 "), I(), w(21, "div", 110), nA(22, mBA, 2, 3, "button", 111, ZB), I(), w(24, "button", 112), G("click", function() {
+    }), h(20, " \u2212 "), I(), w(21, "div", 110), nA(22, mBA, 2, 3, "button", 111, ZB), I(), w(24, "button", 112), G("click", function() {
       U(B);
       let g = a();
       return N(g.setEraserSize(g.Math.min(200, g.eraserSize + 1)));
-    }), F(25, " + "), I()()(), w(26, "div", 103)(27, "label", 113), F(28, "Opacidad "), w(29, "output"), F(30), I()(), w(31, "div", 108)(32, "button", 114), G("click", function() {
+    }), h(25, " + "), I()()(), w(26, "div", 103)(27, "label", 113), h(28, "Opacidad "), w(29, "output"), h(30), I()(), w(31, "div", 108)(32, "button", 114), G("click", function() {
       U(B);
       let g = a();
       return N(g.setEraserOpacity(g.Math.max(1, g.eraserOpacity - 1)));
-    }), F(33, " \u2212 "), I(), w(34, "div", 105)(35, "input", 115), G("input", function(g) {
+    }), h(33, " \u2212 "), I(), w(34, "div", 105)(35, "input", 115), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.setEraserOpacity(+g.target.value));
@@ -43586,11 +43592,11 @@ function xBA(e103, A) {
       U(B);
       let g = a();
       return N(g.setEraserOpacity(g.Math.min(100, g.eraserOpacity + 1)));
-    }), F(38, " + "), I()()(), w(39, "label", 118), F(40, "Borrar "), w(41, "select", 119), G("change", function(g) {
+    }), h(38, " + "), I()()(), w(39, "label", 118), h(40, "Borrar "), w(41, "select", 119), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setEraserMode(g.target.value));
-    }), w(42, "option", 120), F(43, "Parte del trazo"), I(), w(44, "option", 121), F(45, "Anotaci\xF3n completa"), I()()(), w(46, "p", 122), F(47), I()();
+    }), w(42, "option", 120), h(43, "Parte del trazo"), I(), w(44, "option", 121), h(45, "Anotaci\xF3n completa"), I()()(), w(46, "p", 122), h(47), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43604,23 +43610,23 @@ function fBA(e103, A) {
       U(B);
       let g = a();
       return g.toggleAnnotations(), N(g.pdfActionsMenuOpen = false);
-    }), F(2, " Anotaciones "), I(), w(3, "button", 42), G("click", function() {
+    }), h(2, " Anotaciones "), I(), w(3, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return g.placeComment(), N(g.pdfActionsMenuOpen = false);
-    }), F(4, " Comentar "), I(), w(5, "button", 124), G("click", function() {
+    }), h(4, " Comentar "), I(), w(5, "button", 124), G("click", function() {
       U(B);
       let g = a();
       return g.toggleInsert(), N(g.pdfActionsMenuOpen = false);
-    }), F(6, " A\xF1adir texto o p\xE1gina "), I(), w(7, "button", 42), G("click", function() {
+    }), h(6, " A\xF1adir texto o p\xE1gina "), I(), w(7, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return g.chooseEraser(), N(g.pdfActionsMenuOpen = false);
-    }), F(8, " Opciones del borrador PDF "), I(), w(9, "button", 34), G("click", function() {
+    }), h(8, " Opciones del borrador PDF "), I(), w(9, "button", 34), G("click", function() {
       U(B);
       let g = a();
       return N(g.close());
-    }), F(10, " Cerrar PDF "), I()();
+    }), h(10, " Cerrar PDF "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43630,23 +43636,23 @@ function fBA(e103, A) {
 function yBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 49)(1, "div", 100)(2, "strong"), F(3, "A\xF1adir"), I(), w(4, "button", 125), G("click", function() {
+    w(0, "section", 49)(1, "div", 100)(2, "strong"), h(3, "A\xF1adir"), I(), w(4, "button", 125), G("click", function() {
       U(B);
       let g = a();
       return N(g.insertOpen = false);
-    }), F(5, " \xD7 "), I()(), w(6, "button", 126), G("click", function() {
+    }), h(5, " \xD7 "), I()(), w(6, "button", 126), G("click", function() {
       U(B);
       let g = a();
       return N(g.placeText());
-    }), w(7, "b"), F(8, "T"), I(), w(9, "span"), F(10, "Caja de texto"), w(11, "small"), F(12, "Escribe directamente sobre la p\xE1gina"), I()()(), w(13, "button", 127), G("click", function() {
+    }), w(7, "b"), h(8, "T"), I(), w(9, "span"), h(10, "Caja de texto"), w(11, "small"), h(12, "Escribe directamente sobre la p\xE1gina"), I()()(), w(13, "button", 127), G("click", function() {
       U(B);
       let g = a();
       return g.insertOpen = false, N(g.placeComment());
-    }), w(14, "b"), F(15, "\u2630"), I(), w(16, "span"), F(17, "Comentario"), w(18, "small"), F(19, "Deja una nota en el documento"), I()()(), w(20, "button", 128), G("click", function() {
+    }), w(14, "b"), h(15, "\u2630"), I(), w(16, "span"), h(17, "Comentario"), w(18, "small"), h(19, "Deja una nota en el documento"), I()()(), w(20, "button", 128), G("click", function() {
       U(B);
       let g = a();
       return g.insertOpen = false, N(!g.pagesOpen && g.togglePages());
-    }), w(21, "b"), F(22, "\u25A4"), I(), w(23, "span"), F(24, "P\xE1gina"), w(25, "small"), F(26, "A\xF1ade papel blanco, cuadriculado o rayado"), I()()()();
+    }), w(21, "b"), h(22, "\u25A4"), I(), w(23, "span"), h(24, "P\xE1gina"), w(25, "small"), h(26, "A\xF1ade papel blanco, cuadriculado o rayado"), I()()()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43671,7 +43677,7 @@ function JBA(e103, A) {
     w(0, "button", 42), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.changePdfBrush(g.id));
-    }), AA(), w(1, "svg", 151), nA(2, HBA, 1, 4, ":svg:path", null, MB), I(), jA(), w(4, "span"), F(5), I()();
+    }), AA(), w(1, "svg", 151), nA(2, HBA, 1, 4, ":svg:path", null, MB), I(), jA(), w(4, "span"), h(5), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -43684,7 +43690,7 @@ function kBA(e103, A) {
     w(0, "button", 42), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.updatePreset({ width: g }));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -43711,11 +43717,11 @@ function bBA(e103, A) {
       U(B);
       let n = a();
       return N(n.updatePreset({ name: g.target.value }));
-    }), I(), w(4, "span"), F(5, "Herramienta de escritura"), I()(), w(6, "button", 130), G("click", function() {
+    }), I(), w(4, "span"), h(5, "Herramienta de escritura"), I()(), w(6, "button", 130), G("click", function() {
       U(B);
       let g = a();
       return N(g.propertiesPinned = !g.propertiesPinned);
-    }), F(7, " \u2316"), I(), w(8, "button", 131), G("click", function() {
+    }), h(7, " \u2316"), I(), w(8, "button", 131), G("click", function() {
       U(B);
       let g = a();
       return N(g.removePreset());
@@ -43723,7 +43729,7 @@ function bBA(e103, A) {
       U(B);
       let g = a();
       return N(g.propertiesOpen = false);
-    }), F(12, " \xD7 "), I()(), AA(), w(13, "svg", 134), nA(14, RBA, 1, 4, ":svg:path", null, MB), I(), jA(), w(16, "div", 135), nA(17, JBA, 6, 11, "button", 111, P2), I(), w(19, "div", 103)(20, "label", 136), F(21, "Tama\xF1o "), w(22, "output"), F(23), I()(), w(24, "div", 105)(25, "input", 137), G("input", function(g) {
+    }), h(12, " \xD7 "), I()(), AA(), w(13, "svg", 134), nA(14, RBA, 1, 4, ":svg:path", null, MB), I(), jA(), w(16, "div", 135), nA(17, JBA, 6, 11, "button", 111, P2), I(), w(19, "div", 103)(20, "label", 136), h(21, "Tama\xF1o "), w(22, "output"), h(23), I()(), w(24, "div", 105)(25, "input", 137), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.updatePreset({ width: +g.target.value }));
@@ -43735,19 +43741,19 @@ function bBA(e103, A) {
       U(B);
       let g = a();
       return N(g.updatePreset({ width: g.Math.max(0.5, g.activePreset.width - 0.5) }));
-    }), F(29, " \u2212 "), I(), w(30, "div", 110), nA(31, kBA, 2, 3, "button", 111, ZB), I(), w(33, "button", 140), G("click", function() {
+    }), h(29, " \u2212 "), I(), w(30, "div", 110), nA(31, kBA, 2, 3, "button", 111, ZB), I(), w(33, "button", 140), G("click", function() {
       U(B);
       let g = a();
       return N(g.updatePreset({ width: g.Math.min(96, g.activePreset.width + 0.5) }));
-    }), F(34, " + "), I()()(), w(35, "h3"), F(36, "Apariencia"), I(), w(37, "div", 141), nA(38, jBA, 1, 6, "button", 142, ZB), w(40, "label", 143)(41, "input", 144), G("input", function(g) {
+    }), h(34, " + "), I()()(), w(35, "h3"), h(36, "Apariencia"), I(), w(37, "div", 141), nA(38, jBA, 1, 6, "button", 142, ZB), w(40, "label", 143)(41, "input", 144), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.updatePreset({ color: g.target.value }));
-    }), I()()(), w(42, "div", 103)(43, "label", 145), F(44, "Opacidad "), w(45, "output"), F(46), I()(), w(47, "div", 108)(48, "button", 146), G("click", function() {
+    }), I()()(), w(42, "div", 103)(43, "label", 145), h(44, "Opacidad "), w(45, "output"), h(46), I()(), w(47, "div", 108)(48, "button", 146), G("click", function() {
       U(B);
       let g = a();
       return N(g.updatePreset({ opacity: g.Math.max(1, g.activePreset.opacity - 1) }));
-    }), F(49, " \u2212 "), I(), w(50, "div", 105)(51, "input", 147), G("input", function(g) {
+    }), h(49, " \u2212 "), I(), w(50, "div", 105)(51, "input", 147), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.updatePreset({ opacity: +g.target.value }));
@@ -43759,11 +43765,11 @@ function bBA(e103, A) {
       U(B);
       let g = a();
       return N(g.updatePreset({ opacity: g.Math.min(100, g.activePreset.opacity + 1) }));
-    }), F(54, " + "), I()()(), w(55, "button", 150), G("click", function() {
+    }), h(54, " + "), I()()(), w(55, "button", 150), G("click", function() {
       U(B);
       let g = a();
       return N(g.addPreset());
-    }), F(56, " \uFF0B Duplicar como favorito "), I()();
+    }), h(56, " \uFF0B Duplicar como favorito "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -43771,7 +43777,7 @@ function bBA(e103, A) {
   }
 }
 function TBA(e103, A) {
-  e103 & 1 && (w(0, "p", 157), F(1, "Marcadores guardados en este dispositivo."), I());
+  e103 & 1 && (w(0, "p", 157), h(1, "Marcadores guardados en este dispositivo."), I());
 }
 function vBA(e103, A) {
   if (e103 & 1) {
@@ -43779,7 +43785,7 @@ function vBA(e103, A) {
     w(0, "div", 171)(1, "button", 42), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.visitPage(g));
-    }), w(2, "span", 174), $(3, "canvas", 175), I(), w(4, "span"), F(5), I()(), w(6, "button", 176), G("click", function() {
+    }), w(2, "span", 174), $(3, "canvas", 175), I(), w(4, "span"), h(5), I()(), w(6, "button", 176), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.toggleBookmark(g));
     }), AA(), w(7, "svg", 23), $(8, "path", 177), I()()();
@@ -43790,7 +43796,7 @@ function vBA(e103, A) {
   }
 }
 function WBA(e103, A) {
-  e103 & 1 && (w(0, "p", 172), F(1, " Todav\xEDa no hay hojas marcadas. Usa Marcar para guardarlas aqu\xED. "), I());
+  e103 & 1 && (w(0, "p", 172), h(1, " Todav\xEDa no hay hojas marcadas. Usa Marcar para guardarlas aqu\xED. "), I());
 }
 function PBA(e103, A) {
   if (e103 & 1) {
@@ -43799,53 +43805,53 @@ function PBA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.moreThumbnails());
-    }), F(1, " Cargar m\xE1s p\xE1ginas "), I();
+    }), h(1, " Cargar m\xE1s p\xE1ginas "), I();
   }
 }
 function SBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 51)(1, "div", 152)(2, "strong"), F(3, "Hojas"), I(), w(4, "button", 153), G("click", function() {
+    w(0, "section", 51)(1, "div", 152)(2, "strong"), h(3, "Hojas"), I(), w(4, "button", 153), G("click", function() {
       U(B);
       let g = a();
       return N(g.togglePages());
-    }), F(5, " \xD7 "), I()(), w(6, "div", 154)(7, "button", 155), G("click", function() {
+    }), h(5, " \xD7 "), I()(), w(6, "div", 154)(7, "button", 155), G("click", function() {
       U(B);
       let g = a();
       return N(g.setPagesFilter("all"));
-    }), F(8), I(), w(9, "button", 156), G("click", function() {
+    }), h(8), I(), w(9, "button", 156), G("click", function() {
       U(B);
       let g = a();
       return N(g.setPagesFilter("bookmarked"));
-    }), F(10), I()(), b(11, TBA, 2, 0, "p", 157), w(12, "div", 158)(13, "span"), F(14), I(), w(15, "div", 159)(16, "button", 160), G("click", function() {
+    }), h(10), I()(), b(11, TBA, 2, 0, "p", 157), w(12, "div", 158)(13, "span"), h(14), I(), w(15, "div", 159)(16, "button", 160), G("click", function() {
       U(B);
       let g = a();
       return N(g.movePage(-1));
-    }), F(17, " \u2190 "), I(), w(18, "button", 161), G("click", function() {
+    }), h(17, " \u2190 "), I(), w(18, "button", 161), G("click", function() {
       U(B);
       let g = a();
       return N(g.movePage(1));
-    }), F(19, " \u2192 "), I(), w(20, "button", 162), G("click", function() {
+    }), h(19, " \u2192 "), I(), w(20, "button", 162), G("click", function() {
       U(B);
       let g = a();
       return N(g.organizePages({ action: "delete", page: g.page }));
-    }), F(21, " Eliminar "), I(), w(22, "button", 163), G("click", function() {
+    }), h(21, " Eliminar "), I(), w(22, "button", 163), G("click", function() {
       U(B);
       let g = a();
       return N(g.pdfHistory(false));
-    }), F(23, " \u21B6 "), I(), w(24, "button", 164), G("click", function() {
+    }), h(23, " \u21B6 "), I(), w(24, "button", 164), G("click", function() {
       U(B);
       let g = a();
       return N(g.pdfHistory(true));
-    }), F(25, " \u21B7 "), I()(), w(26, "div", 165)(27, "select", 166), G("change", function(g) {
+    }), h(25, " \u21B7 "), I()(), w(26, "div", 165)(27, "select", 166), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setPaper(g.target.value));
-    }), w(28, "option", 167), F(29, "En blanco"), I(), w(30, "option", 168), F(31, "Cuadriculada \xB7 5 mm"), I(), w(32, "option", 169), F(33, "Rayada \xB7 5 mm"), I()(), w(34, "button", 34), G("click", function() {
+    }), w(28, "option", 167), h(29, "En blanco"), I(), w(30, "option", 168), h(31, "Cuadriculada \xB7 5 mm"), I(), w(32, "option", 169), h(33, "Rayada \xB7 5 mm"), I()(), w(34, "button", 34), G("click", function() {
       U(B);
       let g = a();
       return N(g.addPage());
-    }), F(35, " \uFF0B A\xF1adir hoja "), I()(), w(36, "small"), F(37, "Se a\xF1ade despu\xE9s de la hoja seleccionada."), I()(), w(38, "div", 170), nA(39, vBA, 9, 7, "div", 171, ZB, false, WBA, 2, 0, "p", 172), I(), b(42, PBA, 2, 0, "button", 173), I();
+    }), h(35, " \uFF0B A\xF1adir hoja "), I()(), w(36, "small"), h(37, "Se a\xF1ade despu\xE9s de la hoja seleccionada."), I()(), w(38, "div", 170), nA(39, vBA, 9, 7, "div", 171, ZB, false, WBA, 2, 0, "p", 172), I(), b(42, PBA, 2, 0, "button", 173), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -43861,11 +43867,11 @@ function VBA(e103, A) {
 function zBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "details", 181)(1, "summary")(2, "span", 183), F(3, "\u203A"), I(), w(4, "button", 184), G("click", function(g) {
+    w(0, "details", 181)(1, "summary")(2, "span", 183), h(3, "\u203A"), I(), w(4, "button", 184), G("click", function(g) {
       U(B);
       let n = a().$implicit;
       return a(3).visitPage(n.page), N(g.preventDefault());
-    }), F(5), I()(), w(6, "div", 185), bi(7, VBA, 1, 0, "ng-container", 180), I()();
+    }), h(5), I()(), w(6, "div", 185), bi(7, VBA, 1, 0, "ng-container", 180), I()();
   }
   if (e103 & 2) {
     let B = a().$implicit;
@@ -43881,7 +43887,7 @@ function KBA(e103, A) {
       U(B);
       let g = a().$implicit, n = a(3);
       return N(n.visitPage(g.page));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a().$implicit, t = a(3);
@@ -43901,16 +43907,16 @@ function XBA(e103, A) {
   }
 }
 function ZBA(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, " Este PDF no incluye un \xEDndice. Despl\xE1zate para recorrer sus p\xE1ginas. "), I());
+  e103 & 1 && (w(0, "p"), h(1, " Este PDF no incluye un \xEDndice. Despl\xE1zate para recorrer sus p\xE1ginas. "), I());
 }
 function qBA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "aside", 52)(1, "div", 178)(2, "strong"), F(3, "Contenido"), I(), w(4, "span"), F(5), I(), w(6, "button", 179), G("click", function() {
+    w(0, "aside", 52)(1, "div", 178)(2, "strong"), h(3, "Contenido"), I(), w(4, "span"), h(5), I(), w(6, "button", 179), G("click", function() {
       U(B);
       let g = a();
       return N(g.sidebar = false);
-    }), F(7, " \xD7 "), I()(), bi(8, LBA, 1, 0, "ng-container", 180)(9, XBA, 2, 0, "ng-template", null, 2, fQ), b(11, ZBA, 2, 0, "p"), I();
+    }), h(7, " \xD7 "), I()(), bi(8, LBA, 1, 0, "ng-container", 180)(9, XBA, 2, 0, "ng-template", null, 2, fQ), b(11, ZBA, 2, 0, "p"), I();
   }
   if (e103 & 2) {
     let B = qB(10), t = a();
@@ -43918,16 +43924,16 @@ function qBA(e103, A) {
   }
 }
 function _BA(e103, A) {
-  e103 & 1 && (w(0, "p", 189), F(1, "Preparando lectura\u2026"), I());
+  e103 & 1 && (w(0, "p", 189), h(1, "Preparando lectura\u2026"), I());
 }
 function $BA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "p", 193), F(1), I(), w(2, "button", 42), G("click", function() {
+    w(0, "p", 193), h(1), I(), w(2, "button", 42), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.setReadingLayout("text"));
-    }), F(3, " Reintentar lectura "), I();
+    }), h(3, " Reintentar lectura "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -43935,7 +43941,7 @@ function $BA(e103, A) {
   }
 }
 function AeA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 194), F(1), I(), w(2, "p", 188), F(3, " Para ver las im\xE1genes, f\xF3rmulas y el dise\xF1o original, usa P\xE1gina. "), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 194), h(1), I(), w(2, "p", 188), h(3, " Para ver las im\xE1genes, f\xF3rmulas y el dise\xF1o original, usa P\xE1gina. "), I()), e103 & 2) {
     let B = a(2);
     Y(), cA(B.readingText);
   }
@@ -43943,25 +43949,25 @@ function AeA(e103, A) {
 function BeA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "p"), F(1, " Esta hoja no contiene texto seleccionable. Puedes leerla en la vista P\xE1gina. "), I(), w(2, "button", 195), G("click", function() {
+    w(0, "p"), h(1, " Esta hoja no contiene texto seleccionable. Puedes leerla en la vista P\xE1gina. "), I(), w(2, "button", 195), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.setReadingLayout("page"));
-    }), F(3, " Ver p\xE1gina original "), I();
+    }), h(3, " Ver p\xE1gina original "), I();
   }
 }
 function eeA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "article", 187)(1, "p", 188), F(2), I(), b(3, _BA, 2, 0, "p", 189)(4, $BA, 4, 1)(5, AeA, 4, 1)(6, BeA, 4, 0), w(7, "div", 190)(8, "button", 191), G("click", function() {
+    w(0, "article", 187)(1, "p", 188), h(2), I(), b(3, _BA, 2, 0, "p", 189)(4, $BA, 4, 1)(5, AeA, 4, 1)(6, BeA, 4, 0), w(7, "div", 190)(8, "button", 191), G("click", function() {
       U(B);
       let g = a();
       return N(g.go(g.page - 1));
-    }), F(9, " \u2039 Anterior "), I(), w(10, "button", 192), G("click", function() {
+    }), h(9, " \u2039 Anterior "), I(), w(10, "button", 192), G("click", function() {
       U(B);
       let g = a();
       return N(g.go(g.page + 1));
-    }), F(11, " Siguiente \u203A "), I()()();
+    }), h(11, " Siguiente \u203A "), I()()();
   }
   if (e103 & 2) {
     let B = a();
@@ -44145,7 +44151,7 @@ function ueA(e103, A) {
       U(B);
       let n = a().$implicit, i = a(2);
       return N(i.showExcerpts(n, g));
-    }), w(1, "title"), F(2, "Ver citas extra\xEDdas"), I()();
+    }), w(1, "title"), h(2, "Ver citas extra\xEDdas"), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a().$implicit, g = a(2);
@@ -44159,13 +44165,13 @@ function GeA(e103, A) {
   }
 }
 function peA(e103, A) {
-  if (e103 & 1 && (w(0, "section", 196), $(1, "canvas", 175), b(2, geA, 3, 1, ":svg:svg", 197), b(3, neA, 2, 5, ":svg:svg", 198), b(4, seA, 8, 6, ":svg:svg", 199), b(5, FeA, 3, 1, ":svg:svg", 200), AA(), w(6, "svg", 201), nA(7, NeA, 2, 1, null, null, aBA, true), I(), w(9, "svg", 202), nA(10, GeA, 2, 0, null, null, IBA), I(), jA(), w(12, "span", 203), F(13), I()()), e103 & 2) {
+  if (e103 & 1 && (w(0, "section", 196), $(1, "canvas", 175), b(2, geA, 3, 1, ":svg:svg", 197), b(3, neA, 2, 5, ":svg:svg", 198), b(4, seA, 8, 6, ":svg:svg", 199), b(5, FeA, 3, 1, ":svg:svg", 200), AA(), w(6, "svg", 201), nA(7, NeA, 2, 1, null, null, aBA, true), I(), w(9, "svg", 202), nA(10, GeA, 2, 0, null, null, IBA), I(), jA(), w(12, "span", 203), h(13), I()()), e103 & 2) {
     let B = A.$implicit, t = A.$index, g = a();
     hA("width", B.width * g.zoom, "px")("height", B.height * g.zoom, "px"), P("data-page", t)("aria-label", "P\xE1gina " + (t + 1)), Y(), P("aria-label", "P\xE1gina " + (t + 1) + " del PDF"), Y(), T((g.originFocus == null ? null : g.originFocus.page) === t ? 2 : -1), Y(), T((g.textDraft == null ? null : g.textDraft.page) === t ? 3 : -1), Y(), T(g.selectionPage === t ? 4 : -1), Y(), T(g.pageVisuals(t).length ? 5 : -1), Y(), P("viewBox", "0 0 " + B.width + " " + B.height), Y(), iA(g.pageAnnotations(t)), Y(2), P("viewBox", "0 0 " + B.width + " " + B.height), Y(), iA(g.pageExcerpts(t)), Y(3), cA(t + 1);
   }
 }
 function meA(e103, A) {
-  e103 & 1 && (w(0, "div", 57), F(1, "Abriendo PDF\u2026"), I());
+  e103 & 1 && (w(0, "div", 57), h(1, "Abriendo PDF\u2026"), I());
 }
 function xeA(e103, A) {
   if (e103 & 1) {
@@ -44194,31 +44200,31 @@ function xeA(e103, A) {
   }
 }
 function feA(e103, A) {
-  e103 & 1 && (w(0, "p"), F(1, "Buscando\u2026"), I());
+  e103 & 1 && (w(0, "p"), h(1, "Buscando\u2026"), I());
 }
 function yeA(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), cA(B.dictionaryError);
   }
 }
 function ReA(e103, A) {
-  e103 & 1 && (w(0, "p", 236), F(1, " Esta palabra existe en ambos idiomas. Consulta sus dos significados: "), I());
+  e103 & 1 && (w(0, "p", 236), h(1, " Esta palabra existe en ambos idiomas. Consulta sus dos significados: "), I());
 }
 function HeA(e103, A) {
-  if (e103 & 1 && (w(0, "small"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "small"), h(1), I()), e103 & 2) {
     let B = a().$implicit;
     Y(), CA("Forma de ", B.lemma);
   }
 }
 function JeA(e103, A) {
-  if (e103 & 1 && (w(0, "strong", 240), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "strong", 240), h(1), I()), e103 & 2) {
     let B = a().$implicit;
     Y(), cA(B.translations.join(" \xB7 "));
   }
 }
 function keA(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1), I()), e103 & 2) {
     let B = a().$implicit;
     P("lang", B.definitionLanguage), Y(), CA(" ", B.definition, " ");
   }
@@ -44230,7 +44236,7 @@ function jeA(e103, A) {
       U(B);
       let g = a().$implicit, n = a(8);
       return N(n.lookupWord(g));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a().$implicit;
@@ -44238,7 +44244,7 @@ function jeA(e103, A) {
   }
 }
 function beA(e103, A) {
-  if (e103 & 1 && (w(0, "span"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "span"), h(1), I()), e103 & 2) {
     let B = a().$implicit;
     Y(), cA(B);
   }
@@ -44250,31 +44256,31 @@ function TeA(e103, A) {
   }
 }
 function veA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 241)(1, "small"), F(2), I(), nA(3, TeA, 2, 1, null, null, ZB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 241)(1, "small"), h(2), I(), nA(3, TeA, 2, 1, null, null, ZB), I()), e103 & 2) {
     let B = a().$implicit, t = a(2).$implicit, g = a(4);
     Y(2), CA("Sin\xF3nimos en ", g.languageName(t.language).toLowerCase()), Y(), iA(B.synonyms);
   }
 }
 function WeA(e103, A) {
-  if (e103 & 1 && (w(0, "p", 243), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 243), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     Y(), cA(B);
   }
 }
 function PeA(e103, A) {
-  if (e103 & 1 && (w(0, "details")(1, "summary"), F(2), I(), nA(3, WeA, 2, 1, "p", 243, ZB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "details")(1, "summary"), h(2), I(), nA(3, WeA, 2, 1, "p", 243, ZB), I()), e103 & 2) {
     let B = a().$implicit, t = a(6);
     Y(2), CA(" Ejemplos en ", t.languageName(B.exampleLanguage).toLowerCase(), " "), Y(), iA(B.examples);
   }
 }
 function SeA(e103, A) {
-  if (e103 & 1 && F(0), e103 & 2) {
+  if (e103 & 1 && h(0), e103 & 2) {
     let B = a().$implicit, t = a(6);
     CA(" \xB7 Definici\xF3n en ", t.languageName(B.definitionLanguage).toLowerCase(), " ");
   }
 }
 function LeA(e103, A) {
-  if (e103 & 1 && (w(0, "li"), b(1, JeA, 2, 1, "strong", 240), b(2, keA, 2, 2, "p"), b(3, veA, 5, 1, "div", 241), b(4, PeA, 5, 1, "details"), w(5, "small", 242), F(6), b(7, SeA, 1, 1), I()()), e103 & 2) {
+  if (e103 & 1 && (w(0, "li"), b(1, JeA, 2, 1, "strong", 240), b(2, keA, 2, 2, "p"), b(3, veA, 5, 1, "div", 241), b(4, PeA, 5, 1, "details"), w(5, "small", 242), h(6), b(7, SeA, 1, 1), I()()), e103 & 2) {
     let B = A.$implicit, t = a(2).$implicit;
     Y(), T(B.translations.length ? 1 : -1), Y(), T(B.definition ? 2 : -1), Y(), T(B.synonyms.length ? 3 : -1), Y(), T(B.examples.length ? 4 : -1), Y(2), CA("", B.source, " "), Y(), T(B.definitionLanguage !== t.language && B.definition ? 7 : -1);
   }
@@ -44286,7 +44292,7 @@ function VeA(e103, A) {
       U(B);
       let g = a().$implicit, n = a().$implicit, i = a(4);
       return N(i.toggleDictionaryGroup(n.language + g.partOfSpeech));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a().$implicit, t = a().$implicit, g = a(4);
@@ -44294,13 +44300,13 @@ function VeA(e103, A) {
   }
 }
 function zeA(e103, A) {
-  if (e103 & 1 && (w(0, "section", 238)(1, "h4"), F(2), I(), w(3, "ol"), nA(4, LeA, 8, 6, "li", null, MB), I(), b(6, VeA, 2, 2, "button", 239), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "section", 238)(1, "h4"), h(2), I(), w(3, "ol"), nA(4, LeA, 8, 6, "li", null, MB), I(), b(6, VeA, 2, 2, "button", 239), I()), e103 & 2) {
     let B = A.$implicit, t = a().$implicit, g = a(4);
     P("data-part-of-speech", B.partOfSpeech), Y(2), cA(B.label), Y(2), iA(B.senses.slice(0, g.expandedDictionaryGroups.has(t.language + B.partOfSpeech) ? B.senses.length : 4)), Y(2), T(B.senses.length > 4 ? 6 : -1);
   }
 }
 function KeA(e103, A) {
-  if (e103 & 1 && (w(0, "section", 237)(1, "h3"), F(2), I(), b(3, HeA, 2, 1, "small"), nA(4, zeA, 7, 3, "section", 238, YBA), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "section", 237)(1, "h3"), h(2), I(), b(3, HeA, 2, 1, "small"), nA(4, zeA, 7, 3, "section", 238, YBA), I()), e103 & 2) {
     let B = A.$implicit, t = a(2), g = a(2);
     P("data-language", B.language), Y(2), te(" ", g.languageName(B.language), " \u2192 ", g.languageName(B.targetLanguage), " "), Y(), T(B.lemma !== t.word ? 3 : -1), Y(), iA(B.groups);
   }
@@ -44317,7 +44323,7 @@ function XeA(e103, A) {
     w(0, "button", 42), G("click", function() {
       let g = U(B).$implicit, n = a(5);
       return N(n.lookupWord(g));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit;
@@ -44325,19 +44331,19 @@ function XeA(e103, A) {
   }
 }
 function ZeA(e103, A) {
-  if (e103 & 1 && (w(0, "span"), F(1, "Palabras cercanas:"), I(), w(2, "div", 245), nA(3, XeA, 2, 1, "button", 173, ZB), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "span"), h(1, "Palabras cercanas:"), I(), w(2, "div", 245), nA(3, XeA, 2, 1, "button", 173, ZB), I()), e103 & 2) {
     let B = a(2);
     Y(3), iA(B.suggestions);
   }
 }
 function qeA(e103, A) {
-  if (e103 & 1 && (w(0, "p"), F(1, "No encontramos esta palabra."), I(), b(2, ZeA, 5, 0)), e103 & 2) {
+  if (e103 & 1 && (w(0, "p"), h(1, "No encontramos esta palabra."), I(), b(2, ZeA, 5, 0)), e103 & 2) {
     let B = a();
     Y(2), T(B.suggestions.length ? 2 : -1);
   }
 }
 function _eA(e103, A) {
-  if (e103 & 1 && (w(0, "strong"), F(1), I(), b(2, ReA, 2, 0, "p", 236), b(3, OeA, 2, 0)(4, qeA, 3, 1)), e103 & 2) {
+  if (e103 & 1 && (w(0, "strong"), h(1), I(), b(2, ReA, 2, 0, "p", 236), b(3, OeA, 2, 0)(4, qeA, 3, 1)), e103 & 2) {
     let B = A;
     Y(), cA(B.word), Y(), T(B.ambiguous ? 2 : -1), Y(), T(B.readings.length ? 3 : 4);
   }
@@ -44347,23 +44353,23 @@ function $eA(e103, A) {
     let B = S();
     w(0, "section", 219), G("pointerdown", function(g) {
       return g.stopPropagation();
-    }), w(1, "div", 220)(2, "strong"), F(3, "Diccionario"), I(), w(4, "button", 221), G("click", function() {
+    }), w(1, "div", 220)(2, "strong"), h(3, "Diccionario"), I(), w(4, "button", 221), G("click", function() {
       U(B);
       let g = a();
       return N(g.closeDictionary());
-    }), F(5, " \xD7 "), I()(), w(6, "form", 222), G("submit", function(g) {
+    }), h(5, " \xD7 "), I()(), w(6, "form", 222), G("submit", function(g) {
       U(B);
       let n = a();
       return g.preventDefault(), N(n.lookupWord());
-    }), w(7, "label"), F(8, "Idioma "), w(9, "select", 223), G("change", function(g) {
+    }), w(7, "label"), h(8, "Idioma "), w(9, "select", 223), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.setDictionaryLanguage(g.target.value));
-    }), w(10, "option", 224), F(11, "Detectar autom\xE1ticamente"), I(), w(12, "option", 225), F(13, "Ingl\xE9s \u2192 espa\xF1ol"), I(), w(14, "option", 226), F(15, "Espa\xF1ol \u2192 ingl\xE9s"), I()()(), w(16, "div", 227)(17, "input", 228), G("input", function(g) {
+    }), w(10, "option", 224), h(11, "Detectar autom\xE1ticamente"), I(), w(12, "option", 225), h(13, "Ingl\xE9s \u2192 espa\xF1ol"), I(), w(14, "option", 226), h(15, "Espa\xF1ol \u2192 ingl\xE9s"), I()()(), w(16, "div", 227)(17, "input", 228), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.editDictionaryQuery(g.target.value));
-    }), I(), w(18, "button", 229), F(19, " Buscar "), I()()(), w(20, "div", 230), b(21, feA, 2, 0, "p"), b(22, yeA, 2, 1, "p"), b(23, _eA, 5, 3), I(), w(24, "small", 231), F(25, "Sin conexi\xF3n \xB7 "), w(26, "a", 232), F(27, "WordNet"), I(), F(28, " \xB7 "), w(29, "a", 233), F(30, "OMW / MCR"), I(), F(31, " \xB7 "), w(32, "a", 234), F(33, "WikDict"), I(), F(34, " \xB7 "), w(35, "a", 235), F(36, "CC BY-SA 3.0"), I()()();
+    }), I(), w(18, "button", 229), h(19, " Buscar "), I()()(), w(20, "div", 230), b(21, feA, 2, 0, "p"), b(22, yeA, 2, 1, "p"), b(23, _eA, 5, 3), I(), w(24, "small", 231), h(25, "Sin conexi\xF3n \xB7 "), w(26, "a", 232), h(27, "WordNet"), I(), h(28, " \xB7 "), w(29, "a", 233), h(30, "OMW / MCR"), I(), h(31, " \xB7 "), w(32, "a", 234), h(33, "WikDict"), I(), h(34, " \xB7 "), w(35, "a", 235), h(36, "CC BY-SA 3.0"), I()()();
   }
   if (e103 & 2) {
     let B, t = a();
@@ -44377,7 +44383,7 @@ function AtA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.discardPending());
-    }), F(1, " Descartar cambios pendientes "), I();
+    }), h(1, " Descartar cambios pendientes "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -44387,11 +44393,11 @@ function AtA(e103, A) {
 function BtA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 63)(1, "span"), F(2), I(), w(3, "button", 34), G("click", function() {
+    w(0, "div", 63)(1, "span"), h(2), I(), w(3, "button", 34), G("click", function() {
       U(B);
       let g = a();
       return N(g.retry());
-    }), F(4, " Reintentar "), I(), b(5, AtA, 2, 1, "button", 246), I();
+    }), h(4, " Reintentar "), I(), b(5, AtA, 2, 1, "button", 246), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -44399,7 +44405,7 @@ function BtA(e103, A) {
   }
 }
 function etA(e103, A) {
-  if (e103 & 1 && (w(0, "small"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "small"), h(1), I()), e103 & 2) {
     let B = a();
     Y(), cA(B.locked ? "Anotaci\xF3n bloqueada" : "Marca vinculada a una cita");
   }
@@ -44407,19 +44413,19 @@ function etA(e103, A) {
 function ttA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 247)(1, "strong"), F(2), I(), b(3, etA, 2, 1, "small"), w(4, "div", 248)(5, "button", 249), G("click", function() {
+    w(0, "div", 247)(1, "strong"), h(2), I(), b(3, etA, 2, 1, "small"), w(4, "div", 248)(5, "button", 249), G("click", function() {
       U(B);
       let g = a();
       return N(g.deleteActiveAnnotation());
-    }), F(6, " Eliminar"), I(), w(7, "button", 42), G("click", function() {
+    }), h(6, " Eliminar"), I(), w(7, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return g.annotationActionsOpen = false, N(g.annotationsOpen = true);
-    }), F(8, " M\xE1s opciones"), I(), w(9, "button", 250), G("click", function() {
+    }), h(8, " M\xE1s opciones"), I(), w(9, "button", 250), G("click", function() {
       U(B);
       let g = a();
       return N(g.annotationActionsOpen = false);
-    }), F(10, " \xD7 "), I()()();
+    }), h(10, " \xD7 "), I()()();
   }
   if (e103 & 2) {
     let B = A, t = a();
@@ -44429,14 +44435,14 @@ function ttA(e103, A) {
 function gtA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 251)(1, "strong"), F(2, "Caja de texto"), I(), w(3, "textarea", 252, 3), G("input", function(g) {
+    w(0, "div", 251)(1, "strong"), h(2, "Caja de texto"), I(), w(3, "textarea", 252, 3), G("input", function(g) {
       let n = U(B);
       return N(n.text = g.target.value);
-    }), I(), w(5, "label"), F(6, "Tama\xF1o "), w(7, "input", 253), G("input", function(g) {
+    }), I(), w(5, "label"), h(6, "Tama\xF1o "), w(7, "input", 253), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.textFontSize = +g.target.value);
-    }), I(), F(8, " pt"), I(), w(9, "label"), F(10, "Color "), w(11, "input", 254), G("input", function(g) {
+    }), I(), h(8, " pt"), I(), w(9, "label"), h(10, "Color "), w(11, "input", 254), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.textColor = g.target.value);
@@ -44444,11 +44450,11 @@ function gtA(e103, A) {
       U(B);
       let g = a();
       return N(g.saveText());
-    }), F(14, " A\xF1adir texto"), I(), w(15, "button", 42), G("click", function() {
+    }), h(14, " A\xF1adir texto"), I(), w(15, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return N(g.clearSelection());
-    }), F(16, "Cancelar"), I()()();
+    }), h(16, "Cancelar"), I()()();
   }
   if (e103 & 2) {
     let B = A, t = a();
@@ -44506,7 +44512,7 @@ function QtA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.openDictionary(g.selectedWord));
-    }), F(1, " Diccionario "), I();
+    }), h(1, " Diccionario "), I();
   }
 }
 function otA(e103, A) {
@@ -44516,31 +44522,31 @@ function otA(e103, A) {
       U(B);
       let g = a();
       return N(g.copySelectedText());
-    }), F(4), I(), w(5, "button", 42), G("click", function() {
+    }), h(4), I(), w(5, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return N(g.annotate(false));
-    }), F(6, "Resaltar"), I(), w(7, "button", 42), G("click", function() {
+    }), h(6, "Resaltar"), I(), w(7, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return N(g.annotate(true));
-    }), F(8, "Subrayar"), I(), w(9, "button", 42), G("click", function() {
+    }), h(8, "Subrayar"), I(), w(9, "button", 42), G("click", function() {
       U(B);
       let g = a();
       return N(g.commentSelection());
-    }), F(10, "Comentar"), I(), w(11, "button", 258), G("click", function() {
+    }), h(10, "Comentar"), I(), w(11, "button", 258), G("click", function() {
       U(B);
       let g = a();
       return N(g.clearSelection());
-    }), F(12, " \xD7 "), I()(), w(13, "era-pdf-annotation-colors", 259), G("colorChange", function(g) {
+    }), h(12, " \xD7 "), I()(), w(13, "era-pdf-annotation-colors", 259), G("colorChange", function(g) {
       U(B);
       let n = a();
       return N(n.setAnnotationColor(g));
-    }), I(), w(14, "label", 260), F(15, "Opacidad "), w(16, "input", 261), G("input", function(g) {
+    }), I(), w(14, "label", 260), h(15, "Opacidad "), w(16, "input", 261), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.setAnnotationOpacity(+g.target.value));
-    }), I(), w(17, "output"), F(18), I()()();
+    }), I(), w(17, "output"), h(18), I()()();
   }
   if (e103 & 2) {
     let B = a();
@@ -44554,7 +44560,7 @@ function rtA(e103, A) {
       return g.stopPropagation();
     })("keydown.escape", function(g) {
       return U(B), a().clearSelection(), N(g.stopPropagation());
-    }), w(1, "strong"), F(2), I(), w(3, "textarea", 263, 4), G("input", function(g) {
+    }), w(1, "strong"), h(2), I(), w(3, "textarea", 263, 4), G("input", function(g) {
       let n = U(B);
       return N(n.text = g.target.value);
     }), I(), w(5, "era-pdf-annotation-colors", 259), G("colorChange", function(g) {
@@ -44565,11 +44571,11 @@ function rtA(e103, A) {
       U(B);
       let g = a();
       return N(g.clearSelection());
-    }), F(8, "Cancelar"), I(), w(9, "button", 34), G("click", function() {
+    }), h(8, "Cancelar"), I(), w(9, "button", 34), G("click", function() {
       U(B);
       let g = a();
       return N(g.saveComment());
-    }), F(10, " Guardar comentario "), I()()();
+    }), h(10, " Guardar comentario "), I()()();
   }
   if (e103 & 2) {
     let B = A, t = a();
@@ -45037,8 +45043,8 @@ var WF = class e99 {
     if (!this.touchAnchor) {
       let C = t.scrollTop + A.center.y - (this.sharedPalette ? 3 : 24), c = 0, E = this.offsets.length;
       for (; c + 1 < E; ) {
-        let h = Math.floor((c + E) / 2);
-        this.offsets[h] <= C ? c = h : E = h;
+        let F = Math.floor((c + E) / 2);
+        this.offsets[F] <= C ? c = F : E = F;
       }
       let D = t.querySelector(`[data-page="${c}"]`)?.getBoundingClientRect();
       if (!D?.width || !D.height) return;
@@ -45240,8 +45246,8 @@ var WF = class e99 {
         s.width = E.width, s.height = E.height;
         let D = s.getContext("2d");
         if (!D) throw Error("No se pudo mostrar el PDF");
-        let h = D.createImageData(E.width, E.height);
-        h.data.set(E.rgba), D.putImageData(h, 0, 0), s.dataset.rendered = "true", this.rendered.set(r, c), this.visuals = this.visuals.filter((l) => l.page !== r || !this.savedVisuals.has(l.id) || !$e(E, this.savedVisuals.get(l.id)));
+        let F = D.createImageData(E.width, E.height);
+        F.data.set(E.rgba), D.putImageData(F, 0, 0), s.dataset.rendered = "true", this.rendered.set(r, c), this.visuals = this.visuals.filter((l) => l.page !== r || !this.savedVisuals.has(l.id) || !$e(E, this.savedVisuals.get(l.id)));
       }
       for (let r of this.rendered.keys()) if (!o.has(r)) {
         let C = n.querySelector(`[data-page="${r}"] canvas`);
@@ -45272,8 +45278,8 @@ var WF = class e99 {
     let n = A.target instanceof Element && A.target.tagName === "CANVAS" ? A.target : A.target instanceof Element ? A.target.closest(".sheet")?.querySelector("canvas") ?? void 0 : void 0, i = Number(n?.closest("[data-page]")?.dataset.page ?? this.page);
     if (this.tool !== "pan" && A.pointerType !== "touch" && !n || n && !this.rendered.has(i)) return;
     if (A.preventDefault(), !t && this.placingText && n) {
-      let C = this.point(A, n, i), c = this.info.pages[i], E = Math.min(240, c.width), s = Math.min(100, c.height), D = Math.max(0, Math.min(c.width - E, C[0])), h = Math.max(0, Math.min(c.height - s, C[1]));
-      this.cancel(), this.clearSelection(), this.textDraft = { page: i, rect: [D, h, D + E, h + s], text: "" }, this.menuAt(A), setTimeout(() => {
+      let C = this.point(A, n, i), c = this.info.pages[i], E = Math.min(240, c.width), s = Math.min(100, c.height), D = Math.max(0, Math.min(c.width - E, C[0])), F = Math.max(0, Math.min(c.height - s, C[1]));
+      this.cancel(), this.clearSelection(), this.textDraft = { page: i, rect: [D, F, D + E, F + s], text: "" }, this.menuAt(A), setTimeout(() => {
         this.destroyed || this.textInput?.nativeElement.focus({ preventScroll: true });
       }, 0);
       return;
@@ -45406,9 +45412,9 @@ var WF = class e99 {
           let p = u.createImageData(l.width, l.height);
           p.data.set(l.rgba), u.putImageData(p, 0, 0), c.fingerprint = l.fingerprint;
         }
-        let h = { page_id: this.info?.page_ids?.[B.page], resource: i.id, page: B.page, fingerprint: c.fingerprint, original_text: c.original_text, rects: c.rects };
+        let F = { page_id: this.info?.page_ids?.[B.page], resource: i.id, page: B.page, fingerprint: c.fingerprint, original_text: c.original_text, rects: c.rects };
         if (D) {
-          this.pendingExtraction = { resource: i, citation: h, bounds: s, textRects: c.text_rects, canvas: D, generation: n, engine: o, notebookPage: r }, this.selectionPage = B.page, this.marks = c.rects;
+          this.pendingExtraction = { resource: i, citation: F, bounds: s, textRects: c.text_rects, canvas: D, generation: n, engine: o, notebookPage: r }, this.selectionPage = B.page, this.marks = c.rects;
           let l = this.host.nativeElement.getBoundingClientRect();
           this.menu = { x: Math.max(8, Math.min(l.width - 290, A.clientX - l.left)), y: Math.max(60, Math.min(l.height - 140, A.clientY - l.top + 16)) };
         }
@@ -45527,33 +45533,33 @@ var WF = class e99 {
         let g = S();
         b(0, MBA, 1, 1, "div", 5), w(1, "section", 6)(2, "div", 7)(3, "header", 8), b(4, FBA, 2, 1, "button", 9), w(5, "div", 10)(6, "button", 11), G("click", function() {
           return t.close();
-        }), F(7, " \u2039 Lienzo "), I(), w(8, "strong", 12), G("keydown", function(i) {
+        }), h(7, " \u2039 Lienzo "), I(), w(8, "strong", 12), G("keydown", function(i) {
           return t.workspace == null ? null : t.workspace.moveKey(i);
         })("dblclick", function() {
           return t.workspace == null ? null : t.workspace.toggleFull();
-        }), F(9), I()(), b(10, hBA, 4, 1, "div", 13), b(11, lBA, 2, 1, "button", 14), w(12, "nav", 15)(13, "button", 16), G("click", function() {
+        }), h(9), I()(), b(10, hBA, 4, 1, "div", 13), b(11, lBA, 2, 1, "button", 14), w(12, "nav", 15)(13, "button", 16), G("click", function() {
           return t.go(t.page - 1);
-        }), F(14, " \u2039 "), I(), w(15, "input", 17), G("change", function(i) {
+        }), h(14, " \u2039 "), I(), w(15, "input", 17), G("change", function(i) {
           return t.inputPage(i);
-        }), I(), w(16, "span"), F(17), I(), w(18, "button", 18), G("click", function() {
+        }), I(), w(16, "span"), h(17), I(), w(18, "button", 18), G("click", function() {
           return t.go(t.page + 1);
-        }), F(19, " \u203A "), I()(), w(20, "span", 19), F(21), I()(), w(22, "div", 20)(23, "nav", 21)(24, "button", 22), G("touchend", function(i) {
+        }), h(19, " \u203A "), I()(), w(20, "span", 19), h(21), I()(), w(22, "div", 20)(23, "nav", 21)(24, "button", 22), G("touchend", function(i) {
           return i.preventDefault();
         })("click", function() {
           return t.toggleReading();
-        }), AA(), w(25, "svg", 23), $(26, "path", 24), I(), jA(), w(27, "span"), F(28, "Lectura"), I()(), w(29, "button", 25), G("click", function() {
+        }), AA(), w(25, "svg", 23), $(26, "path", 24), I(), jA(), w(27, "span"), h(28, "Lectura"), I()(), w(29, "button", 25), G("click", function() {
           return t.toggleOutline();
-        }), AA(), w(30, "svg", 23), $(31, "path", 26), I(), jA(), w(32, "span"), F(33, "\xCDndice"), I()(), w(34, "button", 27), G("click", function() {
+        }), AA(), w(30, "svg", 23), $(31, "path", 26), I(), jA(), w(32, "span"), h(33, "\xCDndice"), I()(), w(34, "button", 27), G("click", function() {
           return t.togglePages();
-        }), AA(), w(35, "svg", 28), $(36, "rect", 29)(37, "rect", 30)(38, "rect", 31)(39, "rect", 32), I(), jA(), w(40, "span", 33), F(41, "Hojas"), I()(), w(42, "button", 34), G("click", function() {
+        }), AA(), w(35, "svg", 28), $(36, "rect", 29)(37, "rect", 30)(38, "rect", 31)(39, "rect", 32), I(), jA(), w(40, "span", 33), h(41, "Hojas"), I()(), w(42, "button", 34), G("click", function() {
           return t.toggleBookmark();
-        }), AA(), w(43, "svg", 23), $(44, "path", 35), I(), jA(), w(45, "span"), F(46), I()(), b(47, dBA, 4, 1, "button", 36), w(48, "nav", 37)(49, "button", 38), G("click", function() {
+        }), AA(), w(43, "svg", 23), $(44, "path", 35), I(), jA(), w(45, "span"), h(46), I()(), b(47, dBA, 4, 1, "button", 36), w(48, "nav", 37)(49, "button", 38), G("click", function() {
           return t.dictionaryOpen ? t.closeDictionary() : t.openDictionary(t.selectedWord ?? "");
-        }), F(50, " A\u2194A "), I(), w(51, "button", 39), G("click", function() {
+        }), h(50, " A\u2194A "), I(), w(51, "button", 39), G("click", function() {
           return t.choosePdfTool("select");
         }), AA(), w(52, "svg", 28), $(53, "path", 40), I()(), jA(), $(54, "span", 41), w(55, "button", 42), G("click", function() {
           return t.choosePdfTool(t.tool === "pdf-region" ? "select" : "pdf-region");
-        }), AA(), w(56, "svg", 28), $(57, "path", 43), I(), F(58, "Extraer "), I()()()(), b(59, UBA, 37, 14, "div", 44), b(60, uBA, 7, 7, "div", 45), I(), bi(61, pBA, 3, 0, "ng-template", null, 0, fQ), jA(), w(63, "div", 46), b(64, xBA, 48, 23, "section", 47), b(65, fBA, 11, 1, "section", 48), b(66, yBA, 27, 2, "section", 49), b(67, bBA, 57, 17, "section", 50), b(68, SBA, 43, 20, "section", 51), b(69, qBA, 12, 7, "aside", 52), w(70, "main", 53, 1), G("scroll", function() {
+        }), AA(), w(56, "svg", 28), $(57, "path", 43), I(), h(58, "Extraer "), I()()()(), b(59, UBA, 37, 14, "div", 44), b(60, uBA, 7, 7, "div", 45), I(), bi(61, pBA, 3, 0, "ng-template", null, 0, fQ), jA(), w(63, "div", 46), b(64, xBA, 48, 23, "section", 47), b(65, fBA, 11, 1, "section", 48), b(66, yBA, 27, 2, "section", 49), b(67, bBA, 57, 17, "section", 50), b(68, SBA, 43, 20, "section", 51), b(69, qBA, 12, 7, "aside", 52), w(70, "main", 53, 1), G("scroll", function() {
           return t.scrolled();
         })("wheel", function(i) {
           return t.wheel(i);
@@ -45571,11 +45577,11 @@ var WF = class e99 {
           return t.lost(i);
         }), b(72, eeA, 12, 8, "article", 54), w(73, "div", 55), nA(74, peA, 14, 14, "section", 56, MB), I(), b(76, meA, 2, 0, "div", 57), I(), b(77, xeA, 1, 4, "era-pdf-annotation-panel", 58), w(78, "footer", 59)(79, "button", 60), G("click", function() {
           return t.setZoom(t.zoom / 1.2);
-        }), F(80, " \u2212"), I(), w(81, "output"), F(82), I(), w(83, "button", 61), G("click", function() {
+        }), h(80, " \u2212"), I(), w(81, "output"), h(82), I(), w(83, "button", 61), G("click", function() {
           return t.setZoom(t.zoom * 1.2);
-        }), F(84, " +"), I(), $(85, "span", 41), w(86, "button", 42), G("click", function() {
+        }), h(84, " +"), I(), $(85, "span", 41), w(86, "button", 42), G("click", function() {
           return t.fit();
-        }), F(87, "Ajustar"), I()(), b(88, $eA, 37, 6, "section", 62), b(89, BtA, 6, 3, "div", 63), I(), b(90, ttA, 11, 7, "div", 64), b(91, gtA, 17, 8, "div", 65), b(92, ntA, 1, 5, "era-pdf-excerpt-links", 66), b(93, itA, 1, 8, "era-pdf-extraction-choice", 67), b(94, otA, 19, 10, "div", 68), b(95, rtA, 11, 8, "div", 69), I();
+        }), h(87, "Ajustar"), I()(), b(88, $eA, 37, 6, "section", 62), b(89, BtA, 6, 3, "div", 63), I(), b(90, ttA, 11, 7, "div", 64), b(91, gtA, 17, 8, "div", 65), b(92, ntA, 1, 5, "era-pdf-excerpt-links", 66), b(93, itA, 1, 8, "era-pdf-extraction-choice", 67), b(94, otA, 19, 10, "div", 68), b(95, rtA, 11, 8, "div", 69), I();
       }
       if (B & 2) {
         let g, n, i;
@@ -48049,8 +48055,8 @@ function qG(e103, A) {
       t.load(JSON.stringify({ ...i, pages: i.pages.filter((p) => p.id === c.id), active_page: c.id }));
       let E = JSON.parse(t.render_json()), s = new Set((E.layers ?? [{ id: 1, visible: true }]).filter((p) => p.visible).map((p) => p.id));
       E.strokes = E.strokes.filter((p) => s.has(p.layer ?? 1));
-      let D = JSON.parse(t.resources_json()), h = D.objects.filter((p) => s.has(p.layer)), l = D.anchors ?? [], u = new Set([...h, ...l].map((p) => p.id));
-      return { id: c.id, name: c.name, folder: g.folders.find((p) => p.id === c.folder)?.name ?? "", scene: E, settings: JSON.parse(t.canvas_json()), objects: h, anchors: l, connections: D.connections.filter((p) => s.has(p.layer) && u.has(p.from) && u.has(p.to)) };
+      let D = JSON.parse(t.resources_json()), F = D.objects.filter((p) => s.has(p.layer)), l = D.anchors ?? [], u = new Set([...F, ...l].map((p) => p.id));
+      return { id: c.id, name: c.name, folder: g.folders.find((p) => p.id === c.folder)?.name ?? "", scene: E, settings: JSON.parse(t.canvas_json()), objects: F, anchors: l, connections: D.connections.filter((p) => s.has(p.layer) && u.has(p.from) && u.has(p.to)) };
     });
     return { name: g.name, pages: C, resources: n, viewport: { ...o, width: Q.width / r, height: Q.height / r } };
   } finally {
@@ -48338,7 +48344,7 @@ var stA = /^D:(\d\d\d\d)(\d\d)?(\d\d)?(\d\d)?(\d\d)?(\d\d)?([+\-Z])?(\d\d)?'?(\d
 var LF = function(e103) {
   var A = e103.match(stA);
   if (A) {
-    var B = A[1], t = A[2], g = t === void 0 ? "01" : t, n = A[3], i = n === void 0 ? "01" : n, Q = A[4], o = Q === void 0 ? "00" : Q, r = A[5], C = r === void 0 ? "00" : r, c = A[6], E = c === void 0 ? "00" : c, s = A[7], D = s === void 0 ? "Z" : s, h = A[8], l = h === void 0 ? "00" : h, u = A[9], p = u === void 0 ? "00" : u, y = D === "Z" ? "Z" : "" + D + l + ":" + p, k = /* @__PURE__ */ new Date(B + "-" + g + "-" + i + "T" + o + ":" + C + ":" + E + y);
+    var B = A[1], t = A[2], g = t === void 0 ? "01" : t, n = A[3], i = n === void 0 ? "01" : n, Q = A[4], o = Q === void 0 ? "00" : Q, r = A[5], C = r === void 0 ? "00" : r, c = A[6], E = c === void 0 ? "00" : c, s = A[7], D = s === void 0 ? "Z" : s, F = A[8], l = F === void 0 ? "00" : F, u = A[9], p = u === void 0 ? "00" : u, y = D === "Z" ? "Z" : "" + D + l + ":" + p, k = /* @__PURE__ */ new Date(B + "-" + g + "-" + i + "T" + o + ":" + C + ":" + E + y);
     return k;
   }
 };
@@ -49858,7 +49864,7 @@ var niA = (function() {
   }
   return e103.prototype.serializeToBuffer = function() {
     return JA(this, void 0, void 0, function() {
-      var A, B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l, u;
+      var A, B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l, u;
       return kA(this, function(p) {
         switch (p.label) {
           case 0:
@@ -49866,7 +49872,7 @@ var niA = (function() {
           case 1:
             A = p.sent(), B = A.size, t = A.header, g = A.indirectObjects, n = A.xref, i = A.trailerDict, Q = A.trailer, o = 0, r = new Uint8Array(B), o += t.copyBytesInto(r, o), r[o++] = j.Newline, r[o++] = j.Newline, C = 0, c = g.length, p.label = 2;
           case 2:
-            return C < c ? (E = g[C], s = E[0], D = E[1], h = String(s.objectNumber), o += $B(h, r, o), r[o++] = j.Space, l = String(s.generationNumber), o += $B(l, r, o), r[o++] = j.Space, r[o++] = j.o, r[o++] = j.b, r[o++] = j.j, r[o++] = j.Newline, o += D.copyBytesInto(r, o), r[o++] = j.Newline, r[o++] = j.e, r[o++] = j.n, r[o++] = j.d, r[o++] = j.o, r[o++] = j.b, r[o++] = j.j, r[o++] = j.Newline, r[o++] = j.Newline, u = D instanceof ha ? D.getObjectsCount() : 1, this.shouldWaitForTick(u) ? [4, Ci()] : [3, 4]) : [3, 5];
+            return C < c ? (E = g[C], s = E[0], D = E[1], F = String(s.objectNumber), o += $B(F, r, o), r[o++] = j.Space, l = String(s.generationNumber), o += $B(l, r, o), r[o++] = j.Space, r[o++] = j.o, r[o++] = j.b, r[o++] = j.j, r[o++] = j.Newline, o += D.copyBytesInto(r, o), r[o++] = j.Newline, r[o++] = j.e, r[o++] = j.n, r[o++] = j.d, r[o++] = j.o, r[o++] = j.b, r[o++] = j.j, r[o++] = j.Newline, r[o++] = j.Newline, u = D instanceof ha ? D.getObjectsCount() : 1, this.shouldWaitForTick(u) ? [4, Ci()] : [3, 4]) : [3, 5];
           case 3:
             p.sent(), p.label = 4;
           case 4:
@@ -49951,15 +49957,15 @@ var QiA = (function(e103) {
           i[Q] = [C, s, E.generationNumber];
         }
         if (r.type === no.Compressed) {
-          var C = r.type, D = r.objectStreamRef, h = r.index;
-          i[Q] = [C, D.objectNumber, h];
+          var C = r.type, D = r.objectStreamRef, F = r.index;
+          i[Q] = [C, D.objectNumber, F];
         }
       }
       return i;
     }, n.computeMaxEntryByteWidths = function() {
       for (var i = n.entryTuplesCache.access(), Q = [0, 0, 0], o = 0, r = i.length; o < r; o++) {
-        var C = i[o], c = C[0], E = C[1], s = C[2], D = Zs(c), h = Zs(E), l = Zs(s);
-        D > Q[0] && (Q[0] = D), h > Q[1] && (Q[1] = h), l > Q[2] && (Q[2] = l);
+        var C = i[o], c = C[0], E = C[1], s = C[2], D = Zs(c), F = Zs(E), l = Zs(s);
+        D > Q[0] && (Q[0] = D), F > Q[1] && (Q[1] = F), l > Q[2] && (Q[2] = l);
       }
       return Q;
     }, n.entries = t || [], n.entryTuplesCache = ft.populatedBy(n.computeEntryTuples), n.maxByteWidthsCache = ft.populatedBy(n.computeMaxEntryByteWidths), n.indexCache = ft.populatedBy(n.computeIndex), B.set(R.of("Type"), R.of("XRef")), n;
@@ -49985,9 +49991,9 @@ var QiA = (function(e103) {
     return g;
   }, A.prototype.getUnencodedContents = function() {
     for (var B = this.entryTuplesCache.access(), t = this.maxByteWidthsCache.access(), g = new Uint8Array(this.getUnencodedContentsSize()), n = 0, i = 0, Q = B.length; i < Q; i++) {
-      for (var o = B[i], r = o[0], C = o[1], c = o[2], E = lr(dr(r)), s = lr(dr(C)), D = lr(dr(c)), h = t[0] - 1; h >= 0; h--) g[n++] = E[h] || 0;
-      for (var h = t[1] - 1; h >= 0; h--) g[n++] = s[h] || 0;
-      for (var h = t[2] - 1; h >= 0; h--) g[n++] = D[h] || 0;
+      for (var o = B[i], r = o[0], C = o[1], c = o[2], E = lr(dr(r)), s = lr(dr(C)), D = lr(dr(c)), F = t[0] - 1; F >= 0; F--) g[n++] = E[F] || 0;
+      for (var F = t[1] - 1; F >= 0; F--) g[n++] = s[F] || 0;
+      for (var F = t[2] - 1; F >= 0; F--) g[n++] = D[F] || 0;
     }
     return g;
   }, A.prototype.getUnencodedContentsSize = function() {
@@ -50014,13 +50020,13 @@ var oiA = (function(e103) {
   }
   return A.prototype.computeBufferSize = function() {
     return JA(this, void 0, void 0, function() {
-      var B, t, g, n, i, Q, o, r, D, h, C, u, c, E, l, s, D, h, l, u, p, y, k, H;
+      var B, t, g, n, i, Q, o, r, D, F, C, u, c, E, l, s, D, F, l, u, p, y, k, H;
       return kA(this, function(v) {
         switch (v.label) {
           case 0:
-            B = this.context.largestObjectNumber + 1, t = QQ.forVersion(1, 7), g = t.sizeInBytes() + 2, n = Zp.create(this.createTrailerDict(), this.encodeStreams), i = [], Q = [], o = [], r = this.context.enumerateIndirectObjects(), D = 0, h = r.length, v.label = 1;
+            B = this.context.largestObjectNumber + 1, t = QQ.forVersion(1, 7), g = t.sizeInBytes() + 2, n = Zp.create(this.createTrailerDict(), this.encodeStreams), i = [], Q = [], o = [], r = this.context.enumerateIndirectObjects(), D = 0, F = r.length, v.label = 1;
           case 1:
-            return D < h ? (C = r[D], u = C[0], c = C[1], E = u === this.context.trailerInfo.Encrypt || c instanceof ce || c instanceof da || u.generationNumber !== 0, E ? (i.push(C), n.addUncompressedEntry(u, g), g += this.computeIndirectObjectSize(C), this.shouldWaitForTick(1) ? [4, Ci()] : [3, 3]) : [3, 4]) : [3, 6];
+            return D < F ? (C = r[D], u = C[0], c = C[1], E = u === this.context.trailerInfo.Encrypt || c instanceof ce || c instanceof da || u.generationNumber !== 0, E ? (i.push(C), n.addUncompressedEntry(u, g), g += this.computeIndirectObjectSize(C), this.shouldWaitForTick(1) ? [4, Ci()] : [3, 3]) : [3, 4]) : [3, 6];
           case 2:
             v.sent(), v.label = 3;
           case 3:
@@ -50030,9 +50036,9 @@ var oiA = (function(e103) {
           case 5:
             return D++, [3, 1];
           case 6:
-            D = 0, h = Q.length, v.label = 7;
+            D = 0, F = Q.length, v.label = 7;
           case 7:
-            return D < h ? (l = Q[D], u = o[D], p = ha.withContextAndObjects(this.context, l, this.encodeStreams), n.addUncompressedEntry(u, g), g += this.computeIndirectObjectSize([u, p]), i.push([u, p]), this.shouldWaitForTick(l.length) ? [4, Ci()] : [3, 9]) : [3, 10];
+            return D < F ? (l = Q[D], u = o[D], p = ha.withContextAndObjects(this.context, l, this.encodeStreams), n.addUncompressedEntry(u, g), g += this.computeIndirectObjectSize([u, p]), i.push([u, p]), this.shouldWaitForTick(l.length) ? [4, Ci()] : [3, 9]) : [3, 10];
           case 8:
             v.sent(), v.label = 9;
           case 9:
@@ -50288,13 +50294,13 @@ var aiA = (function() {
     });
   }, e103.prototype.embedFontDescriptor = function(A) {
     return JA(this, void 0, void 0, function() {
-      var B, t, g, n, i, Q, o, r, C, c, E, s, D, h, l;
+      var B, t, g, n, i, Q, o, r, C, c, E, s, D, F, l;
       return kA(this, function(u) {
         switch (u.label) {
           case 0:
             return [4, this.embedFontStream(A)];
           case 1:
-            return B = u.sent(), t = this.scale, g = this.font, n = g.italicAngle, i = g.ascent, Q = g.descent, o = g.capHeight, r = g.xHeight, C = this.font.bbox, c = C.minX, E = C.minY, s = C.maxX, D = C.maxY, h = A.obj((l = { Type: "FontDescriptor", FontName: this.baseFontName, Flags: ZW(this.font), FontBBox: [c * t, E * t, s * t, D * t], ItalicAngle: n, Ascent: i * t, Descent: Q * t, CapHeight: (o || i) * t, XHeight: (r || 0) * t, StemV: 0 }, l[this.isCFF() ? "FontFile3" : "FontFile2"] = B, l)), [2, A.register(h)];
+            return B = u.sent(), t = this.scale, g = this.font, n = g.italicAngle, i = g.ascent, Q = g.descent, o = g.capHeight, r = g.xHeight, C = this.font.bbox, c = C.minX, E = C.minY, s = C.maxX, D = C.maxY, F = A.obj((l = { Type: "FontDescriptor", FontName: this.baseFontName, Flags: ZW(this.font), FontBBox: [c * t, E * t, s * t, D * t], ItalicAngle: n, Ascent: i * t, Descent: Q * t, CapHeight: (o || i) * t, XHeight: (r || 0) * t, StemV: 0 }, l[this.isCFF() ? "FontFile3" : "FontFile2"] = B, l)), [2, A.register(F)];
         }
       });
     });
@@ -50435,10 +50441,10 @@ aA.toRGBA8 = function(e103) {
   e103.frames[0].data == null && (e103.frames[0].data = e103.data);
   for (var g = A * B * 4, n = new Uint8Array(g), i = new Uint8Array(g), Q = new Uint8Array(g), o = 0; o < e103.frames.length; o++) {
     var r = e103.frames[o], C = r.rect.x, c = r.rect.y, E = r.rect.width, s = r.rect.height, D = aA.toRGBA8.decodeImage(r.data, E, s, e103);
-    if (o != 0) for (var h = 0; h < g; h++) Q[h] = n[h];
+    if (o != 0) for (var F = 0; F < g; F++) Q[F] = n[F];
     if (r.blend == 0 ? aA._copyTile(D, E, s, n, A, B, C, c, 0) : r.blend == 1 && aA._copyTile(D, E, s, n, A, B, C, c, 1), t.push(n.buffer.slice(0)), r.dispose != 0) {
       if (r.dispose == 1) aA._copyTile(i, E, s, n, A, B, C, c, 0);
-      else if (r.dispose == 2) for (var h = 0; h < g; h++) n[h] = Q[h];
+      else if (r.dispose == 2) for (var F = 0; F < g; F++) n[F] = Q[F];
     }
   }
   return t;
@@ -50450,8 +50456,8 @@ aA.toRGBA8.decodeImage = function(e103, A, B, t) {
     if (C == 8) for (var D = 0; D < s; D += 4) Q[D] = e103[D], Q[D + 1] = e103[D + 1], Q[D + 2] = e103[D + 2], Q[D + 3] = e103[D + 3];
     if (C == 16) for (var D = 0; D < s; D++) Q[D] = e103[D << 1];
   } else if (r == 2) {
-    var h = t.tabs.tRNS;
-    if (h == null) {
+    var F = t.tabs.tRNS;
+    if (F == null) {
       if (C == 8) for (var D = 0; D < g; D++) {
         var l = D * 3;
         o[D] = 255 << 24 | e103[l + 2] << 16 | e103[l + 1] << 8 | e103[l];
@@ -50461,7 +50467,7 @@ aA.toRGBA8.decodeImage = function(e103, A, B, t) {
         o[D] = 255 << 24 | e103[l + 4] << 16 | e103[l + 2] << 8 | e103[l];
       }
     } else {
-      var u = h[0], p = h[1], y = h[2];
+      var u = F[0], p = F[1], y = F[2];
       if (C == 8) for (var D = 0; D < g; D++) {
         var k = D << 2, l = D * 3;
         o[D] = 255 << 24 | e103[l + 2] << 16 | e103[l + 1] << 8 | e103[l], e103[l] == u && e103[l + 1] == p && e103[l + 2] == y && (Q[k + 3] = 0);
@@ -50536,8 +50542,8 @@ aA.decode = function(e103) {
     } else if (D == "acTL") i.tabs[D] = { num_frames: n(A, B), num_plays: n(A, B + 4) }, r = new Uint8Array(A.length);
     else if (D == "fcTL") {
       if (C != 0) {
-        var h = i.frames[i.frames.length - 1];
-        h.data = aA.decode._decompress(i, r.slice(0, C), h.rect.width, h.rect.height), C = 0;
+        var F = i.frames[i.frames.length - 1];
+        F.data = aA.decode._decompress(i, r.slice(0, C), F.rect.width, F.rect.height), C = 0;
       }
       var l = { x: n(A, B + 12), y: n(A, B + 16), width: n(A, B + 4), height: n(A, B + 8) }, u = g(A, B + 22);
       u = g(A, B + 20) / (u == 0 ? 100 : u);
@@ -50583,8 +50589,8 @@ aA.decode = function(e103) {
     B += 4;
   }
   if (C != 0) {
-    var h = i.frames[i.frames.length - 1];
-    h.data = aA.decode._decompress(i, r.slice(0, C), h.rect.width, h.rect.height), C = 0;
+    var F = i.frames[i.frames.length - 1];
+    F.data = aA.decode._decompress(i, r.slice(0, C), F.rect.width, F.rect.height), C = 0;
   }
   return i.data = aA.decode._decompress(i, Q, i.width, i.height), delete i.compress, delete i.interlace, delete i.filter, i;
 };
@@ -50603,7 +50609,7 @@ aA.inflateRaw = (function() {
   return e103.H = {}, e103.H.N = function(A, B) {
     var t = Uint8Array, g = 0, n = 0, i = 0, Q = 0, o = 0, r = 0, C = 0, c = 0, E = 0, s, D;
     if (A[0] == 3 && A[1] == 0) return B || new t(0);
-    var h = e103.H, l = h.b, u = h.e, p = h.R, y = h.n, k = h.A, H = h.Z, v = h.m, z = B == null;
+    var F = e103.H, l = F.b, u = F.e, p = F.R, y = F.n, k = F.A, H = F.Z, v = F.m, z = B == null;
     for (z && (B = new t(A.length >>> 2 << 3)); g == 0; ) {
       if (g = l(A, E, 1), n = l(A, E + 1, 2), E += 3, n == 0) {
         (E & 7) != 0 && (E += 8 - (E & 7));
@@ -50619,9 +50625,9 @@ aA.inflateRaw = (function() {
           v.Q[(v.X[_] << 1) + 1] = YA, YA > q && (q = YA);
         }
         E += 3 * o, y(v.Q, q), k(v.Q, q, v.u), s = v.w, D = v.d, E = p(v.u, (1 << q) - 1, i + Q, A, E, v.v);
-        var rA = h.V(v.v, 0, i, v.C);
+        var rA = F.V(v.v, 0, i, v.C);
         r = (1 << rA) - 1;
-        var dA = h.V(v.v, i, Q, v.D);
+        var dA = F.V(v.v, i, Q, v.D);
         C = (1 << dA) - 1, y(v.C, rA), k(v.C, rA, s), y(v.D, dA), k(v.D, dA, D);
       }
       for (; ; ) {
@@ -50719,8 +50725,8 @@ aA.inflateRaw = (function() {
 })();
 aA.decode._readInterlace = function(e103, A) {
   for (var B = A.width, t = A.height, g = aA.decode._getBPP(A), n = g >> 3, i = Math.ceil(B * g / 8), Q = new Uint8Array(t * i), o = 0, r = [0, 0, 4, 0, 2, 0, 1], C = [0, 4, 0, 2, 0, 1, 0], c = [8, 8, 8, 4, 4, 2, 2], E = [8, 8, 4, 4, 2, 2, 1], s = 0; s < 7; ) {
-    for (var D = c[s], h = E[s], l = 0, u = 0, p = r[s]; p < t; ) p += D, u++;
-    for (var y = C[s]; y < B; ) y += h, l++;
+    for (var D = c[s], F = E[s], l = 0, u = 0, p = r[s]; p < t; ) p += D, u++;
+    for (var y = C[s]; y < B; ) y += F, l++;
     var k = Math.ceil(l * g / 8);
     aA.decode._filterZero(e103, A, o, l, u);
     for (var H = 0, v = r[s]; v < t; ) {
@@ -50738,7 +50744,7 @@ aA.decode._readInterlace = function(e103, A) {
           K = K >> 4 - (W & 7) & 15, Q[v * i + (z >> 1)] |= K << 4 - ((z & 1) << 2);
         }
         if (g >= 8) for (var BA = v * i + z * n, q = 0; q < n; q++) Q[BA + q] = e103[(W >> 3) + q];
-        W += g, z += h;
+        W += g, z += F;
       }
       H++, v += D;
     }
@@ -50810,15 +50816,15 @@ aA._bin = { nextZero: function(e103, A) {
 aA._copyTile = function(e103, A, B, t, g, n, i, Q, o) {
   for (var r = Math.min(A, g), C = Math.min(B, n), c = 0, E = 0, s = 0; s < C; s++) for (var D = 0; D < r; D++) if (i >= 0 && Q >= 0 ? (c = s * A + D << 2, E = (Q + s) * g + i + D << 2) : (c = (-Q + s) * A - i + D << 2, E = s * g + D << 2), o == 0) t[E] = e103[c], t[E + 1] = e103[c + 1], t[E + 2] = e103[c + 2], t[E + 3] = e103[c + 3];
   else if (o == 1) {
-    var h = e103[c + 3] * 0.00392156862745098, l = e103[c] * h, u = e103[c + 1] * h, p = e103[c + 2] * h, y = t[E + 3] * (1 / 255), k = t[E] * y, H = t[E + 1] * y, v = t[E + 2] * y, z = 1 - h, W = h + y * z, K = W == 0 ? 0 : 1 / W;
+    var F = e103[c + 3] * 0.00392156862745098, l = e103[c] * F, u = e103[c + 1] * F, p = e103[c + 2] * F, y = t[E + 3] * (1 / 255), k = t[E] * y, H = t[E + 1] * y, v = t[E + 2] * y, z = 1 - F, W = F + y * z, K = W == 0 ? 0 : 1 / W;
     t[E + 3] = 255 * W, t[E + 0] = (l + k * z) * K, t[E + 1] = (u + H * z) * K, t[E + 2] = (p + v * z) * K;
   } else if (o == 2) {
-    var h = e103[c + 3], l = e103[c], u = e103[c + 1], p = e103[c + 2], y = t[E + 3], k = t[E], H = t[E + 1], v = t[E + 2];
-    h == y && l == k && u == H && p == v ? (t[E] = 0, t[E + 1] = 0, t[E + 2] = 0, t[E + 3] = 0) : (t[E] = l, t[E + 1] = u, t[E + 2] = p, t[E + 3] = h);
+    var F = e103[c + 3], l = e103[c], u = e103[c + 1], p = e103[c + 2], y = t[E + 3], k = t[E], H = t[E + 1], v = t[E + 2];
+    F == y && l == k && u == H && p == v ? (t[E] = 0, t[E + 1] = 0, t[E + 2] = 0, t[E + 3] = 0) : (t[E] = l, t[E + 1] = u, t[E + 2] = p, t[E + 3] = F);
   } else if (o == 3) {
-    var h = e103[c + 3], l = e103[c], u = e103[c + 1], p = e103[c + 2], y = t[E + 3], k = t[E], H = t[E + 1], v = t[E + 2];
-    if (h == y && l == k && u == H && p == v) continue;
-    if (h < 220 && y > 20) return false;
+    var F = e103[c + 3], l = e103[c], u = e103[c + 1], p = e103[c + 2], y = t[E + 3], k = t[E], H = t[E + 1], v = t[E + 2];
+    if (F == y && l == k && u == H && p == v) continue;
+    if (F < 220 && y > 20) return false;
   }
   return true;
 };
@@ -50840,9 +50846,9 @@ aA.encode._main = function(e103, A, B, t, g) {
     for (var s = e103.plte.length, D = 0; D < s; D++) e103.plte[D] >>> 24 != 255 && (c = true);
     E += 8 + s * 3 + 4 + (c ? 8 + s * 1 + 4 : 0);
   }
-  for (var h = 0; h < e103.frames.length; h++) {
-    var l = e103.frames[h];
-    C && (E += 38), E += l.cimg.length + 12, h != 0 && (E += 4);
+  for (var F = 0; F < e103.frames.length; F++) {
+    var l = e103.frames[F];
+    C && (E += 38), E += l.cimg.length + 12, F != 0 && (E += 4);
   }
   E += 12;
   for (var u = new Uint8Array(E), p = [137, 80, 78, 71, 13, 10, 26, 10], D = 0; D < 8; D++) u[D] = p[D];
@@ -50859,13 +50865,13 @@ aA.encode._main = function(e103, A, B, t, g) {
       r += s, i(u, r, n(u, r - s - 4, s + 4)), r += 4;
     }
   }
-  for (var W = 0, h = 0; h < e103.frames.length; h++) {
-    var l = e103.frames[h];
-    C && (i(u, r, 26), r += 4, o(u, r, "fcTL"), r += 4, i(u, r, W++), r += 4, i(u, r, l.rect.width), r += 4, i(u, r, l.rect.height), r += 4, i(u, r, l.rect.x), r += 4, i(u, r, l.rect.y), r += 4, Q(u, r, t[h]), r += 2, Q(u, r, 1e3), r += 2, u[r] = l.dispose, r++, u[r] = l.blend, r++, i(u, r, n(u, r - 30, 30)), r += 4);
+  for (var W = 0, F = 0; F < e103.frames.length; F++) {
+    var l = e103.frames[F];
+    C && (i(u, r, 26), r += 4, o(u, r, "fcTL"), r += 4, i(u, r, W++), r += 4, i(u, r, l.rect.width), r += 4, i(u, r, l.rect.height), r += 4, i(u, r, l.rect.x), r += 4, i(u, r, l.rect.y), r += 4, Q(u, r, t[F]), r += 2, Q(u, r, 1e3), r += 2, u[r] = l.dispose, r++, u[r] = l.blend, r++, i(u, r, n(u, r - 30, 30)), r += 4);
     var K = l.cimg, s = K.length;
-    i(u, r, s + (h == 0 ? 0 : 4)), r += 4;
+    i(u, r, s + (F == 0 ? 0 : 4)), r += 4;
     var BA = r;
-    o(u, r, h == 0 ? "IDAT" : "fdAT"), r += 4, h != 0 && (i(u, r, W++), r += 4), u.set(K, r), r += s, i(u, r, n(u, BA, r - BA)), r += 4;
+    o(u, r, F == 0 ? "IDAT" : "fdAT"), r += 4, F != 0 && (i(u, r, W++), r += 4), u.set(K, r), r += s, i(u, r, n(u, BA, r - BA)), r += 4;
   }
   return i(u, r, 0), r += 4, o(u, r, "IEND"), r += 4, i(u, r, n(u, r - 4, 4)), r += 4, u.buffer;
 };
@@ -50876,7 +50882,7 @@ aA.encode.compressPNG = function(e103, A, B) {
   }
 };
 aA.encode.compress = function(e103, A, B, t, g) {
-  for (var n = g[0], i = g[1], Q = g[2], o = g[3], r = g[4], C = 6, c = 8, E = 255, s = 0; s < e103.length; s++) for (var D = new Uint8Array(e103[s]), h = D.length, l = 0; l < h; l += 4) E &= D[l + 3];
+  for (var n = g[0], i = g[1], Q = g[2], o = g[3], r = g[4], C = 6, c = 8, E = 255, s = 0; s < e103.length; s++) for (var D = new Uint8Array(e103[s]), F = D.length, l = 0; l < F; l += 4) E &= D[l + 3];
   var u = E != 255, p = aA.encode.framize(e103, A, B, n, i, Q), y = {}, k = [], H = [];
   if (t != 0) {
     for (var v = [], l = 0; l < p.length; l++) v.push(p[l].img.buffer);
@@ -50888,9 +50894,9 @@ aA.encode.compress = function(e103, A, B, t, g) {
     }
     for (var l = 0; l < W.plte.length; l++) k.push(W.plte[l].est.rgba);
   } else for (var s = 0; s < p.length; s++) {
-    var YA = p[s], rA = new Uint32Array(YA.img.buffer), dA = YA.rect.width, h = rA.length, mA = new Uint8Array(h);
+    var YA = p[s], rA = new Uint32Array(YA.img.buffer), dA = YA.rect.width, F = rA.length, mA = new Uint8Array(F);
     H.push(mA);
-    for (var l = 0; l < h; l++) {
+    for (var l = 0; l < F; l++) {
       var DA = rA[l];
       if (l != 0 && DA == rA[l - 1]) mA[l] = mA[l - 1];
       else if (l > dA && DA == rA[l - dA]) mA[l] = mA[l - dA];
@@ -50928,7 +50934,7 @@ aA.encode.compress = function(e103, A, B, t, g) {
 };
 aA.encode.framize = function(e103, A, B, t, g, n) {
   for (var i = [], Q = 0; Q < e103.length; Q++) {
-    var o = new Uint8Array(e103[Q]), r = new Uint32Array(o.buffer), C, c = 0, E = 0, s = A, D = B, h = t ? 1 : 0;
+    var o = new Uint8Array(e103[Q]), r = new Uint32Array(o.buffer), C, c = 0, E = 0, s = A, D = B, F = t ? 1 : 0;
     if (Q != 0) {
       for (var l = n || t || Q == 1 || i[Q - 2].dispose != 0 ? 1 : 2, u = 0, p = 1e9, y = 0; y < l; y++) {
         for (var YA = new Uint8Array(e103[Q - 1 - y]), k = new Uint32Array(e103[Q - 1 - y]), H = A, v = B, z = -1, W = -1, K = 0; K < B; K++) for (var BA = 0; BA < A; BA++) {
@@ -50940,9 +50946,9 @@ aA.encode.framize = function(e103, A, B, t, g, n) {
         _ < p && (p = _, u = y, c = H, E = v, s = z - H + 1, D = W - v + 1);
       }
       var YA = new Uint8Array(e103[Q - 1 - u]);
-      u == 1 && (i[Q - 1].dispose = 2), C = new Uint8Array(s * D * 4), aA._copyTile(YA, A, B, C, s, D, -c, -E, 0), h = aA._copyTile(o, A, B, C, s, D, -c, -E, 3) ? 1 : 0, h == 1 ? aA.encode._prepareDiff(o, A, B, C, { x: c, y: E, width: s, height: D }) : aA._copyTile(o, A, B, C, s, D, -c, -E, 0);
+      u == 1 && (i[Q - 1].dispose = 2), C = new Uint8Array(s * D * 4), aA._copyTile(YA, A, B, C, s, D, -c, -E, 0), F = aA._copyTile(o, A, B, C, s, D, -c, -E, 3) ? 1 : 0, F == 1 ? aA.encode._prepareDiff(o, A, B, C, { x: c, y: E, width: s, height: D }) : aA._copyTile(o, A, B, C, s, D, -c, -E, 0);
     } else C = o.slice(0);
-    i.push({ rect: { x: c, y: E, width: s, height: D }, img: C, blend: h, dispose: 0 });
+    i.push({ rect: { x: c, y: E, width: s, height: D }, img: C, blend: F, dispose: 0 });
   }
   if (t) for (var Q = 0; Q < i.length; Q++) {
     var rA = i[Q];
@@ -50959,11 +50965,11 @@ aA.encode.framize = function(e103, A, B, t, g, n) {
   return i;
 };
 aA.encode._updateFrame = function(e103, A, B, t, g, n, i) {
-  for (var Q = Uint8Array, o = Uint32Array, r = new Q(e103[g - 1]), C = new o(e103[g - 1]), c = g + 1 < e103.length ? new Q(e103[g + 1]) : null, E = new Q(e103[g]), s = new o(E.buffer), D = A, h = B, l = -1, u = -1, p = 0; p < n.height; p++) for (var y = 0; y < n.width; y++) {
+  for (var Q = Uint8Array, o = Uint32Array, r = new Q(e103[g - 1]), C = new o(e103[g - 1]), c = g + 1 < e103.length ? new Q(e103[g + 1]) : null, E = new Q(e103[g]), s = new o(E.buffer), D = A, F = B, l = -1, u = -1, p = 0; p < n.height; p++) for (var y = 0; y < n.width; y++) {
     var k = n.x + y, H = n.y + p, v = H * A + k, z = s[v];
-    z == 0 || t[g - 1].dispose == 0 && C[v] == z && (c == null || c[v * 4 + 3] != 0) || (k < D && (D = k), k > l && (l = k), H < h && (h = H), H > u && (u = H));
+    z == 0 || t[g - 1].dispose == 0 && C[v] == z && (c == null || c[v * 4 + 3] != 0) || (k < D && (D = k), k > l && (l = k), H < F && (F = H), H > u && (u = H));
   }
-  l == -1 && (D = h = l = u = 0), i && ((D & 1) == 1 && D--, (h & 1) == 1 && h--), n = { x: D, y: h, width: l - D + 1, height: u - h + 1 };
+  l == -1 && (D = F = l = u = 0), i && ((D & 1) == 1 && D--, (F & 1) == 1 && F--), n = { x: D, y: F, width: l - D + 1, height: u - F + 1 };
   var W = t[g];
   W.rect = n, W.blend = 1, W.img = new Uint8Array(n.width * n.height * 4), t[g - 1].dispose == 0 ? (aA._copyTile(r, A, B, W.img, n.width, n.height, -n.x, -n.y, 0), aA.encode._prepareDiff(E, A, B, W.img, n)) : aA._copyTile(E, A, B, W.img, n.width, n.height, -n.x, -n.y, 0);
 };
@@ -51020,7 +51026,7 @@ aA.crc = { table: (function() {
 } };
 aA.quantize = function(e103, A) {
   for (var B = new Uint8Array(e103), t = B.slice(0), g = new Uint32Array(t.buffer), n = aA.quantize.getKDtree(t, A), i = n[0], Q = n[1], o = aA.quantize.planeDst, r = B, C = g, c = r.length, E = new Uint8Array(B.length >> 2), s = 0; s < c; s += 4) {
-    var D = r[s] * 0.00392156862745098, h = r[s + 1] * (1 / 255), l = r[s + 2] * (1 / 255), u = r[s + 3] * (1 / 255), p = aA.quantize.getNearest(i, D, h, l, u);
+    var D = r[s] * 0.00392156862745098, F = r[s + 1] * (1 / 255), l = r[s + 2] * (1 / 255), u = r[s + 3] * (1 / 255), p = aA.quantize.getNearest(i, D, F, l, u);
     E[s >> 2] = p.ind, C[s >> 2] = p.est.rgba;
   }
   return { abuf: t.buffer, inds: E, plte: Q };
@@ -51045,8 +51051,8 @@ aA.quantize.getKDtree = function(e103, A, B) {
     for (var o = 0; o < 4; o++) s.bst.m[o] = r.bst.m[o] - E.bst.m[o];
     s.est = aA.quantize.estats(s.bst), r.left = E, r.right = s, n[Q] = E, n.push(s);
   }
-  n.sort(function(D, h) {
-    return h.bst.N - D.bst.N;
+  n.sort(function(D, F) {
+    return F.bst.N - D.bst.N;
   });
   for (var o = 0; o < n.length; o++) n[o].ind = o;
   return [g, n];
@@ -51093,7 +51099,7 @@ aA.quantize.stats = function(e103, A, B) {
 };
 aA.quantize.estats = function(e103) {
   var A = e103.R, B = e103.m, t = e103.N, g = B[0], n = B[1], i = B[2], Q = B[3], o = t == 0 ? 0 : 1 / t, r = [A[0] - g * g * o, A[1] - g * n * o, A[2] - g * i * o, A[3] - g * Q * o, A[4] - n * g * o, A[5] - n * n * o, A[6] - n * i * o, A[7] - n * Q * o, A[8] - i * g * o, A[9] - i * n * o, A[10] - i * i * o, A[11] - i * Q * o, A[12] - Q * g * o, A[13] - Q * n * o, A[14] - Q * i * o, A[15] - Q * Q * o], C = r, c = aA.M4, E = [0.5, 0.5, 0.5, 0.5], s = 0, D = 0;
-  if (t != 0) for (var h = 0; h < 10 && (E = c.multVec(C, E), D = Math.sqrt(c.dot(E, E)), E = c.sml(1 / D, E), !(Math.abs(D - s) < 1e-9)); h++) s = D;
+  if (t != 0) for (var F = 0; F < 10 && (E = c.multVec(C, E), D = Math.sqrt(c.dot(E, E)), E = c.sml(1 / D, E), !(Math.abs(D - s) < 1e-9)); F++) s = D;
   var l = [g * o, n * o, i * o, Q * o], u = c.dot(c.sml(255, l), E);
   return { Cov: r, q: l, e: E, L: s, eMq255: u, eMq: c.dot(E, l), rgba: (Math.round(255 * l[3]) << 24 | Math.round(255 * l[2]) << 16 | Math.round(255 * l[1]) << 8 | Math.round(255 * l[0]) << 0) >>> 0 };
 };
@@ -51390,11 +51396,11 @@ var yiA = (function(e103) {
     var E, s;
     if (n === 1) E = xiA, s = fiA;
     else if (n === 2) {
-      var D = this.getBits(5) + 257, h = this.getBits(5) + 1, l = this.getBits(4) + 4, u = new Uint8Array(tP.length), p = void 0;
+      var D = this.getBits(5) + 257, F = this.getBits(5) + 1, l = this.getBits(4) + 4, u = new Uint8Array(tP.length), p = void 0;
       for (p = 0; p < l; ++p) u[tP[p]] = this.getBits(3);
       var y = this.generateHuffmanTable(u);
       t = 0, p = 0;
-      for (var k = D + h, H = new Uint8Array(k), v = void 0, z = void 0, W = void 0; p < k; ) {
+      for (var k = D + F, H = new Uint8Array(k), v = void 0, z = void 0, W = void 0; p < k; ) {
         var K = this.getCode(y);
         if (K === 16) v = 2, z = 3, W = t;
         else if (K === 17) v = 3, z = 3, W = t = 0;
@@ -51462,7 +51468,7 @@ var RiA = (function(e103) {
   return A.prototype.readBlock = function() {
     var B = 512, t = B * 2, g = B, n, i, Q, o = this.lzwState;
     if (o) {
-      var r = o.earlyChange, C = o.nextCode, c = o.dictionaryValues, E = o.dictionaryLengths, s = o.dictionaryPrevCodes, D = o.codeLength, h = o.prevCode, l = o.currentSequence, u = o.currentSequenceLength, p = 0, y = this.bufferLength, k = this.ensureBuffer(this.bufferLength + t);
+      var r = o.earlyChange, C = o.nextCode, c = o.dictionaryValues, E = o.dictionaryLengths, s = o.dictionaryPrevCodes, D = o.codeLength, F = o.prevCode, l = o.currentSequence, u = o.currentSequenceLength, p = 0, y = this.bufferLength, k = this.ensureBuffer(this.bufferLength + t);
       for (n = 0; n < B; n++) {
         var H = this.readBits(D), v = u > 0;
         if (!H || H < 256) l[0] = H, u = 1;
@@ -51475,7 +51481,7 @@ var RiA = (function(e103) {
           this.eof = true, delete this.lzwState;
           break;
         }
-        if (v && (s[C] = h, E[C] = E[h] + 1, c[C] = l[0], C++, D = C + r & C + r - 1 ? D : Math.min(Math.log(C + r) / 0.6931471805599453 + 1, 12) | 0), h = H, p += u, t < p) {
+        if (v && (s[C] = F, E[C] = E[F] + 1, c[C] = l[0], C++, D = C + r & C + r - 1 ? D : Math.min(Math.log(C + r) / 0.6931471805599453 + 1, 12) | 0), F = H, p += u, t < p) {
           do
             t += g;
           while (t < p);
@@ -51483,7 +51489,7 @@ var RiA = (function(e103) {
         }
         for (i = 0; i < u; i++) k[y++] = l[i];
       }
-      o.nextCode = C, o.codeLength = D, o.prevCode = h, o.currentSequenceLength = u, this.bufferLength = y;
+      o.nextCode = C, o.codeLength = D, o.prevCode = F, o.currentSequenceLength = u, this.bufferLength = y;
     }
   }, A.prototype.readBits = function(B) {
     for (var t = this.bitsCached, g = this.cachedData; t < B; ) {
@@ -52844,10 +52850,10 @@ var sQA = (function() {
   }, e103.prototype.parseEntries = function() {
     for (var A = [], B = this.byteWidths, t = B[0], g = B[1], n = B[2], i = 0, Q = this.subsections.length; i < Q; i++) for (var o = this.subsections[i], r = o.firstObjectNumber, C = o.length, c = 0; c < C; c++) {
       for (var E = 0, s = 0, D = t; s < D; s++) E = E << 8 | this.bytes.next();
-      for (var h = 0, s = 0, D = g; s < D; s++) h = h << 8 | this.bytes.next();
+      for (var F = 0, s = 0, D = g; s < D; s++) F = F << 8 | this.bytes.next();
       for (var l = 0, s = 0, D = n; s < D; s++) l = l << 8 | this.bytes.next();
       t === 0 && (E = 1);
-      var u = r + c, p = { ref: ZA.of(u, l), offset: h, deleted: E === 0, inObjectStream: E === 2 };
+      var u = r + c, p = { ref: ZA.of(u, l), offset: F, deleted: E === 0, inObjectStream: E === 2 };
       A.push(p);
     }
     return A;
@@ -53333,8 +53339,8 @@ var pP = { M: function(e103) {
 } };
 var mP = function(e103, A, B) {
   for (var t = B[0], g = B[1], n = B[2], i = B[3], Q = B[4], o = B[5], r = B[6], C = FQA(o, r, t, g, i, Q, n, e103, A), c = [], E = 0, s = C; E < s.length; E++) {
-    var D = s[E], h = hQA.apply(void 0, D);
-    c.push($t.apply(void 0, h));
+    var D = s[E], F = hQA.apply(void 0, D);
+    c.push($t.apply(void 0, F));
   }
   return c;
 };
@@ -53343,7 +53349,7 @@ var FQA = function(e103, A, B, t, g, n, i, Q, o) {
   B = Math.abs(B), t = Math.abs(t), xB = c * (Q - e103) * 0.5 + C * (o - A) * 0.5, fB = c * (o - A) * 0.5 - C * (Q - e103) * 0.5;
   var E = xB * xB / (B * B) + fB * fB / (t * t);
   E > 1 && (E = Math.sqrt(E), B *= E, t *= E);
-  var s = c / B, D = C / B, h = -C / t, l = c / t, u = s * Q + D * o, p = h * Q + l * o, y = s * e103 + D * A, k = h * e103 + l * A, H = (y - u) * (y - u) + (k - p) * (k - p), v = 1 / H - 0.25;
+  var s = c / B, D = C / B, F = -C / t, l = c / t, u = s * Q + D * o, p = F * Q + l * o, y = s * e103 + D * A, k = F * e103 + l * A, H = (y - u) * (y - u) + (k - p) * (k - p), v = 1 / H - 0.25;
   v < 0 && (v = 0);
   var z = Math.sqrt(v);
   n === g && (z = -z);
@@ -53356,7 +53362,7 @@ var FQA = function(e103, A, B, t, g, n, i, Q, o) {
   return rA;
 };
 var hQA = function(e103, A, B, t, g, n, i, Q) {
-  var o = Q * g, r = -i * n, C = i * g, c = Q * n, E = 0.5 * (t - B), s = 8 / 3 * Math.sin(E * 0.5) * Math.sin(E * 0.5) / Math.sin(E), D = e103 + Math.cos(B) - s * Math.sin(B), h = A + Math.sin(B) + s * Math.cos(B), l = e103 + Math.cos(t), u = A + Math.sin(t), p = l + s * Math.sin(t), y = u - s * Math.cos(t), k = [o * D + r * h, C * D + c * h, o * p + r * y, C * p + c * y, o * l + r * u, C * l + c * u];
+  var o = Q * g, r = -i * n, C = i * g, c = Q * n, E = 0.5 * (t - B), s = 8 / 3 * Math.sin(E * 0.5) * Math.sin(E * 0.5) / Math.sin(E), D = e103 + Math.cos(B) - s * Math.sin(B), F = A + Math.sin(B) + s * Math.cos(B), l = e103 + Math.cos(t), u = A + Math.sin(t), p = l + s * Math.sin(t), y = u - s * Math.cos(t), k = [o * D + r * F, C * D + c * F, o * p + r * y, C * p + c * y, o * l + r * u, C * l + c * u];
   return k;
 };
 var xP = function(e103) {
@@ -53434,8 +53440,8 @@ var dm = function(e103) {
   return sB([Ee()], E, c, D, [we()]);
 };
 var JP = function(e103) {
-  for (var A = EB(e103.x), B = EB(e103.y), t = EB(e103.width), g = EB(e103.height), n = EB(e103.lineHeight), i = EB(e103.borderWidth), Q = EB(e103.padding), o = A + i / 2 + Q, r = B + i / 2 + Q, C = t - (i / 2 + Q) * 2, c = g - (i / 2 + Q) * 2, E = [gn(o, r), Le(o, r + c), Le(o + C, r + c), Le(o + C, r), Fi(), Sa(), Oa()], s = Kr({ x: A, y: B, width: t, height: g, borderWidth: e103.borderWidth, color: e103.color, borderColor: e103.borderColor, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) }), D = [], h = 0, l = e103.selectedLines.length; h < l; h++) {
-    var u = e103.textLines[e103.selectedLines[h]];
+  for (var A = EB(e103.x), B = EB(e103.y), t = EB(e103.width), g = EB(e103.height), n = EB(e103.lineHeight), i = EB(e103.borderWidth), Q = EB(e103.padding), o = A + i / 2 + Q, r = B + i / 2 + Q, C = t - (i / 2 + Q) * 2, c = g - (i / 2 + Q) * 2, E = [gn(o, r), Le(o, r + c), Le(o + C, r + c), Le(o + C, r), Fi(), Sa(), Oa()], s = Kr({ x: A, y: B, width: t, height: g, borderWidth: e103.borderWidth, color: e103.color, borderColor: e103.borderColor, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) }), D = [], F = 0, l = e103.selectedLines.length; F < l; F++) {
+    var u = e103.textLines[e103.selectedLines[F]];
     D.push.apply(D, Kr({ x: u.x - Q, y: u.y - (n - u.height) / 2, width: t - i, height: u.height + (n - u.height) / 2, borderWidth: 0, color: e103.selectedColor, borderColor: void 0, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) }));
   }
   var p = lm(e103.textLines, { color: e103.textColor, font: e103.font, size: e103.fontSize, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) }), y = sB([wm("Tx"), Ee()], p, [we(), sm()]);
@@ -53565,8 +53571,8 @@ var OP = function(e103, A, B, t) {
     for (var n = 0, i = 0, Q = e103.length; i < Q; i++) {
       n += 1;
       for (var o = e103[i], r = o.split(" "), C = B.width, c = 0, E = r.length; c < E; c++) {
-        var s = c === E - 1, D = s ? r[c] : r[c] + " ", h = A.widthOfTextAtSize(D, g);
-        C -= h, C <= 0 && (n += 1, C = B.width - h);
+        var s = c === E - 1, D = s ? r[c] : r[c] + " ", F = A.widthOfTextAtSize(D, g);
+        C -= F, C <= 0 && (n += 1, C = B.width - F);
       }
     }
     if (!t && n > e103.length) return g - 1;
@@ -53605,7 +53611,7 @@ var GQA = function(e103, A, B, t) {
 var Nm = function(e103, A) {
   var B = A.alignment, t = A.fontSize, g = A.font, n = A.bounds, i = SF(hr(e103));
   (t === void 0 || t === 0) && (t = OP(i, g, n, true));
-  for (var Q = g.heightAtSize(t), o = Q + Q * 0.2, r = [], C = n.x, c = n.y, E = n.x + n.width, s = n.y + n.height, D = n.y + n.height, h = 0, l = i.length; h < l; h++) for (var u = i[h]; u !== void 0; ) {
+  for (var Q = g.heightAtSize(t), o = Q + Q * 0.2, r = [], C = n.x, c = n.y, E = n.x + n.width, s = n.y + n.height, D = n.y + n.height, F = 0, l = i.length; F < l; F++) for (var u = i[F]; u !== void 0; ) {
     var p = GQA(u, n.width, g, t), y = p.line, k = p.encoded, H = p.width, v = p.remainder, z = B === fe.Left ? n.x : B === fe.Center ? n.x + n.width / 2 - H / 2 : B === fe.Right ? n.x + n.width - H : n.x;
     D -= o, z < C && (C = z), D < c && (c = D), z + H > E && (E = z + H), D + Q > s && (s = D + Q), r.push({ text: y, encoded: k, width: H, height: Q, x: z, y: D }), u = v?.trim();
   }
@@ -53615,9 +53621,9 @@ var XP = function(e103, A) {
   var B = A.fontSize, t = A.font, g = A.bounds, n = A.cellCount, i = ep(hr(e103));
   if (i.length > n) throw new SP(i.length, n);
   (B === void 0 || B === 0) && (B = NQA(i, t, g, n));
-  for (var Q = g.width / n, o = t.heightAtSize(B, { descender: false }), r = g.y + (g.height / 2 - o / 2), C = [], c = g.x, E = g.y, s = g.x + g.width, D = g.y + g.height, h = 0, l = 0; h < n; ) {
-    var u = tp(i, l), p = u[0], y = u[1], k = t.encodeText(p), H = t.widthOfTextAtSize(p, B), v = g.x + (Q * h + Q / 2), z = v - H / 2;
-    z < c && (c = z), r < E && (E = r), z + H > s && (s = z + H), r + o > D && (D = r + o), C.push({ text: i, encoded: k, width: H, height: o, x: z, y: r }), h += 1, l += y;
+  for (var Q = g.width / n, o = t.heightAtSize(B, { descender: false }), r = g.y + (g.height / 2 - o / 2), C = [], c = g.x, E = g.y, s = g.x + g.width, D = g.y + g.height, F = 0, l = 0; F < n; ) {
+    var u = tp(i, l), p = u[0], y = u[1], k = t.encodeText(p), H = t.widthOfTextAtSize(p, B), v = g.x + (Q * F + Q / 2), z = v - H / 2;
+    z < c && (c = z), r < E && (E = r), z + H > s && (s = z + H), r + o > D && (D = r + o), C.push({ text: i, encoded: k, width: H, height: o, x: z, y: r }), F += 1, l += y;
   }
   return { fontSize: B, cells: C, bounds: { x: c, y: E, width: s - c, height: D - E } };
 };
@@ -53650,25 +53656,25 @@ var Qn = function(e103, A, B, t) {
   e103.setDefaultAppearance(n);
 };
 var ZP = function(e103, A) {
-  var B, t, g, n = nn(A), i = nn(e103.acroField), Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (B = r?.getWidth()) !== null && B !== void 0 ? B : 0, c = xn(o?.getRotation()), E = CQ(Q, c), s = E.width, D = E.height, h = fn(XA(XA({}, Q), { rotation: c })), l = DB(0, 0, 0), u = (t = Rt(o?.getBorderColor())) !== null && t !== void 0 ? t : l, p = Rt(o?.getBackgroundColor()), y = Rt(o?.getBackgroundColor(), 0.8), k = (g = n ?? i) !== null && g !== void 0 ? g : l;
+  var B, t, g, n = nn(A), i = nn(e103.acroField), Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (B = r?.getWidth()) !== null && B !== void 0 ? B : 0, c = xn(o?.getRotation()), E = CQ(Q, c), s = E.width, D = E.height, F = fn(XA(XA({}, Q), { rotation: c })), l = DB(0, 0, 0), u = (t = Rt(o?.getBorderColor())) !== null && t !== void 0 ? t : l, p = Rt(o?.getBackgroundColor()), y = Rt(o?.getBackgroundColor(), 0.8), k = (g = n ?? i) !== null && g !== void 0 ? g : l;
   Qn(n ? A : e103.acroField, k);
   var H = { x: 0 + C / 2, y: 0 + C / 2, width: s - C, height: D - C, thickness: 1.5, borderWidth: C, borderColor: u, markColor: k };
-  return { normal: { on: sB(h, _a(XA(XA({}, H), { color: p, filled: true }))), off: sB(h, _a(XA(XA({}, H), { color: p, filled: false }))) }, down: { on: sB(h, _a(XA(XA({}, H), { color: y, filled: true }))), off: sB(h, _a(XA(XA({}, H), { color: y, filled: false }))) } };
+  return { normal: { on: sB(F, _a(XA(XA({}, H), { color: p, filled: true }))), off: sB(F, _a(XA(XA({}, H), { color: p, filled: false }))) }, down: { on: sB(F, _a(XA(XA({}, H), { color: y, filled: true }))), off: sB(F, _a(XA(XA({}, H), { color: y, filled: false }))) } };
 };
 var qP = function(e103, A) {
-  var B, t, g, n = nn(A), i = nn(e103.acroField), Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (B = r?.getWidth()) !== null && B !== void 0 ? B : 0, c = xn(o?.getRotation()), E = CQ(Q, c), s = E.width, D = E.height, h = fn(XA(XA({}, Q), { rotation: c })), l = DB(0, 0, 0), u = (t = Rt(o?.getBorderColor())) !== null && t !== void 0 ? t : l, p = Rt(o?.getBackgroundColor()), y = Rt(o?.getBackgroundColor(), 0.8), k = (g = n ?? i) !== null && g !== void 0 ? g : l;
+  var B, t, g, n = nn(A), i = nn(e103.acroField), Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (B = r?.getWidth()) !== null && B !== void 0 ? B : 0, c = xn(o?.getRotation()), E = CQ(Q, c), s = E.width, D = E.height, F = fn(XA(XA({}, Q), { rotation: c })), l = DB(0, 0, 0), u = (t = Rt(o?.getBorderColor())) !== null && t !== void 0 ? t : l, p = Rt(o?.getBackgroundColor()), y = Rt(o?.getBackgroundColor(), 0.8), k = (g = n ?? i) !== null && g !== void 0 ? g : l;
   Qn(n ? A : e103.acroField, k);
   var H = { x: s / 2, y: D / 2, width: s - C, height: D - C, borderWidth: C, borderColor: u, dotColor: k };
-  return { normal: { on: sB(h, $a(XA(XA({}, H), { color: p, filled: true }))), off: sB(h, $a(XA(XA({}, H), { color: p, filled: false }))) }, down: { on: sB(h, $a(XA(XA({}, H), { color: y, filled: true }))), off: sB(h, $a(XA(XA({}, H), { color: y, filled: false }))) } };
+  return { normal: { on: sB(F, $a(XA(XA({}, H), { color: p, filled: true }))), off: sB(F, $a(XA(XA({}, H), { color: p, filled: false }))) }, down: { on: sB(F, $a(XA(XA({}, H), { color: y, filled: true }))), off: sB(F, $a(XA(XA({}, H), { color: y, filled: false }))) } };
 };
 var _P = function(e103, A, B) {
-  var t, g, n, i, Q, o = nn(A), r = nn(e103.acroField), C = Io(A), c = Io(e103.acroField), E = A.getRectangle(), s = A.getAppearanceCharacteristics(), D = A.getBorderStyle(), h = s?.getCaptions(), l = (t = h?.normal) !== null && t !== void 0 ? t : "", u = (n = (g = h?.down) !== null && g !== void 0 ? g : l) !== null && n !== void 0 ? n : "", p = (i = D?.getWidth()) !== null && i !== void 0 ? i : 0, y = xn(s?.getRotation()), k = CQ(E, y), H = k.width, v = k.height, z = fn(XA(XA({}, E), { rotation: y })), W = DB(0, 0, 0), K = Rt(s?.getBorderColor()), BA = Rt(s?.getBackgroundColor()), q = Rt(s?.getBackgroundColor(), 0.8), _ = { x: p, y: p, width: H - p * 2, height: v - p * 2 }, YA = AI(l, { alignment: fe.Center, fontSize: C ?? c, font: B, bounds: _ }), rA = AI(u, { alignment: fe.Center, fontSize: C ?? c, font: B, bounds: _ }), dA = Math.min(YA.fontSize, rA.fontSize), mA = (Q = o ?? r) !== null && Q !== void 0 ? Q : W;
+  var t, g, n, i, Q, o = nn(A), r = nn(e103.acroField), C = Io(A), c = Io(e103.acroField), E = A.getRectangle(), s = A.getAppearanceCharacteristics(), D = A.getBorderStyle(), F = s?.getCaptions(), l = (t = F?.normal) !== null && t !== void 0 ? t : "", u = (n = (g = F?.down) !== null && g !== void 0 ? g : l) !== null && n !== void 0 ? n : "", p = (i = D?.getWidth()) !== null && i !== void 0 ? i : 0, y = xn(s?.getRotation()), k = CQ(E, y), H = k.width, v = k.height, z = fn(XA(XA({}, E), { rotation: y })), W = DB(0, 0, 0), K = Rt(s?.getBorderColor()), BA = Rt(s?.getBackgroundColor()), q = Rt(s?.getBackgroundColor(), 0.8), _ = { x: p, y: p, width: H - p * 2, height: v - p * 2 }, YA = AI(l, { alignment: fe.Center, fontSize: C ?? c, font: B, bounds: _ }), rA = AI(u, { alignment: fe.Center, fontSize: C ?? c, font: B, bounds: _ }), dA = Math.min(YA.fontSize, rA.fontSize), mA = (Q = o ?? r) !== null && Q !== void 0 ? Q : W;
   Qn(o || C !== void 0 ? A : e103.acroField, mA, B, dA);
   var DA = { x: 0 + p / 2, y: 0 + p / 2, width: H - p, height: v - p, borderWidth: p, borderColor: K, textColor: mA, font: B.name, fontSize: dA };
   return { normal: sB(z, hm(XA(XA({}, DA), { color: BA, textLines: [YA.line] }))), down: sB(z, hm(XA(XA({}, DA), { color: q, textLines: [rA.line] }))) };
 };
 var $P = function(e103, A, B) {
-  var t, g, n, i, Q = nn(A), o = nn(e103.acroField), r = Io(A), C = Io(e103.acroField), c = A.getRectangle(), E = A.getAppearanceCharacteristics(), s = A.getBorderStyle(), D = (t = e103.getText()) !== null && t !== void 0 ? t : "", h = (g = s?.getWidth()) !== null && g !== void 0 ? g : 0, l = xn(E?.getRotation()), u = CQ(c, l), p = u.width, y = u.height, k = fn(XA(XA({}, c), { rotation: l })), H = DB(0, 0, 0), v = Rt(E?.getBorderColor()), z = Rt(E?.getBackgroundColor()), W, K, BA = e103.isCombed() ? 0 : 1, q = { x: h + BA, y: h + BA, width: p - (h + BA) * 2, height: y - (h + BA) * 2 };
+  var t, g, n, i, Q = nn(A), o = nn(e103.acroField), r = Io(A), C = Io(e103.acroField), c = A.getRectangle(), E = A.getAppearanceCharacteristics(), s = A.getBorderStyle(), D = (t = e103.getText()) !== null && t !== void 0 ? t : "", F = (g = s?.getWidth()) !== null && g !== void 0 ? g : 0, l = xn(E?.getRotation()), u = CQ(c, l), p = u.width, y = u.height, k = fn(XA(XA({}, c), { rotation: l })), H = DB(0, 0, 0), v = Rt(E?.getBorderColor()), z = Rt(E?.getBackgroundColor()), W, K, BA = e103.isCombed() ? 0 : 1, q = { x: F + BA, y: F + BA, width: p - (F + BA) * 2, height: y - (F + BA) * 2 };
   if (e103.isMultiline()) {
     var _ = Nm(D, { alignment: e103.getAlignment(), fontSize: r ?? C, font: B, bounds: q });
     W = _.lines, K = _.fontSize;
@@ -53681,26 +53687,26 @@ var $P = function(e103, A, B) {
   }
   var YA = (i = Q ?? o) !== null && i !== void 0 ? i : H;
   Qn(Q || r !== void 0 ? A : e103.acroField, YA, B, K);
-  var rA = { x: 0 + h / 2, y: 0 + h / 2, width: p - h, height: y - h, borderWidth: h ?? 0, borderColor: v, textColor: YA, font: B.name, fontSize: K, color: z, textLines: W, padding: BA };
+  var rA = { x: 0 + F / 2, y: 0 + F / 2, width: p - F, height: y - F, borderWidth: F ?? 0, borderColor: v, textColor: YA, font: B.name, fontSize: K, color: z, textLines: W, padding: BA };
   return sB(k, dm(rA));
 };
 var AS = function(e103, A, B) {
-  var t, g, n, i = nn(A), Q = nn(e103.acroField), o = Io(A), r = Io(e103.acroField), C = A.getRectangle(), c = A.getAppearanceCharacteristics(), E = A.getBorderStyle(), s = (t = e103.getSelected()[0]) !== null && t !== void 0 ? t : "", D = (g = E?.getWidth()) !== null && g !== void 0 ? g : 0, h = xn(c?.getRotation()), l = CQ(C, h), u = l.width, p = l.height, y = fn(XA(XA({}, C), { rotation: h })), k = DB(0, 0, 0), H = Rt(c?.getBorderColor()), v = Rt(c?.getBackgroundColor()), z = 1, W = { x: D + z, y: D + z, width: u - (D + z) * 2, height: p - (D + z) * 2 }, K = AI(s, { alignment: fe.Left, fontSize: o ?? r, font: B, bounds: W }), BA = K.line, q = K.fontSize, _ = (n = i ?? Q) !== null && n !== void 0 ? n : k;
+  var t, g, n, i = nn(A), Q = nn(e103.acroField), o = Io(A), r = Io(e103.acroField), C = A.getRectangle(), c = A.getAppearanceCharacteristics(), E = A.getBorderStyle(), s = (t = e103.getSelected()[0]) !== null && t !== void 0 ? t : "", D = (g = E?.getWidth()) !== null && g !== void 0 ? g : 0, F = xn(c?.getRotation()), l = CQ(C, F), u = l.width, p = l.height, y = fn(XA(XA({}, C), { rotation: F })), k = DB(0, 0, 0), H = Rt(c?.getBorderColor()), v = Rt(c?.getBackgroundColor()), z = 1, W = { x: D + z, y: D + z, width: u - (D + z) * 2, height: p - (D + z) * 2 }, K = AI(s, { alignment: fe.Left, fontSize: o ?? r, font: B, bounds: W }), BA = K.line, q = K.fontSize, _ = (n = i ?? Q) !== null && n !== void 0 ? n : k;
   Qn(i || o !== void 0 ? A : e103.acroField, _, B, q);
   var YA = { x: 0 + D / 2, y: 0 + D / 2, width: u - D, height: p - D, borderWidth: D ?? 0, borderColor: H, textColor: _, font: B.name, fontSize: q, color: v, textLines: [BA], padding: z };
   return sB(y, dm(YA));
 };
 var BS = function(e103, A, B) {
-  var t, g, n = nn(A), i = nn(e103.acroField), Q = Io(A), o = Io(e103.acroField), r = A.getRectangle(), C = A.getAppearanceCharacteristics(), c = A.getBorderStyle(), E = (t = c?.getWidth()) !== null && t !== void 0 ? t : 0, s = xn(C?.getRotation()), D = CQ(r, s), h = D.width, l = D.height, u = fn(XA(XA({}, r), { rotation: s })), p = DB(0, 0, 0), y = Rt(C?.getBorderColor()), k = Rt(C?.getBackgroundColor()), H = e103.getOptions(), v = e103.getSelected();
+  var t, g, n = nn(A), i = nn(e103.acroField), Q = Io(A), o = Io(e103.acroField), r = A.getRectangle(), C = A.getAppearanceCharacteristics(), c = A.getBorderStyle(), E = (t = c?.getWidth()) !== null && t !== void 0 ? t : 0, s = xn(C?.getRotation()), D = CQ(r, s), F = D.width, l = D.height, u = fn(XA(XA({}, r), { rotation: s })), p = DB(0, 0, 0), y = Rt(C?.getBorderColor()), k = Rt(C?.getBackgroundColor()), H = e103.getOptions(), v = e103.getSelected();
   e103.isSorted() && H.sort();
   for (var z = "", W = 0, K = H.length; W < K; W++) z += H[W], W < K - 1 && (z += `
 `);
-  for (var BA = 1, q = { x: E + BA, y: E + BA, width: h - (E + BA) * 2, height: l - (E + BA) * 2 }, _ = Nm(z, { alignment: fe.Left, fontSize: Q ?? o, font: B, bounds: q }), YA = _.lines, rA = _.fontSize, dA = _.lineHeight, mA = [], W = 0, K = YA.length; W < K; W++) {
+  for (var BA = 1, q = { x: E + BA, y: E + BA, width: F - (E + BA) * 2, height: l - (E + BA) * 2 }, _ = Nm(z, { alignment: fe.Left, fontSize: Q ?? o, font: B, bounds: q }), YA = _.lines, rA = _.fontSize, dA = _.lineHeight, mA = [], W = 0, K = YA.length; W < K; W++) {
     var DA = YA[W];
     v.includes(DA.text) && mA.push(W);
   }
   var LA = DB(153 / 255, 193 / 255, 218 / 255), uB = (g = n ?? i) !== null && g !== void 0 ? g : p;
-  return Qn(n || Q !== void 0 ? A : e103.acroField, uB, B, rA), sB(u, JP({ x: 0 + E / 2, y: 0 + E / 2, width: h - E, height: l - E, borderWidth: E ?? 0, borderColor: y, textColor: uB, font: B.name, fontSize: rA, color: k, textLines: YA, lineHeight: dA, selectedColor: LA, selectedLines: mA, padding: BA }));
+  return Qn(n || Q !== void 0 ? A : e103.acroField, uB, B, rA), sB(u, JP({ x: 0 + E / 2, y: 0 + E / 2, width: F - E, height: l - E, borderWidth: E ?? 0, borderColor: y, textColor: uB, font: B.name, fontSize: rA, color: k, textLines: YA, lineHeight: dA, selectedColor: LA, selectedLines: mA, padding: BA }));
 };
 var xQA = (function() {
   function e103(A, B, t) {
@@ -53835,17 +53841,17 @@ var RQA = (function() {
   }, e103.prototype.createWidget = function(A) {
     var B, t = A.textColor, g = A.backgroundColor, n = A.borderColor, i = A.borderWidth, Q = Nh(A.rotate), o = A.caption, r = A.x, C = A.y, c = A.width + i, E = A.height + i, s = !!A.hidden, D = A.page;
     wh(Q, "degreesAngle", 90);
-    var h = gE.create(this.doc.context, this.ref), l = aP({ x: r, y: C, width: c, height: E }, i, Q);
-    h.setRectangle(l), D && h.setP(D);
-    var u = h.getOrCreateAppearanceCharacteristics();
+    var F = gE.create(this.doc.context, this.ref), l = aP({ x: r, y: C, width: c, height: E }, i, Q);
+    F.setRectangle(l), D && F.setP(D);
+    var u = F.getOrCreateAppearanceCharacteristics();
     g && u.setBackgroundColor(Fm(g)), u.setRotation(Q), o && u.setCaptions({ normal: o }), n && u.setBorderColor(Fm(n));
-    var p = h.getOrCreateBorderStyle();
-    if (i !== void 0 && p.setWidth(i), h.setFlagTo(iE.Print, true), h.setFlagTo(iE.Hidden, s), h.setFlagTo(iE.Invisible, false), t) {
+    var p = F.getOrCreateBorderStyle();
+    if (i !== void 0 && p.setWidth(i), F.setFlagTo(iE.Print, true), F.setFlagTo(iE.Hidden, s), F.setFlagTo(iE.Invisible, false), t) {
       var y = (B = this.acroField.getDefaultAppearance()) !== null && B !== void 0 ? B : "", k = y + `
 ` + hi(t).toString();
       this.acroField.setDefaultAppearance(k);
     }
-    return h;
+    return F;
   }, e103.prototype.updateWidgetAppearanceWithFont = function(A, B, t) {
     var g = t.normal, n = t.rollover, i = t.down;
     this.updateWidgetAppearances(A, { normal: this.createAppearanceStream(A, g, B), rollover: n && this.createAppearanceStream(A, n, B), down: i && this.createAppearanceStream(A, i, B) });
@@ -53859,9 +53865,9 @@ var RQA = (function() {
     var g, n = this.acroField.dict.context, i = A.getRectangle(), Q = i.width, o = i.height, r = t && { Font: (g = {}, g[t.name] = t.ref, g) }, C = n.formXObject(B, { Resources: r, BBox: n.obj([0, 0, Q, o]), Matrix: n.obj([1, 0, 0, 1, 0, 0]) }), c = n.register(C);
     return c;
   }, e103.prototype.createImageAppearanceStream = function(A, B, t) {
-    var g, n, i = this.acroField.dict.context, Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (n = r?.getWidth()) !== null && n !== void 0 ? n : 0, c = xn(o?.getRotation()), E = fn(XA(XA({}, Q), { rotation: c })), s = CQ(Q, c), D = B.scaleToFit(s.width - C * 2, s.height - C * 2), h = { x: C, y: C, width: D.width, height: D.height, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) };
-    t === yn.Center ? (h.x += (s.width - C * 2) / 2 - D.width / 2, h.y += (s.height - C * 2) / 2 - D.height / 2) : t === yn.Right && (h.x = s.width - C - D.width, h.y = s.height - C - D.height);
-    var l = this.doc.context.addRandomSuffix("Image", 10), u = sB(E, Hh(l, h)), p = { XObject: (g = {}, g[l] = B.ref, g) }, y = i.formXObject(u, { Resources: p, BBox: i.obj([0, 0, Q.width, Q.height]), Matrix: i.obj([1, 0, 0, 1, 0, 0]) });
+    var g, n, i = this.acroField.dict.context, Q = A.getRectangle(), o = A.getAppearanceCharacteristics(), r = A.getBorderStyle(), C = (n = r?.getWidth()) !== null && n !== void 0 ? n : 0, c = xn(o?.getRotation()), E = fn(XA(XA({}, Q), { rotation: c })), s = CQ(Q, c), D = B.scaleToFit(s.width - C * 2, s.height - C * 2), F = { x: C, y: C, width: D.width, height: D.height, rotate: TA(0), xSkew: TA(0), ySkew: TA(0) };
+    t === yn.Center ? (F.x += (s.width - C * 2) / 2 - D.width / 2, F.y += (s.height - C * 2) / 2 - D.height / 2) : t === yn.Right && (F.x = s.width - C - D.width, F.y = s.height - C - D.height);
+    var l = this.doc.context.addRandomSuffix("Image", 10), u = sB(E, Hh(l, F)), p = { XObject: (g = {}, g[l] = B.ref, g) }, y = i.formXObject(u, { Resources: p, BBox: i.obj([0, 0, Q.width, Q.height]), Matrix: i.obj([1, 0, 0, 1, 0, 0]) });
     return i.register(y);
   }, e103.prototype.createAppearanceDict = function(A, B, t) {
     var g = this.acroField.dict.context, n = this.createAppearanceStream(A, B.on), i = this.createAppearanceStream(A, B.off), Q = g.obj({});
@@ -54148,8 +54154,8 @@ var jQA = (function(e103) {
   }, A.prototype.addOptionToPage = function(B, t, g) {
     var n, i, Q, o, r, C, c, E, s;
     Z(B, "option", ["string"]), Z(t, "page", [[Ve, "PDFPage"]]), rn(g);
-    var D = this.createWidget({ x: (n = g?.x) !== null && n !== void 0 ? n : 0, y: (i = g?.y) !== null && i !== void 0 ? i : 0, width: (Q = g?.width) !== null && Q !== void 0 ? Q : 50, height: (o = g?.height) !== null && o !== void 0 ? o : 50, textColor: (r = g?.textColor) !== null && r !== void 0 ? r : DB(0, 0, 0), backgroundColor: (C = g?.backgroundColor) !== null && C !== void 0 ? C : DB(1, 1, 1), borderColor: (c = g?.borderColor) !== null && c !== void 0 ? c : DB(0, 0, 0), borderWidth: (E = g?.borderWidth) !== null && E !== void 0 ? E : 1, rotate: (s = g?.rotate) !== null && s !== void 0 ? s : TA(0), hidden: g?.hidden, page: t.ref }), h = this.doc.context.register(D.dict), l = this.acroField.addWidgetWithOpt(h, xA.fromText(B), !this.isMutuallyExclusive());
-    D.setAppearanceState(R.of("Off")), this.updateWidgetAppearance(D, l), t.node.addAnnot(h);
+    var D = this.createWidget({ x: (n = g?.x) !== null && n !== void 0 ? n : 0, y: (i = g?.y) !== null && i !== void 0 ? i : 0, width: (Q = g?.width) !== null && Q !== void 0 ? Q : 50, height: (o = g?.height) !== null && o !== void 0 ? o : 50, textColor: (r = g?.textColor) !== null && r !== void 0 ? r : DB(0, 0, 0), backgroundColor: (C = g?.backgroundColor) !== null && C !== void 0 ? C : DB(1, 1, 1), borderColor: (c = g?.borderColor) !== null && c !== void 0 ? c : DB(0, 0, 0), borderWidth: (E = g?.borderWidth) !== null && E !== void 0 ? E : 1, rotate: (s = g?.rotate) !== null && s !== void 0 ? s : TA(0), hidden: g?.hidden, page: t.ref }), F = this.doc.context.register(D.dict), l = this.acroField.addWidgetWithOpt(F, xA.fromText(B), !this.isMutuallyExclusive());
+    D.setAppearanceState(R.of("Off")), this.updateWidgetAppearance(D, l), t.node.addAnnot(F);
   }, A.prototype.needsAppearancesUpdate = function() {
     for (var B, t = this.acroField.getWidgets(), g = 0, n = t.length; g < n; g++) {
       var i = t[g], Q = i.getAppearanceState(), o = (B = i.getAppearances()) === null || B === void 0 ? void 0 : B.normal;
@@ -54582,12 +54588,12 @@ var VQA = (function() {
   return e103.load = function(A, B) {
     return B === void 0 && (B = {}), JA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C, c, E, s, D;
-      return kA(this, function(h) {
-        switch (h.label) {
+      return kA(this, function(F) {
+        switch (F.label) {
           case 0:
             return t = B.ignoreEncryption, g = t === void 0 ? false : t, n = B.parseSpeed, i = n === void 0 ? Jh.Slow : n, Q = B.throwOnInvalidObject, o = Q === void 0 ? false : Q, r = B.updateMetadata, C = r === void 0 ? true : r, c = B.capNumbers, E = c === void 0 ? false : c, Z(A, "pdf", ["string", Uint8Array, ArrayBuffer]), Z(g, "ignoreEncryption", ["boolean"]), Z(i, "parseSpeed", ["number"]), Z(o, "throwOnInvalidObject", ["boolean"]), s = jc(A), [4, Qm.forBytesWithOptions(s, i, o, E).parseDocument()];
           case 1:
-            return D = h.sent(), [2, new e103(D, g, C)];
+            return D = F.sent(), [2, new e103(D, g, C)];
         }
       });
     });
@@ -54810,7 +54816,7 @@ var VQA = (function() {
     });
   }, e103.prototype.embedPages = function(A, B, t) {
     return B === void 0 && (B = []), t === void 0 && (t = []), JA(this, void 0, void 0, function() {
-      var r, C, g, n, i, Q, o, r, C, c, E, s, D, h, l;
+      var r, C, g, n, i, Q, o, r, C, c, E, s, D, F, l;
       return kA(this, function(u) {
         switch (u.label) {
           case 0:
@@ -54822,7 +54828,7 @@ var VQA = (function() {
           case 1:
             return r < C ? (c = Q(A[r].node), E = B[r], s = t[r], [4, pa.for(c, E, s)]) : [3, 4];
           case 2:
-            D = u.sent(), h = this.context.nextRef(), o[r] = BI.of(h, this, D), u.label = 3;
+            D = u.sent(), F = this.context.nextRef(), o[r] = BI.of(F, this, D), u.label = 3;
           case 3:
             return r++, [3, 1];
           case 4:
@@ -55030,9 +55036,9 @@ var zQA = (function() {
   }, e103.prototype.drawText = function(A, B) {
     var t, g, n, i, Q, o, r;
     B === void 0 && (B = {}), Z(A, "text", ["string"]), sA(B.color, "options.color", [[Object, "Color"]]), kg(B.opacity, "opacity.opacity", 0, 1), sA(B.font, "options.font", [[je, "PDFFont"]]), sA(B.size, "options.size", ["number"]), sA(B.rotate, "options.rotate", [[Object, "Rotation"]]), sA(B.xSkew, "options.xSkew", [[Object, "Rotation"]]), sA(B.ySkew, "options.ySkew", [[Object, "Rotation"]]), sA(B.x, "options.x", ["number"]), sA(B.y, "options.y", ["number"]), sA(B.lineHeight, "options.lineHeight", ["number"]), sA(B.maxWidth, "options.maxWidth", ["number"]), sA(B.wordBreaks, "options.wordBreaks", [Array]), ag(B.blendMode, "options.blendMode", li);
-    for (var C = this.setOrEmbedFont(B.font), c = C.oldFont, E = C.newFont, s = C.newFontKey, D = B.size || this.fontSize, h = B.wordBreaks || this.doc.defaultWordBreaks, l = function(z) {
+    for (var C = this.setOrEmbedFont(B.font), c = C.oldFont, E = C.newFont, s = C.newFontKey, D = B.size || this.fontSize, F = B.wordBreaks || this.doc.defaultWordBreaks, l = function(z) {
       return E.widthOfTextAtSize(z, D);
-    }, u = B.maxWidth === void 0 ? SF(hr(A)) : _2(A, h, B.maxWidth, l), p = new Array(u.length), y = 0, k = u.length; y < k; y++) p[y] = E.encodeText(u[y]);
+    }, u = B.maxWidth === void 0 ? SF(hr(A)) : _2(A, F, B.maxWidth, l), p = new Array(u.length), y = 0, k = u.length; y < k; y++) p[y] = E.encodeText(u[y]);
     var H = this.maybeEmbedGraphicsState({ opacity: B.opacity, blendMode: B.blendMode }), v = this.getContentStream();
     v.push.apply(v, fP(p, { color: (t = B.color) !== null && t !== void 0 ? t : this.fontColor, font: s, size: D, rotate: (g = B.rotate) !== null && g !== void 0 ? g : TA(0), xSkew: (n = B.xSkew) !== null && n !== void 0 ? n : TA(0), ySkew: (i = B.ySkew) !== null && i !== void 0 ? i : TA(0), x: (Q = B.x) !== null && Q !== void 0 ? Q : this.x, y: (o = B.y) !== null && o !== void 0 ? o : this.y, lineHeight: (r = B.lineHeight) !== null && r !== void 0 ? r : this.lineHeight, graphicsState: H })), B.font && (c ? this.setFont(c) : this.resetFont());
   }, e103.prototype.drawImage = function(A, B) {
@@ -55062,10 +55068,10 @@ var zQA = (function() {
   }, e103.prototype.drawRectangle = function(A) {
     var B, t, g, n, i, Q, o, r, C, c, E, s, D;
     A === void 0 && (A = {}), sA(A.x, "options.x", ["number"]), sA(A.y, "options.y", ["number"]), sA(A.width, "options.width", ["number"]), sA(A.height, "options.height", ["number"]), sA(A.rotate, "options.rotate", [[Object, "Rotation"]]), sA(A.xSkew, "options.xSkew", [[Object, "Rotation"]]), sA(A.ySkew, "options.ySkew", [[Object, "Rotation"]]), sA(A.borderWidth, "options.borderWidth", ["number"]), sA(A.color, "options.color", [[Object, "Color"]]), kg(A.opacity, "opacity.opacity", 0, 1), sA(A.borderColor, "options.borderColor", [[Object, "Color"]]), sA(A.borderDashArray, "options.borderDashArray", [Array]), sA(A.borderDashPhase, "options.borderDashPhase", ["number"]), ag(A.borderLineCap, "options.borderLineCap", Sr), kg(A.borderOpacity, "options.borderOpacity", 0, 1), ag(A.blendMode, "options.blendMode", li);
-    var h = this.maybeEmbedGraphicsState({ opacity: A.opacity, borderOpacity: A.borderOpacity, blendMode: A.blendMode });
+    var F = this.maybeEmbedGraphicsState({ opacity: A.opacity, borderOpacity: A.borderOpacity, blendMode: A.blendMode });
     !("color" in A) && !("borderColor" in A) && (A.color = DB(0, 0, 0));
     var l = this.getContentStream();
-    l.push.apply(l, Kr({ x: (B = A.x) !== null && B !== void 0 ? B : this.x, y: (t = A.y) !== null && t !== void 0 ? t : this.y, width: (g = A.width) !== null && g !== void 0 ? g : 150, height: (n = A.height) !== null && n !== void 0 ? n : 100, rotate: (i = A.rotate) !== null && i !== void 0 ? i : TA(0), xSkew: (Q = A.xSkew) !== null && Q !== void 0 ? Q : TA(0), ySkew: (o = A.ySkew) !== null && o !== void 0 ? o : TA(0), borderWidth: (r = A.borderWidth) !== null && r !== void 0 ? r : 0, color: (C = A.color) !== null && C !== void 0 ? C : void 0, borderColor: (c = A.borderColor) !== null && c !== void 0 ? c : void 0, borderDashArray: (E = A.borderDashArray) !== null && E !== void 0 ? E : void 0, borderDashPhase: (s = A.borderDashPhase) !== null && s !== void 0 ? s : void 0, graphicsState: h, borderLineCap: (D = A.borderLineCap) !== null && D !== void 0 ? D : void 0 }));
+    l.push.apply(l, Kr({ x: (B = A.x) !== null && B !== void 0 ? B : this.x, y: (t = A.y) !== null && t !== void 0 ? t : this.y, width: (g = A.width) !== null && g !== void 0 ? g : 150, height: (n = A.height) !== null && n !== void 0 ? n : 100, rotate: (i = A.rotate) !== null && i !== void 0 ? i : TA(0), xSkew: (Q = A.xSkew) !== null && Q !== void 0 ? Q : TA(0), ySkew: (o = A.ySkew) !== null && o !== void 0 ? o : TA(0), borderWidth: (r = A.borderWidth) !== null && r !== void 0 ? r : 0, color: (C = A.color) !== null && C !== void 0 ? C : void 0, borderColor: (c = A.borderColor) !== null && c !== void 0 ? c : void 0, borderDashArray: (E = A.borderDashArray) !== null && E !== void 0 ? E : void 0, borderDashPhase: (s = A.borderDashPhase) !== null && s !== void 0 ? s : void 0, graphicsState: F, borderLineCap: (D = A.borderLineCap) !== null && D !== void 0 ? D : void 0 }));
   }, e103.prototype.drawSquare = function(A) {
     A === void 0 && (A = {});
     var B = A.size;
@@ -55141,11 +55147,11 @@ var KQA = (function(e103) {
   }, A.prototype.setFontSize = function(B) {
     to(B, "fontSize"), this.acroField.setFontSize(B), this.markAsDirty();
   }, A.prototype.addToPage = function(B, t, g) {
-    var n, i, Q, o, r, C, c, E, s, D, h;
+    var n, i, Q, o, r, C, c, E, s, D, F;
     sA(B, "text", ["string"]), sA(t, "page", [[Ve, "PDFPage"]]), rn(g);
     var l = this.createWidget({ x: ((n = g?.x) !== null && n !== void 0 ? n : 0) - ((i = g?.borderWidth) !== null && i !== void 0 ? i : 0) / 2, y: ((Q = g?.y) !== null && Q !== void 0 ? Q : 0) - ((o = g?.borderWidth) !== null && o !== void 0 ? o : 0) / 2, width: (r = g?.width) !== null && r !== void 0 ? r : 100, height: (C = g?.height) !== null && C !== void 0 ? C : 50, textColor: (c = g?.textColor) !== null && c !== void 0 ? c : DB(0, 0, 0), backgroundColor: (E = g?.backgroundColor) !== null && E !== void 0 ? E : DB(0.75, 0.75, 0.75), borderColor: g?.borderColor, borderWidth: (s = g?.borderWidth) !== null && s !== void 0 ? s : 0, rotate: (D = g?.rotate) !== null && D !== void 0 ? D : TA(0), caption: B, hidden: g?.hidden, page: t.ref }), u = this.doc.context.register(l.dict);
     this.acroField.addWidget(u);
-    var p = (h = g?.font) !== null && h !== void 0 ? h : this.doc.getForm().getDefaultFont();
+    var p = (F = g?.font) !== null && F !== void 0 ? F : this.doc.getForm().getDefaultFont();
     this.updateWidgetAppearance(l, p), t.node.addAnnot(u);
   }, A.prototype.needsAppearancesUpdate = function() {
     var B;
@@ -55257,21 +55263,21 @@ var pm = function(e103, A) {
   for (var E = n[0].s, t = 1; t < g; ++t) n[t].s > E && (E = n[t].s);
   var s = new bg(E + 1), D = fm(B[C - 1], s, 0);
   if (D > A) {
-    var t = 0, h = 0, l = D - A, u = 1 << l;
+    var t = 0, F = 0, l = D - A, u = 1 << l;
     for (n.sort(function(v, z) {
       return s[z.s] - s[v.s] || v.f - z.f;
     }); t < g; ++t) {
       var p = n[t].s;
-      if (s[p] > A) h += u - (1 << D - s[p]), s[p] = A;
+      if (s[p] > A) F += u - (1 << D - s[p]), s[p] = A;
       else break;
     }
-    for (h >>= l; h > 0; ) {
+    for (F >>= l; F > 0; ) {
       var y = n[t].s;
-      s[y] < A ? h -= 1 << A - s[y]++ - 1 : ++t;
+      s[y] < A ? F -= 1 << A - s[y]++ - 1 : ++t;
     }
-    for (; t >= 0 && h; --t) {
+    for (; t >= 0 && F; --t) {
       var k = n[t].s;
-      s[k] == A && (--s[k], ++h);
+      s[k] == A && (--s[k], ++F);
     }
     D = A;
   }
@@ -55310,14 +55316,14 @@ var DS = function(e103, A, B) {
 };
 var oS = function(e103, A, B, t, g, n, i, Q, o, r, C) {
   EQ(A, C++, B), ++g[256];
-  for (var c = pm(g, 15), E = c.t, s = c.l, D = pm(n, 15), h = D.t, l = D.l, u = QS(E), p = u.c, y = u.n, k = QS(h), H = k.c, v = k.n, z = new bg(19), W = 0; W < p.length; ++W) ++z[p[W] & 31];
+  for (var c = pm(g, 15), E = c.t, s = c.l, D = pm(n, 15), F = D.t, l = D.l, u = QS(E), p = u.c, y = u.n, k = QS(F), H = k.c, v = k.n, z = new bg(19), W = 0; W < p.length; ++W) ++z[p[W] & 31];
   for (var W = 0; W < H.length; ++W) ++z[H[W] & 31];
   for (var K = pm(z, 7), BA = K.t, q = K.l, _ = 19; _ > 4 && !BA[nS[_ - 1]]; --_) ;
-  var YA = r + 5 << 3, rA = gI(g, Zr) + gI(n, kh) + i, dA = gI(g, E) + gI(n, h) + i + 14 + 3 * _ + gI(z, BA) + 2 * z[16] + 3 * z[17] + 7 * z[18];
+  var YA = r + 5 << 3, rA = gI(g, Zr) + gI(n, kh) + i, dA = gI(g, E) + gI(n, F) + i + 14 + 3 * _ + gI(z, BA) + 2 * z[16] + 3 * z[17] + 7 * z[18];
   if (o >= 0 && YA <= rA && YA <= dA) return DS(A, C, e103.subarray(o, o + r));
   var mA, DA, LA, uB;
   if (EQ(A, C, 1 + (dA < rA)), C += 2, dA < rA) {
-    mA = nI(E, s, 0), DA = E, LA = nI(h, l, 0), uB = h;
+    mA = nI(E, s, 0), DA = E, LA = nI(F, l, 0), uB = F;
     var le = nI(BA, q, 0);
     EQ(A, C, y - 257), EQ(A, C + 5, v - 1), EQ(A, C + 10, _ - 4), C += 14;
     for (var W = 0; W < _; ++W) EQ(A, C + 3 * W, BA[nS[W]]);
@@ -55344,11 +55350,11 @@ var $QA = function(e103, A, B, t, g, n) {
   var i = n.z || e103.length, Q = new Jt(t + i + 5 * (1 + Math.ceil(i / 7e3)) + g), o = Q.subarray(t, Q.length - g), r = n.l, C = (n.r || 0) & 7;
   if (A) {
     C && (o[0] = n.r >> 3);
-    for (var c = _QA[A - 1], E = c >> 13, s = c & 8191, D = (1 << B) - 1, h = n.p || new bg(32768), l = n.h || new bg(D + 1), u = Math.ceil(B / 3), p = 2 * u, y = function(Rn) {
+    for (var c = _QA[A - 1], E = c >> 13, s = c & 8191, D = (1 << B) - 1, F = n.p || new bg(32768), l = n.h || new bg(D + 1), u = Math.ceil(B / 3), p = 2 * u, y = function(Rn) {
       return (e103[Rn] ^ e103[Rn + 1] << u ^ e103[Rn + 2] << p) & D;
     }, k = new Rm(25e3), H = new bg(288), v = new bg(32), z = 0, W = 0, K = n.i || 0, BA = 0, q = n.w || 0, _ = 0; K + 2 < i; ++K) {
       var YA = y(K), rA = K & 32767, dA = l[YA];
-      if (h[rA] = dA, l[YA] = rA, q <= K) {
+      if (F[rA] = dA, l[YA] = rA, q <= K) {
         var mA = i - K;
         if ((z > 7e3 || BA > 24576) && (mA > 423 || !r)) {
           C = oS(e103, o, 0, k, H, v, W, BA, _, K - _, C), BA = z = W = 0, _ = K;
@@ -55362,12 +55368,12 @@ var $QA = function(e103, A, B, t, g, n) {
             if (Ae > LA) {
               if (LA = Ae, uB = OB, Ae > Qe) break;
               for (var hB = Math.min(OB, Ae - 2), pe = 0, DA = 0; DA < hB; ++DA) {
-                var Dg = K - OB + DA & 32767, kt = h[Dg], Tg = Dg - kt & 32767;
+                var Dg = K - OB + DA & 32767, kt = F[Dg], Tg = Dg - kt & 32767;
                 Tg > pe && (pe = Tg, dA = Dg);
               }
             }
           }
-          rA = dA, dA = h[rA], OB += rA - dA & 32767;
+          rA = dA, dA = F[rA], OB += rA - dA & 32767;
         }
         if (uB) {
           k[BA++] = 268435456 | mm[LA] << 18 | iS[uB];
@@ -55377,7 +55383,7 @@ var $QA = function(e103, A, B, t, g, n) {
       }
     }
     for (K = Math.max(K, q); K < i; ++K) k[BA++] = e103[K], ++H[e103[K]];
-    C = oS(e103, o, r, k, H, v, W, BA, _, K - _, C), r || (n.r = C & 7 | o[C / 8 | 0] << 3, C -= 7, n.h = l, n.p = h, n.i = K, n.w = q);
+    C = oS(e103, o, r, k, H, v, W, BA, _, K - _, C), r || (n.r = C & 7 | o[C / 8 | 0] << 3, C -= 7, n.h = l, n.p = F, n.i = K, n.w = q);
   } else {
     for (var K = n.w || 0; K < i + r; K += 65535) {
       var jt = K + 65535;
@@ -55466,8 +55472,8 @@ var cS = function(e103, A, B, t, g, n, i, Q) {
   lt(e103, A, i != null ? 33639248 : 67324752), A += 4, i != null && (e103[A++] = 20, e103[A++] = B.os), e103[A] = 20, A += 2, e103[A++] = B.flag << 1 | (n < 0 && 8), e103[A++] = g && 8, e103[A++] = B.compression & 255, e103[A++] = B.compression >> 8;
   var E = new Date(B.mtime == null ? Date.now() : B.mtime), s = E.getFullYear() - 1980;
   if ((s < 0 || s > 119) && jh(10), lt(e103, A, s << 25 | E.getMonth() + 1 << 21 | E.getDate() << 16 | E.getHours() << 11 | E.getMinutes() << 5 | E.getSeconds() >> 1), A += 4, n != -1 && (lt(e103, A, B.crc), lt(e103, A + 4, n < 0 ? -n - 2 : n), lt(e103, A + 8, B.size)), lt(e103, A + 12, o), lt(e103, A + 14, c), A += 16, i != null && (lt(e103, A, C), lt(e103, A + 6, B.attrs), lt(e103, A + 10, i), A += 14), e103.set(t, A), A += o, c) for (var D in r) {
-    var h = r[D], l = h.length;
-    lt(e103, A, +D), lt(e103, A + 2, l), e103.set(h, A + 4), A += 4 + l;
+    var F = r[D], l = F.length;
+    lt(e103, A, +D), lt(e103, A + 2, l), e103.set(F, A + 4), A += 4 + l;
   }
   return C && (e103.set(Q, A), A += C), A;
 };
@@ -55480,10 +55486,10 @@ function hS(e103, A) {
   FS(e103, "", B, A);
   var g = 0, n = 0;
   for (var i in B) {
-    var Q = B[i], o = Q[0], r = Q[1], C = r.level == 0 ? 0 : 8, c = CS(i), E = c.length, s = r.comment, D = s && CS(s), h = D && D.length, l = ym(r.extra);
+    var Q = B[i], o = Q[0], r = Q[1], C = r.level == 0 ? 0 : 8, c = CS(i), E = c.length, s = r.comment, D = s && CS(s), F = D && D.length, l = ym(r.extra);
     E > 65535 && jh(11);
     var u = C ? toA(o, r) : o, p = u.length, y = BoA();
-    y.p(o), t.push(MS(r, { size: o.length, crc: y.d(), c: u, f: c, m: D, u: E != i.length || D && s.length != h, o: g, compression: C })), g += 30 + E + l + p, n += 76 + 2 * (E + l) + (h || 0) + p;
+    y.p(o), t.push(MS(r, { size: o.length, crc: y.d(), c: u, f: c, m: D, u: E != i.length || D && s.length != F, o: g, compression: C })), g += 30 + E + l + p, n += 76 + 2 * (E + l) + (F || 0) + p;
   }
   for (var k = new Jt(n + 22), H = g, v = n - g, z = 0; z < t.length; ++z) {
     var c = t[z];
@@ -55526,16 +55532,16 @@ function QoA(e103) {
 }
 function ooA(e103, A, B, t, g, n) {
   let i = B.outline, Q = e103.context.obj({}), o = "";
-  for (let [D, h] of i.parts.entries()) {
-    Q.set(R.of(`a${D}`), e103.context.obj({ Type: "ExtGState", ca: h.opacity, CA: h.opacity })), o += `q /a${D} gs ${h.color.map((l) => _A(l / 255)).join(" ")} rg
+  for (let [D, F] of i.parts.entries()) {
+    Q.set(R.of(`a${D}`), e103.context.obj({ Type: "ExtGState", ca: F.opacity, CA: F.opacity })), o += `q /a${D} gs ${F.color.map((l) => _A(l / 255)).join(" ")} rg
 `;
-    for (let l of h.contours) {
+    for (let l of F.contours) {
       for (let [u, p] of l.entries()) o += `${_A(p.x)} ${_A(p.y)} ${u ? "l" : "m"}
 `;
       o += `h
 `;
     }
-    o += `${h.even_odd ? "f*" : "f"}
+    o += `${F.even_odd ? "f*" : "f"}
 Q
 `;
   }
@@ -55560,7 +55566,7 @@ function roA(e103, A) {
     for (let s = Math.ceil(B / i) * i; s <= B + g; s += i) for (let D = Math.ceil(t / i) * i; D <= t + n; D += i) E.push(`<circle cx="${_A(s)}" cy="${_A(D)}" r="1.3"/>`);
     return `<g fill="${bm(e103) ? "#ffffff" : "#423e35"}" opacity=".24">${E.join("")}</g>`;
   }
-  if (e103.grid === "triangle" || e103.grid.startsWith("perspective_")) o = SG(Q, { left: B, top: t, width: g, height: n }, 2).map(([E, s, D, h]) => `M${_A(E)} ${_A(s)}L${_A(D)} ${_A(h)}`).join("");
+  if (e103.grid === "triangle" || e103.grid.startsWith("perspective_")) o = SG(Q, { left: B, top: t, width: g, height: n }, 2).map(([E, s, D, F]) => `M${_A(E)} ${_A(s)}L${_A(D)} ${_A(F)}`).join("");
   else if (o = c(i), e103.grid === "graph" && (o += C(i), i === e103.grid_spacing_px && i / 5 >= 4 && g / i * 5 <= 2048 && n / i * 5 <= 2048 && (r = C(i / 5) + c(i / 5))), e103.grid === "isometric") {
     let E = n / Math.sqrt(3);
     for (let s = Math.floor((B - E) / i) * i; s <= B + g + E; s += i) o += `M${_A(s)} ${_A(t)}l${_A(E)} ${_A(n)}M${_A(s)} ${_A(t)}l${_A(-E)} ${_A(n)}`;
@@ -55630,11 +55636,11 @@ async function woA(e103, A, B, t, g, n) {
     if (!g.pdf?.renderFragment) return iI(i.preview, A);
     let E = i.citation.rects[0], s = await g.pdf.renderFragment(i.data, qr(A.width, A.height, n).width / (E[2] - E[0])), D = e103.createElement("canvas");
     D.width = s.width, D.height = s.height;
-    let h = D.getContext("2d");
-    if (!h) throw Error("Canvas 2D no disponible");
+    let F = D.getContext("2d");
+    if (!F) throw Error("Canvas 2D no disponible");
     try {
-      let l = h.createImageData(s.width, s.height);
-      return l.data.set(s.rgba), h.putImageData(l, 0, 0), iI(D.toDataURL("image/png"), A);
+      let l = F.createImageData(s.width, s.height);
+      return l.data.set(s.rgba), F.putImageData(l, 0, 0), iI(D.toDataURL("image/png"), A);
     } finally {
       D.width = D.height = 1;
     }
@@ -55700,12 +55706,12 @@ async function uS(e103, A, B, t, g = () => {
       let { bytes: D } = await QI(e103, r, A, B, t);
       if (!n) i[`${String(r + 1).padStart(3, "0")}-${Vs(C.name)}.png`] = D;
       else {
-        let h = Math.max(1, Math.ceil(Math.max(c.width, c.height) * 0.75 / 14400)), l = n.addPage([c.width * 0.75 / h, c.height * 0.75 / h]);
-        h > 1 && l.node.set(R.of("UserUnit"), pA.of(h)), l.drawImage(await n.embedPng(D), { x: 0, y: 0, width: l.getWidth(), height: l.getHeight() });
+        let F = Math.max(1, Math.ceil(Math.max(c.width, c.height) * 0.75 / 14400)), l = n.addPage([c.width * 0.75 / F, c.height * 0.75 / F]);
+        F > 1 && l.node.set(R.of("UserUnit"), pA.of(F)), l.drawImage(await n.embedPng(D), { x: 0, y: 0, width: l.getWidth(), height: l.getHeight() });
       }
     } else if (n) {
-      let D = await NS(e103, C, B, t, A.scale * c.scale), h = Math.max(1, Math.ceil(Math.max(c.width, c.height) * 0.75 / 14400)), l = 0.75 / h, u = c.scale * l, p = n.addPage([c.width * l, c.height * l]);
-      h > 1 && p.node.set(R.of("UserUnit"), pA.of(h)), E && p.drawImage(await n.embedPng(await Th(B, bh(c.width, c.height, E), c.width, c.height, A.scale)), { x: 0, y: 0, width: p.getWidth(), height: p.getHeight() });
+      let D = await NS(e103, C, B, t, A.scale * c.scale), F = Math.max(1, Math.ceil(Math.max(c.width, c.height) * 0.75 / 14400)), l = 0.75 / F, u = c.scale * l, p = n.addPage([c.width * l, c.height * l]);
+      F > 1 && p.node.set(R.of("UserUnit"), pA.of(F)), E && p.drawImage(await n.embedPng(await Th(B, bh(c.width, c.height, E), c.width, c.height, A.scale)), { x: 0, y: 0, width: p.getWidth(), height: p.getHeight() });
       let y = (c.offsetX - c.source.x * c.scale) * l, k = p.getHeight() - (c.offsetY - c.source.y * c.scale) * l, H = c.clip;
       p.pushOperators(Ee(), YP(y + H.x * u, k - (H.y + H.height) * u, H.width * u, H.height * u), Sa(), Oa());
       for (let v of s) {
@@ -55747,7 +55753,7 @@ function MoA(e103, A) {
     w(0, "button", 10), G("click", function() {
       let g = U(B).$implicit, n = a();
       return N(n.choose(g.value));
-    }), w(1, "span", 3)(2, "span", 4), F(3), I(), w(4, "span", 5), F(5), I()(), AA(), w(6, "svg", 6), b(7, YoA, 1, 0, ":svg:path", 11), I()();
+    }), w(1, "span", 3)(2, "span", 4), h(3), I(), w(4, "span", 5), h(5), I()(), AA(), w(6, "svg", 6), b(7, YoA, 1, 0, ":svg:path", 11), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a();
@@ -55827,7 +55833,7 @@ var Ph = class e100 {
         return t.toggle();
       })("keydown", function(n) {
         return t.key(n);
-      }), w(2, "span", 3)(3, "span", 4), F(4), I(), w(5, "span", 5), F(6), I()(), AA(), w(7, "svg", 6), $(8, "path", 7), I()(), jA(), w(9, "div", 8, 1), G("keydown", function(n) {
+      }), w(2, "span", 3)(3, "span", 4), h(4), I(), w(5, "span", 5), h(6), I()(), AA(), w(7, "svg", 6), $(8, "path", 7), I()(), jA(), w(9, "div", 8, 1), G("keydown", function(n) {
         return t.key(n);
       }), nA(11, MoA, 8, 5, "button", 9, DoA), I()), B & 2 && (x("disabled", t.disabled), P("aria-label", t.label)("aria-description", t.current ? t.current.label + ". " + t.current.description : null)("aria-expanded", t.open)("aria-controls", t.menuId), Y(4), cA(t.current == null ? null : t.current.label), Y(2), cA(t.current == null ? null : t.current.description), Y(3), x("hidden", !t.open)("id", t.menuId), P("aria-label", t.label), Y(2), iA(t.choices));
     }, dependencies: [YB], styles: [`[_nghost-%COMP%] {
@@ -55941,11 +55947,11 @@ var hoA = ["dialog"];
 function loA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 24)(1, "label"), F(2, "Ancho (mm)"), w(3, "input", 25), G("input", function(g) {
+    w(0, "div", 24)(1, "label"), h(2, "Ancho (mm)"), w(3, "input", 25), G("input", function(g) {
       U(B);
       let n = a(3);
       return N(n.number("customWidthMm", g));
-    }), I()(), w(4, "label"), F(5, "Alto (mm)"), w(6, "input", 26), G("input", function(g) {
+    }), I()(), w(4, "label"), h(5, "Alto (mm)"), w(6, "input", 26), G("input", function(g) {
       U(B);
       let n = a(3);
       return N(n.number("customHeightMm", g));
@@ -55959,7 +55965,7 @@ function loA(e103, A) {
 function doA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 8)(1, "span", 9), F(2, "Tama\xF1o de las p\xE1ginas"), I(), w(3, "era-export-select", 23), G("selected", function(g) {
+    w(0, "div", 8)(1, "span", 9), h(2, "Tama\xF1o de las p\xE1ginas"), I(), w(3, "era-export-select", 23), G("selected", function(g) {
       U(B);
       let n = a(2);
       return N(n.select("sizing", g));
@@ -55971,7 +55977,7 @@ function doA(e103, A) {
   }
 }
 function UoA(e103, A) {
-  e103 & 1 && F(0, " Los trazos vectoriales conservan su nitidez. ");
+  e103 & 1 && h(0, " Los trazos vectoriales conservan su nitidez. ");
 }
 function NoA(e103, A) {
   if (e103 & 1) {
@@ -55980,7 +55986,7 @@ function NoA(e103, A) {
       U(B);
       let n = a(2);
       return N(n.check("attachments", g));
-    }), I(), F(2, "Adjuntar materiales originales utilizados"), I(), w(3, "p", 12), F(4, " A\xF1ade los archivos de los objetos visibles como adjuntos del PDF, consultables en lectores como Adobe Acrobat. "), I();
+    }), I(), h(2, "Adjuntar materiales originales utilizados"), I(), w(3, "p", 12), h(4, " A\xF1ade los archivos de los objetos visibles como adjuntos del PDF, consultables en lectores como Adobe Acrobat. "), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -55988,24 +55994,24 @@ function NoA(e103, A) {
   }
 }
 function uoA(e103, A) {
-  e103 & 1 && (w(0, "p", 12), F(1, " Si hay varias p\xE1ginas, las im\xE1genes se guardan juntas en un ZIP. "), I());
+  e103 & 1 && (w(0, "p", 12), h(1, " Si hay varias p\xE1ginas, las im\xE1genes se guardan juntas en un ZIP. "), I());
 }
 function GoA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    b(0, doA, 5, 4), w(1, "p", 12), F(2), I(), w(3, "label", 20)(4, "input", 21), G("change", function(g) {
+    b(0, doA, 5, 4), w(1, "p", 12), h(2), I(), w(3, "label", 20)(4, "input", 21), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.check("background", g));
-    }), I(), F(5, "Incluir fondo del lienzo"), I(), w(6, "label", 20)(7, "input", 21), G("change", function(g) {
+    }), I(), h(5, "Incluir fondo del lienzo"), I(), w(6, "label", 20)(7, "input", 21), G("change", function(g) {
       U(B);
       let n = a();
       return N(n.check("grid", g));
-    }), I(), F(8, "Incluir cuadr\xEDcula de cada p\xE1gina"), I(), w(9, "div", 8)(10, "span", 9), F(11, "Resoluci\xF3n de la imagen"), I(), w(12, "era-export-select", 22), G("selected", function(g) {
+    }), I(), h(8, "Incluir cuadr\xEDcula de cada p\xE1gina"), I(), w(9, "div", 8)(10, "span", 9), h(11, "Resoluci\xF3n de la imagen"), I(), w(12, "era-export-select", 22), G("selected", function(g) {
       U(B);
       let n = a();
       return N(n.select("scale", g));
-    }), I()(), w(13, "p", 12), b(14, UoA, 1, 0), F(15, " Las im\xE1genes se limitan a 16 megap\xEDxeles y 8192 px por lado. "), I(), b(16, NoA, 5, 1), b(17, uoA, 2, 0, "p", 12);
+    }), I()(), w(13, "p", 12), b(14, UoA, 1, 0), h(15, " Las im\xE1genes se limitan a 16 megap\xEDxeles y 8192 px por lado. "), I(), b(16, NoA, 5, 1), b(17, uoA, 2, 0, "p", 12);
   }
   if (e103 & 2) {
     let B = a();
@@ -56013,34 +56019,34 @@ function GoA(e103, A) {
   }
 }
 function poA(e103, A) {
-  e103 & 1 && (w(0, "p", 12), F(1, " Incluye p\xE1ginas, textos, referencias a materiales y datos de los trazos visibles. CSV no conserva el dibujo como imagen. "), I());
+  e103 & 1 && (w(0, "p", 12), h(1, " Incluye p\xE1ginas, textos, referencias a materiales y datos de los trazos visibles. CSV no conserva el dibujo como imagen. "), I());
 }
 function moA(e103, A) {
-  if (e103 & 1 && (w(0, "p", 13), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 13), h(1), I()), e103 & 2) {
     let B = a();
     Y(), cA(B.error);
   }
 }
 function xoA(e103, A) {
-  if (e103 & 1 && (w(0, "p", 14), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 14), h(1), I()), e103 & 2) {
     let B = a();
     Y(), CA(" ", B.progress, " ");
   }
 }
 function foA(e103, A) {
-  if (e103 & 1 && (w(0, "span"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "span"), h(1), I()), e103 & 2) {
     let B = a();
     Y(), cA(B.previewSize);
   }
 }
 function yoA(e103, A) {
-  if (e103 & 1 && (w(0, "th", 29), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "th", 29), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     Y(), cA(B);
   }
 }
 function RoA(e103, A) {
-  if (e103 & 1 && (w(0, "td"), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "td"), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     Y(), cA(B);
   }
@@ -56052,7 +56058,7 @@ function HoA(e103, A) {
   }
 }
 function JoA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 27)(1, "table", 28)(2, "thead")(3, "tr"), nA(4, yoA, 2, 1, "th", 29, MB), I()(), w(6, "tbody"), nA(7, HoA, 3, 0, "tr", null, MB), I()()(), w(9, "p", 30), F(10), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 27)(1, "table", 28)(2, "thead")(3, "tr"), nA(4, yoA, 2, 1, "th", 29, MB), I()(), w(6, "tbody"), nA(7, HoA, 3, 0, "tr", null, MB), I()()(), w(9, "p", 30), h(10), I()), e103 & 2) {
     let B = a();
     Y(4), iA(B.csvHeaders), Y(3), iA(B.csvRows), Y(3), te(" ", B.csvRowCount, " filas de datos \xB7 mostrando las primeras ", B.csvRows.length, ". ");
   }
@@ -56064,13 +56070,13 @@ function koA(e103, A) {
   }
 }
 function joA(e103, A) {
-  e103 & 1 && (w(0, "p", 33), F(1, " Preparando vista previa\u2026 "), I());
+  e103 & 1 && (w(0, "p", 33), h(1, " Preparando vista previa\u2026 "), I());
 }
 function boA(e103, A) {
-  e103 & 1 && (w(0, "p", 34), F(1, " Introduce un ancho y un alto v\xE1lidos para ver la p\xE1gina. "), I());
+  e103 & 1 && (w(0, "p", 34), h(1, " Introduce un ancho y un alto v\xE1lidos para ver la p\xE1gina. "), I());
 }
 function ToA(e103, A) {
-  if (e103 & 1 && (w(0, "p", 35), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 35), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), CA(" ", B.previewError, " ");
   }
@@ -56082,11 +56088,11 @@ function voA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.stepPreview(-1));
-    }), F(2, " \u2039 "), I(), w(3, "div")(4, "strong"), F(5), I(), w(6, "span"), F(7), I()(), w(8, "button", 38), G("click", function() {
+    }), h(2, " \u2039 "), I(), w(3, "div")(4, "strong"), h(5), I(), w(6, "span"), h(7), I()(), w(8, "button", 38), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.stepPreview(1));
-    }), F(9, " \u203A "), I()();
+    }), h(9, " \u203A "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -56094,7 +56100,7 @@ function voA(e103, A) {
   }
 }
 function WoA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 31), b(1, koA, 1, 2, "img", 32), b(2, joA, 2, 0, "p", 33), b(3, boA, 2, 0, "p", 34), b(4, ToA, 2, 1, "p", 35), I(), b(5, voA, 10, 5, "nav", 36), w(6, "p", 30), F(7, " As\xED quedar\xE1 el encuadre de la p\xE1gina. El patr\xF3n de cuadros indica las zonas transparentes. "), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 31), b(1, koA, 1, 2, "img", 32), b(2, joA, 2, 0, "p", 33), b(3, boA, 2, 0, "p", 34), b(4, ToA, 2, 1, "p", 35), I(), b(5, voA, 10, 5, "nav", 36), w(6, "p", 30), h(7, " As\xED quedar\xE1 el encuadre de la p\xE1gina. El patr\xF3n de cuadros indica las zonas transparentes. "), I()), e103 & 2) {
     let B = a();
     Y(), T(B.previewUrl ? 1 : -1), Y(), T(B.previewBusy ? 2 : -1), Y(), T(B.validSize ? -1 : 3), Y(), T(B.previewError ? 4 : -1), Y(), T(B.previewPages.length ? 5 : -1);
   }
@@ -56212,15 +56218,15 @@ var Sh = class e101 {
         return t.close(n);
       }), w(2, "form", 2), G("submit", function(n) {
         return t.export(n);
-      }), w(3, "header")(4, "div")(5, "h2", 3), F(6, "Exportar cuaderno"), I(), w(7, "p"), F(8), I()(), w(9, "button", 4), G("click", function() {
+      }), w(3, "header")(4, "div")(5, "h2", 3), h(6, "Exportar cuaderno"), I(), w(7, "p"), h(8), I()(), w(9, "button", 4), G("click", function() {
         return t.close();
-      }), F(10, " \xD7 "), I()(), w(11, "div", 5)(12, "div", 6)(13, "fieldset", 7)(14, "div", 8)(15, "span", 9), F(16, "Formato"), I(), w(17, "era-export-select", 10), G("selected", function(n) {
+      }), h(10, " \xD7 "), I()(), w(11, "div", 5)(12, "div", 6)(13, "fieldset", 7)(14, "div", 8)(15, "span", 9), h(16, "Formato"), I(), w(17, "era-export-select", 10), G("selected", function(n) {
         return t.select("format", n);
-      }), I()(), w(18, "div", 8)(19, "span", 9), F(20, "Qu\xE9 exportar"), I(), w(21, "era-export-select", 11), G("selected", function(n) {
+      }), I()(), w(18, "div", 8)(19, "span", 9), h(20, "Qu\xE9 exportar"), I(), w(21, "era-export-select", 11), G("selected", function(n) {
         return t.select("scope", n);
-      }), I()(), b(22, GoA, 18, 10)(23, poA, 2, 0, "p", 12), I(), b(24, moA, 2, 1, "p", 13), b(25, xoA, 2, 1, "p", 14), I(), w(26, "section", 15)(27, "div", 16)(28, "h3", 17), F(29, "Previsualizaci\xF3n"), I(), b(30, foA, 2, 1, "span"), I(), b(31, JoA, 11, 2)(32, WoA, 8, 5), I()(), w(33, "footer")(34, "button", 18), G("click", function() {
+      }), I()(), b(22, GoA, 18, 10)(23, poA, 2, 0, "p", 12), I(), b(24, moA, 2, 1, "p", 13), b(25, xoA, 2, 1, "p", 14), I(), w(26, "section", 15)(27, "div", 16)(28, "h3", 17), h(29, "Previsualizaci\xF3n"), I(), b(30, foA, 2, 1, "span"), I(), b(31, JoA, 11, 2)(32, WoA, 8, 5), I()(), w(33, "footer")(34, "button", 18), G("click", function() {
         return t.close();
-      }), F(35, " Cancelar"), I(), w(36, "button", 19), F(37), I()()()()), B & 2 && (P("aria-busy", t.busy), Y(8), gr(" ", t.editor.organization.name, " \xB7 ", t.editor.organization.pages.length, " ", t.editor.organization.pages.length === 1 ? "p\xE1gina" : "p\xE1ginas", " "), Y(), x("disabled", t.busy), Y(4), x("disabled", t.busy), Y(4), x("value", t.options.format)("choices", t.formatChoices)("disabled", t.busy), Y(4), x("value", t.options.scope)("choices", t.scopeChoices)("disabled", t.busy), Y(), T(t.options.format !== "csv" ? 22 : 23), Y(2), T(t.error ? 24 : -1), Y(), T(t.progress ? 25 : -1), Y(), P("aria-busy", t.previewBusy), Y(4), T(t.options.format !== "csv" && t.previewPages.length ? 30 : -1), Y(), T(t.options.format === "csv" ? 31 : 32), Y(3), x("disabled", t.busy), Y(2), x("disabled", t.busy || !t.validSize), Y(), CA(" ", t.busy ? "Exportando\u2026" : "Exportar", " "));
+      }), h(35, " Cancelar"), I(), w(36, "button", 19), h(37), I()()()()), B & 2 && (P("aria-busy", t.busy), Y(8), gr(" ", t.editor.organization.name, " \xB7 ", t.editor.organization.pages.length, " ", t.editor.organization.pages.length === 1 ? "p\xE1gina" : "p\xE1ginas", " "), Y(), x("disabled", t.busy), Y(4), x("disabled", t.busy), Y(4), x("value", t.options.format)("choices", t.formatChoices)("disabled", t.busy), Y(4), x("value", t.options.scope)("choices", t.scopeChoices)("disabled", t.busy), Y(), T(t.options.format !== "csv" ? 22 : 23), Y(2), T(t.error ? 24 : -1), Y(), T(t.progress ? 25 : -1), Y(), P("aria-busy", t.previewBusy), Y(4), T(t.options.format !== "csv" && t.previewPages.length ? 30 : -1), Y(), T(t.options.format === "csv" ? 31 : 32), Y(3), x("disabled", t.busy), Y(2), x("disabled", t.busy || !t.validSize), Y(), CA(" ", t.busy ? "Exportando\u2026" : "Exportar", " "));
     }, dependencies: [YB, Ph], styles: [`dialog[_ngcontent-%COMP%] {
   box-sizing: border-box;
   width: min(1020px, calc(100vw - 32px));
@@ -56552,7 +56558,7 @@ function OoA(e103, A) {
       U(B);
       let g = a().$implicit, n = a(2);
       return N(n.closePageTab(g));
-    }), F(1, " \xD7 "), I();
+    }), h(1, " \xD7 "), I();
   }
   if (e103 & 2) {
     let B = a().$implicit, t = a(2);
@@ -56565,7 +56571,7 @@ function XoA(e103, A) {
     w(0, "div", 73)(1, "button", 74), G("click", function() {
       let g = U(B).$implicit, n = a(2);
       return N(n.activatePageTab(g));
-    }), w(2, "span", 75), F(3), I(), w(4, "span", 76), F(5), I()(), b(6, OoA, 2, 2, "button", 77), I();
+    }), w(2, "span", 75), h(3), I(), w(4, "span", 76), h(5), I()(), b(6, OoA, 2, 2, "button", 77), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(2);
@@ -56579,15 +56585,15 @@ function ZoA(e103, A) {
       U(B);
       let g = a(2);
       return N(g.windowAction("minimize"));
-    }), F(2, " \u2212 "), I(), w(3, "button", 80), G("click", function() {
+    }), h(2, " \u2212 "), I(), w(3, "button", 80), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.windowAction("toggleMaximize"));
-    }), F(4, " \u25A1 "), I(), w(5, "button", 81), G("click", function() {
+    }), h(4, " \u25A1 "), I(), w(5, "button", 81), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.windowAction("close"));
-    }), F(6, " \xD7 "), I()();
+    }), h(6, " \xD7 "), I()();
   }
 }
 function qoA(e103, A) {
@@ -56605,7 +56611,7 @@ function qoA(e103, A) {
       U(B);
       let g = a();
       return N(g.addCanvasPage());
-    }), F(5, " + Nueva p\xE1gina "), I(), b(6, ZoA, 7, 0, "div", 72), I();
+    }), h(5, " + Nueva p\xE1gina "), I(), b(6, ZoA, 7, 0, "div", 72), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -56619,7 +56625,7 @@ function _oA(e103, A) {
       U(B);
       let g = a();
       return N(g.action("goHome"));
-    }), F(1, " \u2302 "), I();
+    }), h(1, " \u2302 "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -56643,11 +56649,11 @@ function $oA(e103, A) {
       U(B);
       let n = a();
       return N(n.titleDraft = g.target.value);
-    }), I(), w(2, "button", 85), F(3, " \u2713 "), I(), w(4, "button", 86), G("click", function() {
+    })("blur", function() {
       U(B);
       let g = a();
-      return N(g.cancelTitle());
-    }), F(5, " \xD7 "), I()();
+      return N(g.saveTitle());
+    }), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -56657,11 +56663,11 @@ function $oA(e103, A) {
 function ArA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 87), G("click", function() {
+    w(0, "button", 85), G("click", function() {
       U(B);
       let g = a();
       return N(g.beginTitle());
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -56669,25 +56675,25 @@ function ArA(e103, A) {
   }
 }
 function BrA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 89));
+  e103 & 1 && (AA(), $(0, "path", 87));
 }
 function erA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 90));
+  e103 & 1 && (AA(), $(0, "path", 88));
 }
 function trA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 91));
+  e103 & 1 && (AA(), $(0, "path", 89));
 }
 function grA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 92));
+  e103 & 1 && (AA(), $(0, "path", 90));
 }
 function nrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 88), G("click", function() {
+    w(0, "button", 86), G("click", function() {
       U(B);
       let g = a();
       return N(g.action("save"));
-    }), AA(), w(1, "svg", 20), b(2, BrA, 1, 0, ":svg:path", 89)(3, erA, 1, 0, ":svg:path", 90)(4, trA, 1, 0, ":svg:path", 91)(5, grA, 1, 0, ":svg:path", 92), I(), jA(), w(6, "span", 93), F(7), I()();
+    }), AA(), w(1, "svg", 20), b(2, BrA, 1, 0, ":svg:path", 87)(3, erA, 1, 0, ":svg:path", 88)(4, trA, 1, 0, ":svg:path", 89)(5, grA, 1, 0, ":svg:path", 90), I(), jA(), w(6, "span", 91), h(7), I()();
   }
   if (e103 & 2) {
     let B, t = a();
@@ -56697,11 +56703,11 @@ function nrA(e103, A) {
 function irA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 94), G("click", function() {
+    w(0, "button", 92), G("click", function() {
       U(B);
       let g = a();
       return g.settingsOpen = false, g.brushesOpen = false, N(g.editor.beginArtboardPlacement());
-    }), AA(), w(1, "svg", 95), $(2, "rect", 96)(3, "path", 97), I()();
+    }), AA(), w(1, "svg", 93), $(2, "rect", 94)(3, "path", 95), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -56709,23 +56715,23 @@ function irA(e103, A) {
   }
 }
 function QrA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 98)(1, "path", 99)(2, "path", 100)(3, "path", 101));
+  e103 & 1 && (AA(), $(0, "path", 96)(1, "path", 97)(2, "path", 98)(3, "path", 99));
 }
 function orA(e103, A) {
-  e103 & 1 && (AA(), $(0, "path", 102)(1, "path", 103)(2, "path", 104)(3, "path", 105));
+  e103 & 1 && (AA(), $(0, "path", 100)(1, "path", 101)(2, "path", 102)(3, "path", 103));
 }
 function rrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 106)(1, "button", 110), G("click", function() {
+    w(0, "div", 104)(1, "button", 108), G("click", function() {
       U(B);
       let g = a(2);
       return g.sidebarView = "library", g.query = "", N(g.selectedVaultFolder = "");
-    }), F(2, " Cuadernos "), I(), w(3, "button", 110), G("click", function() {
+    }), h(2, " Cuadernos "), I(), w(3, "button", 108), G("click", function() {
       U(B);
       let g = a(2);
       return g.sidebarView = "pages", N(g.pagesOpen = true);
-    }), F(4, " P\xE1ginas "), I()();
+    }), h(4, " P\xE1ginas "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -56735,11 +56741,11 @@ function rrA(e103, A) {
 function CrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 115), G("click", function() {
+    w(0, "button", 113), G("click", function() {
       U(B);
       let g = a(3);
       return N(g.newNotebook());
-    }), AA(), w(1, "svg", 113), $(2, "path", 116), I()();
+    }), AA(), w(1, "svg", 111), $(2, "path", 114), I()();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -56749,11 +56755,11 @@ function CrA(e103, A) {
 function crA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 107), b(1, CrA, 3, 1, "button", 111), w(2, "button", 112), G("click", function() {
+    w(0, "div", 105), b(1, CrA, 3, 1, "button", 109), w(2, "button", 110), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.edit(g.actions.createVaultFolder ? "vault_folder" : "folder"));
-    }), AA(), w(3, "svg", 113), $(4, "path", 114), I()()();
+    }), AA(), w(3, "svg", 111), $(4, "path", 112), I()()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -56763,11 +56769,11 @@ function crA(e103, A) {
 function ErA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 112), G("click", function() {
+    w(0, "button", 110), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.edit("folder"));
-    }), F(1, " + Carpeta "), I();
+    }), h(1, " + Carpeta "), I();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -56775,7 +56781,7 @@ function ErA(e103, A) {
   }
 }
 function wrA(e103, A) {
-  if (e103 & 1 && (w(0, "option", 130), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 128), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     x("value", B), Y(), cA(B);
   }
@@ -56783,13 +56789,13 @@ function wrA(e103, A) {
 function srA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 132), G("dragover", function(g) {
+    w(0, "button", 130), G("dragover", function(g) {
       let n = U(B).$implicit, i = a(5);
       return N(i.dragOver(g, "vault-folder", n));
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(5);
       return N(i.drop(g, "vault-folder", n));
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(5);
@@ -56799,7 +56805,7 @@ function srA(e103, A) {
 function arA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 124)(1, "span", 127), G("dragstart", function(g) {
+    w(0, "div", 122)(1, "span", 125), G("dragstart", function(g) {
       U(B);
       let n = a(4);
       return N(n.startDrag(g, "notebook", n.editor.vault.activePath));
@@ -56807,11 +56813,11 @@ function arA(e103, A) {
       U(B);
       let g = a(4);
       return N(g.endDrag());
-    }), F(2), I(), w(3, "label"), F(4, "Carpeta del Vault "), w(5, "select", 128), G("change", function(g) {
+    }), h(2), I(), w(3, "label"), h(4, "Carpeta del Vault "), w(5, "select", 126), G("change", function(g) {
       U(B);
       let n = a(4);
       return N(n.moveVault(n.editor.vault.activePath, n.value(g)));
-    }), w(6, "option", 129), F(7, "Sin carpeta"), I(), nA(8, wrA, 2, 2, "option", 130, ZB), I()(), w(10, "div", 131)(11, "button", 132), G("dragover", function(g) {
+    }), w(6, "option", 127), h(7, "Sin carpeta"), I(), nA(8, wrA, 2, 2, "option", 128, ZB), I()(), w(10, "div", 129)(11, "button", 130), G("dragover", function(g) {
       U(B);
       let n = a(4);
       return N(n.dragOver(g, "root"));
@@ -56819,7 +56825,7 @@ function arA(e103, A) {
       U(B);
       let n = a(4);
       return N(n.drop(g, "root"));
-    }), F(12, " \u25B1 Sin carpeta "), I(), nA(13, srA, 2, 4, "button", 133, ZB), I()();
+    }), h(12, " \u25B1 Sin carpeta "), I(), nA(13, srA, 2, 4, "button", 131, ZB), I()();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -56829,7 +56835,7 @@ function arA(e103, A) {
 function IrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "input", 134), G("input", function(g) {
+    w(0, "input", 132), G("input", function(g) {
       U(B);
       let n = a(4);
       return n.query = n.value(g), N(n.notebookExpanded = true);
@@ -56843,15 +56849,15 @@ function IrA(e103, A) {
 function DrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 120)(1, "button", 121), G("click", function() {
+    w(0, "div", 118)(1, "button", 119), G("click", function() {
       U(B);
       let g = a(3);
       return N(g.addCanvasPage());
-    }), F(2, " + P\xE1gina "), I(), b(3, ErA, 2, 1, "button", 122), w(4, "button", 123), G("click", function() {
+    }), h(2, " + P\xE1gina "), I(), b(3, ErA, 2, 1, "button", 120), w(4, "button", 121), G("click", function() {
       U(B);
       let g = a(3);
       return g.searchOpen = !g.searchOpen, N(g.query = "");
-    }), F(5, " \u2315 "), I()(), b(6, arA, 15, 6, "div", 124), b(7, IrA, 1, 1, "input", 125), _n(8, 126);
+    }), h(5, " \u2315 "), I()(), b(6, arA, 15, 6, "div", 122), b(7, IrA, 1, 1, "input", 123), _n(8, 124);
   }
   if (e103 & 2) {
     a(2);
@@ -56862,11 +56868,11 @@ function DrA(e103, A) {
 function YrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 108)(1, "div", 117)(2, "button", 118), G("click", function() {
+    w(0, "section", 106)(1, "div", 115)(2, "button", 116), G("click", function() {
       U(B);
       let g = a(2);
       return g.pagesOpen = !g.pagesOpen, N(g.pageMenu = null);
-    }), w(3, "span", 119), F(4), I(), w(5, "strong"), F(6, "P\xE1ginas"), I()()(), b(7, DrA, 9, 6), I();
+    }), w(3, "span", 117), h(4), I(), w(5, "strong"), h(6, "P\xE1ginas"), I()()(), b(7, DrA, 9, 6), I();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -56876,11 +56882,11 @@ function YrA(e103, A) {
 function MrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 146), G("click", function() {
+    w(0, "button", 144), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.action("chooseVault"));
-    }), F(1, " Cambiar vault "), I();
+    }), h(1, " Cambiar vault "), I();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -56890,11 +56896,11 @@ function MrA(e103, A) {
 function FrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 147), G("click", function() {
+    w(0, "button", 145), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.action("refreshVault"));
-    }), F(1, " \u21BB "), I();
+    }), h(1, " \u21BB "), I();
   }
   if (e103 & 2) {
     let B = a(), t = a(3);
@@ -56904,11 +56910,11 @@ function FrA(e103, A) {
 function hrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 148), G("click", function() {
+    w(0, "button", 146), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.action("importNotebook"));
-    }), F(1, " Importar .era "), I();
+    }), h(1, " Importar .era "), I();
   }
   if (e103 & 2) {
     let B = a(), t = a(3);
@@ -56918,15 +56924,15 @@ function hrA(e103, A) {
 function lrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 145)(1, "p"), F(2), I(), w(3, "div", 139)(4, "button", 149), G("click", function() {
+    w(0, "div", 143)(1, "p"), h(2), I(), w(3, "div", 137)(4, "button", 147), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.confirmNotebookDelete());
-    }), F(5, " Eliminar cuaderno "), I(), w(6, "button", 110), G("click", function() {
+    }), h(5, " Eliminar cuaderno "), I(), w(6, "button", 108), G("click", function() {
       U(B);
       let g = a(4);
       return N(g.pendingNotebookDelete = null);
-    }), F(7, " Cancelar "), I()()();
+    }), h(7, " Cancelar "), I()()();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -56936,7 +56942,7 @@ function lrA(e103, A) {
 function drA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 136), G("click", function(g) {
+    w(0, "section", 134), G("click", function(g) {
       U(B);
       let n = a(3);
       return N(g.target === g.currentTarget && (n.selectedVaultFolder = ""));
@@ -56948,7 +56954,7 @@ function drA(e103, A) {
       U(B);
       let n = a(3);
       return N(n.drop(g, "root"));
-    }), w(1, "details", 137)(2, "summary"), F(3, "Opciones del vault"), I(), w(4, "p", 138), F(5), I(), w(6, "div", 139), b(7, MrA, 2, 1, "button", 140), b(8, FrA, 2, 1, "button", 141), b(9, hrA, 2, 1, "button", 142), I()(), w(10, "nav", 143), _n(11, 144), I(), b(12, lrA, 8, 2, "div", 145), I();
+    }), w(1, "details", 135)(2, "summary"), h(3, "Opciones del vault"), I(), w(4, "p", 136), h(5), I(), w(6, "div", 137), b(7, MrA, 2, 1, "button", 138), b(8, FrA, 2, 1, "button", 139), b(9, hrA, 2, 1, "button", 140), I()(), w(10, "nav", 141), _n(11, 142), I(), b(12, lrA, 8, 2, "div", 143), I();
   }
   if (e103 & 2) {
     let B = A;
@@ -56958,7 +56964,7 @@ function drA(e103, A) {
   }
 }
 function UrA(e103, A) {
-  if (e103 & 1 && b(0, drA, 13, 11, "section", 135), e103 & 2) {
+  if (e103 & 1 && b(0, drA, 13, 11, "section", 133), e103 & 2) {
     let B, t = a(2);
     T((B = t.editor.vault) ? 0 : -1, B);
   }
@@ -56966,7 +56972,7 @@ function UrA(e103, A) {
 function NrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "details", 150)(1, "summary", 153), G("click", function() {
+    w(0, "details", 148)(1, "summary", 151), G("click", function() {
       let g = U(B).$implicit, n = a(3);
       return N(n.selectedVaultFolder = g);
     })("contextmenu", function(g) {
@@ -56985,7 +56991,7 @@ function NrA(e103, A) {
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(3);
       return N(i.drop(g, "vault-folder", n));
-    }), F(2), I(), w(3, "div", 154), _n(4, 144), I()();
+    }), h(2), I(), w(3, "div", 152), _n(4, 142), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit;
@@ -56997,7 +57003,7 @@ function NrA(e103, A) {
 function urA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 151)(1, "button", 155), G("dragstart", function(g) {
+    w(0, "div", 149)(1, "button", 153), G("dragstart", function(g) {
       let n = U(B).$implicit, i = a(3);
       return N(i.startDrag(g, "notebook", n));
     })("dragend", function() {
@@ -57016,10 +57022,10 @@ function urA(e103, A) {
     })("contextmenu", function(g) {
       let n = U(B).$implicit, i = a(3);
       return N(i.selectNotebook(n, g));
-    }), w(2, "span", 119), F(3, "\u25A4"), I(), F(4), I(), w(5, "button", 156), G("click", function(g) {
+    }), w(2, "span", 117), h(3, "\u25A4"), I(), h(4), I(), w(5, "button", 154), G("click", function(g) {
       let n = U(B).$implicit, i = a(3);
       return N(i.selectNotebook(n, g));
-    }), F(6, " \u22EF "), I()();
+    }), h(6, " \u22EF "), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(3);
@@ -57027,10 +57033,10 @@ function urA(e103, A) {
   }
 }
 function GrA(e103, A) {
-  e103 & 1 && (w(0, "p", 152), F(1, "Carpeta vac\xEDa"), I());
+  e103 & 1 && (w(0, "p", 150), h(1, "Carpeta vac\xEDa"), I());
 }
 function prA(e103, A) {
-  if (e103 & 1 && (nA(0, NrA, 5, 9, "details", 150, ZB), nA(2, urA, 7, 10, "div", 151, ZB), b(4, GrA, 2, 0, "p", 152)), e103 & 2) {
+  if (e103 & 1 && (nA(0, NrA, 5, 9, "details", 148, ZB), nA(2, urA, 7, 10, "div", 149, ZB), b(4, GrA, 2, 0, "p", 150)), e103 & 2) {
     let B = A.parent, t = a(2);
     iA(t.foldersAt(B)), Y(2), iA(t.notebooksAt(B)), Y(2), T(!t.foldersAt(B).length && !t.notebooksAt(B).length ? 4 : -1);
   }
@@ -57038,7 +57044,7 @@ function prA(e103, A) {
 function mrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 159), G("click", function() {
+    w(0, "button", 157), G("click", function() {
       let g = U(B).$implicit, n = a(4);
       return n.pageMenu = null, N(n.selectPage(g.id));
     })("contextmenu", function(g) {
@@ -57057,7 +57063,7 @@ function mrA(e103, A) {
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(4);
       return N(i.drop(g, "page", n.id));
-    }), w(1, "span", 160), F(2, "\u25A7"), I(), w(3, "span"), F(4), I()();
+    }), w(1, "span", 158), h(2, "\u25A7"), I(), w(3, "span"), h(4), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -57065,10 +57071,10 @@ function mrA(e103, A) {
   }
 }
 function xrA(e103, A) {
-  e103 & 1 && (w(0, "p", 152), F(1, "No hay coincidencias."), I());
+  e103 & 1 && (w(0, "p", 150), h(1, "No hay coincidencias."), I());
 }
 function frA(e103, A) {
-  if (e103 & 1 && nA(0, mrA, 5, 8, "button", 158, oI, false, xrA, 2, 0, "p", 152), e103 & 2) {
+  if (e103 & 1 && nA(0, mrA, 5, 8, "button", 156, oI, false, xrA, 2, 0, "p", 150), e103 & 2) {
     let B = a(3);
     iA(B.pages);
   }
@@ -57076,7 +57082,7 @@ function frA(e103, A) {
 function yrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 163), G("dragover", function(g) {
+    w(0, "button", 161), G("dragover", function(g) {
       U(B);
       let n = a(4);
       return N(n.dragOver(g, "root"));
@@ -57088,7 +57094,7 @@ function yrA(e103, A) {
       U(B);
       let g = a(4);
       return g.folder = null, g.form = null, N(g.pendingDelete = null);
-    }), F(1, " \u25B1 Sin carpeta "), I();
+    }), h(1, " \u25B1 Sin carpeta "), I();
   }
   if (e103 & 2) {
     let B = a(4);
@@ -57098,7 +57104,7 @@ function yrA(e103, A) {
 function RrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 159), G("click", function() {
+    w(0, "button", 157), G("click", function() {
       let g = U(B).$implicit, n = a(4);
       return n.pageMenu = null, N(n.selectPage(g.id));
     })("contextmenu", function(g) {
@@ -57117,7 +57123,7 @@ function RrA(e103, A) {
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(4);
       return N(i.drop(g, "page", n.id));
-    }), w(1, "span", 160), F(2, "\u25A7"), I(), w(3, "span"), F(4), I()();
+    }), w(1, "span", 158), h(2, "\u25A7"), I(), w(3, "span"), h(4), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -57127,7 +57133,7 @@ function RrA(e103, A) {
 function HrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 159), G("click", function() {
+    w(0, "button", 157), G("click", function() {
       let g = U(B).$implicit, n = a(5);
       return n.pageMenu = null, N(n.selectPage(g.id));
     })("contextmenu", function(g) {
@@ -57146,7 +57152,7 @@ function HrA(e103, A) {
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(5);
       return N(i.drop(g, "page", n.id));
-    }), w(1, "span", 160), F(2, "\u25A7"), I(), w(3, "span"), F(4), I()();
+    }), w(1, "span", 158), h(2, "\u25A7"), I(), w(3, "span"), h(4), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(5);
@@ -57154,12 +57160,12 @@ function HrA(e103, A) {
   }
 }
 function JrA(e103, A) {
-  e103 & 1 && (w(0, "p", 152), F(1, "Carpeta vac\xEDa"), I());
+  e103 & 1 && (w(0, "p", 150), h(1, "Carpeta vac\xEDa"), I());
 }
 function krA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "details", 162)(1, "summary", 164), G("click", function() {
+    w(0, "details", 160)(1, "summary", 162), G("click", function() {
       let g = U(B).$implicit, n = a(4);
       return n.folder = g.id, n.pageMenu = null, n.form = null, N(n.pendingDelete = null);
     })("contextmenu", function(g) {
@@ -57178,7 +57184,7 @@ function krA(e103, A) {
     })("drop", function(g) {
       let n = U(B).$implicit, i = a(4);
       return N(i.drop(g, "folder", n.id));
-    }), F(2), I(), w(3, "div", 154), nA(4, HrA, 5, 8, "button", 158, oI, false, JrA, 2, 0, "p", 152), I()();
+    }), h(2), I(), w(3, "div", 152), nA(4, HrA, 5, 8, "button", 156, oI, false, JrA, 2, 0, "p", 150), I()();
   }
   if (e103 & 2) {
     let B = A.$implicit, t = a(4);
@@ -57186,7 +57192,7 @@ function krA(e103, A) {
   }
 }
 function jrA(e103, A) {
-  if (e103 & 1 && (b(0, yrA, 2, 4, "button", 161), w(1, "div", 154), nA(2, RrA, 5, 8, "button", 158, oI), I(), nA(4, krA, 7, 6, "details", 162, oI)), e103 & 2) {
+  if (e103 & 1 && (b(0, yrA, 2, 4, "button", 159), w(1, "div", 152), nA(2, RrA, 5, 8, "button", 156, oI), I(), nA(4, krA, 7, 6, "details", 160, oI)), e103 & 2) {
     let B = a(3);
     T(B.notebook.folders.length ? 0 : -1), Y(2), iA(B.pagesIn(null)), Y(2), iA(B.notebook.folders);
   }
@@ -57194,15 +57200,15 @@ function jrA(e103, A) {
 function brA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 145)(1, "p"), F(2), I(), w(3, "div", 139)(4, "button", 165), G("click", function() {
+    w(0, "div", 143)(1, "p"), h(2), I(), w(3, "div", 137)(4, "button", 163), G("click", function() {
       U(B);
       let g = a(3);
       return N(g.remove());
-    }), F(5, " Confirmar eliminaci\xF3n"), I(), w(6, "button", 110), G("click", function() {
+    }), h(5, " Confirmar eliminaci\xF3n"), I(), w(6, "button", 108), G("click", function() {
       U(B);
       let g = a(3);
       return N(g.pendingDelete = null);
-    }), F(7, " Cancelar "), I()()();
+    }), h(7, " Cancelar "), I()()();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -57210,13 +57216,13 @@ function brA(e103, A) {
   }
 }
 function TrA(e103, A) {
-  if (e103 & 1 && (w(0, "nav", 157), b(1, frA, 3, 1)(2, jrA, 6, 1), I(), b(3, brA, 8, 2, "div", 145)), e103 & 2) {
+  if (e103 & 1 && (w(0, "nav", 155), b(1, frA, 3, 1)(2, jrA, 6, 1), I(), b(3, brA, 8, 2, "div", 143)), e103 & 2) {
     let B = a(2);
     Y(), T(B.query || B.pagesOnly ? 1 : 2), Y(2), T(B.pendingDelete ? 3 : -1);
   }
 }
 function vrA(e103, A) {
-  if (e103 & 1 && (w(0, "aside", 30), b(1, rrA, 5, 2, "div", 106), b(2, crA, 5, 2, "div", 107), b(3, YrA, 8, 3, "section", 108), b(4, UrA, 1, 1), bi(5, prA, 5, 1, "ng-template", null, 5, fQ)(7, TrA, 4, 2, "ng-template", null, 6, fQ), $(9, "era-resource-panel", 109), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "aside", 30), b(1, rrA, 5, 2, "div", 104), b(2, crA, 5, 2, "div", 105), b(3, YrA, 8, 3, "section", 106), b(4, UrA, 1, 1), bi(5, prA, 5, 1, "ng-template", null, 5, fQ)(7, TrA, 4, 2, "ng-template", null, 6, fQ), $(9, "era-resource-panel", 107), I()), e103 & 2) {
     let B = a();
     Y(), T(B.editor.vault && !B.pagesOnly ? 1 : -1), Y(), T(!B.pagesOnly && B.sidebarView === "library" ? 2 : -1), Y(), T(B.pagesOnly || B.sidebarView === "pages" ? 3 : -1), Y(), T(!B.pagesOnly && B.sidebarView === "library" ? 4 : -1), Y(5), x("editor", B.editor)("actions", B.actions)("revision", B.editor.resourceVersion);
   }
@@ -57224,11 +57230,11 @@ function vrA(e103, A) {
 function WrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 166), G("click", function() {
+    w(0, "button", 164), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.recoverEquation());
-    }), F(1, " Volver a trazos "), I();
+    }), h(1, " Volver a trazos "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -57238,11 +57244,11 @@ function WrA(e103, A) {
 function PrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 166), G("click", function() {
+    w(0, "button", 164), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.retryEquation());
-    }), F(1, " Reconocer de nuevo "), I();
+    }), h(1, " Reconocer de nuevo "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -57252,11 +57258,11 @@ function PrA(e103, A) {
 function SrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 167), G("click", function() {
+    w(0, "button", 165), G("click", function() {
       U(B);
       let g = a();
       return N(g.openEquationEdit());
-    }), F(1, " Editar ecuaci\xF3n "), I();
+    }), h(1, " Editar ecuaci\xF3n "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -57266,11 +57272,11 @@ function SrA(e103, A) {
 function LrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 166), G("click", function() {
+    w(0, "button", 164), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.selectedEquation && g.editor.recognitionProfile === "math" ? g.editor.recoverEquation(g.editor.selected) : g.editor.restoreWriting());
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -57280,7 +57286,7 @@ function LrA(e103, A) {
 function VrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "era-brush-panel", 168), G("closed", function() {
+    w(0, "era-brush-panel", 166), G("closed", function() {
       U(B);
       let g = a();
       return N(g.brushesOpen = false);
@@ -57298,7 +57304,7 @@ function VrA(e103, A) {
 function zrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "era-canvas-settings", 169), G("dismissed", function() {
+    w(0, "era-canvas-settings", 167), G("dismissed", function() {
       U(B);
       let g = a();
       return N(g.settingsOpen = false);
@@ -57316,7 +57322,7 @@ function zrA(e103, A) {
 function KrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "era-export-dialog", 170), G("closed", function() {
+    w(0, "era-export-dialog", 168), G("closed", function() {
       U(B);
       let g = a();
       return N(g.exportOpen = false);
@@ -57330,25 +57336,25 @@ function KrA(e103, A) {
 function OrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 47)(1, "span"), F(2, "Arrastra para encuadrar la hoja. El dibujo se conserva completo."), I(), w(3, "button", 171), G("click", function() {
+    w(0, "section", 47)(1, "span"), h(2, "Arrastra para encuadrar la hoja. El dibujo se conserva completo."), I(), w(3, "button", 169), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.centerArtboardInView());
-    }), F(4, " Centrar aqu\xED "), I(), w(5, "button", 171), G("click", function() {
+    }), h(4, " Centrar aqu\xED "), I(), w(5, "button", 169), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.endArtboardPlacement(true));
-    }), F(6, " Listo "), I(), w(7, "button", 171), G("click", function() {
+    }), h(6, " Listo "), I(), w(7, "button", 169), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.endArtboardPlacement(false));
-    }), F(8, " Cancelar "), I()();
+    }), h(8, " Cancelar "), I()();
   }
 }
 function XrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 175), G("pointerdown", function(g) {
+    w(0, "button", 173), G("pointerdown", function(g) {
       U(B), a(3);
       let n = qB(66);
       return N(n.beginInkConnectionDrag(g));
@@ -57366,16 +57372,16 @@ function XrA(e103, A) {
   }
 }
 function ZrA(e103, A) {
-  e103 & 1 && nA(0, XrA, 1, 3, "button", 174, ZB), e103 & 2 && iA(rg(0, VoA));
+  e103 & 1 && nA(0, XrA, 1, 3, "button", 172, ZB), e103 & 2 && iA(rg(0, VoA));
 }
 function qrA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 176), G("pointerdown", function(g) {
+    w(0, "button", 174), G("pointerdown", function(g) {
       return g.stopPropagation();
     })("click", function(g) {
       return U(B), a(2).editor.copySelection(), N(g.stopPropagation());
-    }), F(1), I();
+    }), h(1), I();
   }
   if (e103 & 2) {
     let B = a(), t = a();
@@ -57385,7 +57391,7 @@ function qrA(e103, A) {
 function _rA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "div", 172), G("pointerdown", function(g) {
+    w(0, "div", 170), G("pointerdown", function(g) {
       U(B);
       let n = a();
       return N(n.editor.beginGroup(g));
@@ -57411,7 +57417,7 @@ function _rA(e103, A) {
       U(B);
       let n = a();
       return n.editor.cancelSelectionGesture(), n.editor.clearObjectSelection(), n.editor.render(), N(g.stopPropagation());
-    }), b(1, ZrA, 2, 1), w(2, "span"), F(3), I(), b(4, qrA, 2, 4, "button", 173), I();
+    }), b(1, ZrA, 2, 1), w(2, "span"), h(3), I(), b(4, qrA, 2, 4, "button", 171), I();
   }
   if (e103 & 2) {
     let B = A, t = a();
@@ -57419,19 +57425,19 @@ function _rA(e103, A) {
   }
 }
 function $rA(e103, A) {
-  if (e103 & 1 && $(0, "era-pdf-reader", 177, 7), e103 & 2) {
+  if (e103 & 1 && $(0, "era-pdf-reader", 175, 7), e103 & 2) {
     let B = a(2);
     x("eraPdfWorkspace", B.editor)("editor", B.editor)("actions", B.actions)("revision", B.editor.pdfRevision)("citationFocus", B.editor.pdfCitation)("tool", B.editor.tool);
   }
 }
 function ACA(e103, A) {
-  if (e103 & 1 && nA(0, $rA, 2, 6, "era-pdf-reader", 177, ZB), e103 & 2) {
+  if (e103 & 1 && nA(0, $rA, 2, 6, "era-pdf-reader", 175, ZB), e103 & 2) {
     let B = a();
     iA($n(0, zoA, B.editor.pdfReader.resource));
   }
 }
 function BCA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 53), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 53), h(1), I()), e103 & 2) {
     let B = a();
     Y(), cA(B.editor.status);
   }
@@ -57439,21 +57445,21 @@ function BCA(e103, A) {
 function eCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 110), G("click", function() {
+    w(0, "button", 108), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.retryPdfMarks());
-    }), F(1, " Reintentar marcas PDF "), I();
+    }), h(1, " Reintentar marcas PDF "), I();
   }
 }
 function tCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 178), G("click", function() {
+    w(0, "button", 176), G("click", function() {
       U(B);
       let g = a();
       return N(g.editor.returnToContent());
-    }), F(1, " \u2197 Volver al contenido "), I();
+    }), h(1, " \u2197 Volver al contenido "), I();
   }
   if (e103 & 2) {
     let B = a();
@@ -57461,13 +57467,13 @@ function tCA(e103, A) {
   }
 }
 function gCA(e103, A) {
-  if (e103 & 1 && (w(0, "output", 57), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "output", 57), h(1), I()), e103 & 2) {
     let B = a();
     Y(), CA(" ", B.editor.selectionMeasurement, " ");
   }
 }
 function nCA(e103, A) {
-  if (e103 & 1 && (w(0, "div", 179), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "div", 177), h(1), I()), e103 & 2) {
     let B = A, t = a();
     hA("left", B.x, "px")("top", B.y, "px"), x("id", t.tooltipId), Y(), CA(" ", B.text, " ");
   }
@@ -57475,19 +57481,19 @@ function nCA(e103, A) {
 function iCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "strong"), F(1), I(), w(2, "div", 139)(3, "button", 149), G("click", function() {
+    w(0, "strong"), h(1), I(), w(2, "div", 137)(3, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.newNotebook(), N(g.pageMenu = null);
-    }), F(4, " Nuevo cuaderno "), I(), w(5, "button", 149), G("click", function() {
+    }), h(4, " Nuevo cuaderno "), I(), w(5, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("vault_folder"), N(g.pageMenu = null);
-    }), F(6, " Nueva carpeta "), I(), w(7, "button", 149), G("click", function() {
+    }), h(6, " Nueva carpeta "), I(), w(7, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("rename_vault_folder"), N(g.pageMenu = null);
-    }), F(8, " Renombrar carpeta "), I()();
+    }), h(8, " Renombrar carpeta "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -57497,19 +57503,19 @@ function iCA(e103, A) {
 function QCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "strong"), F(1), I(), w(2, "div", 139)(3, "button", 149), G("click", function() {
+    w(0, "strong"), h(1), I(), w(2, "div", 137)(3, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("page"), N(g.pageMenu = null);
-    }), F(4, " Nueva p\xE1gina "), I(), w(5, "button", 149), G("click", function() {
+    }), h(4, " Nueva p\xE1gina "), I(), w(5, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("rename_folder"), N(g.pageMenu = null);
-    }), F(6, " Renombrar carpeta "), I(), w(7, "button", 149), G("click", function() {
+    }), h(6, " Renombrar carpeta "), I(), w(7, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.pendingDelete = "folder", g.notebookExpanded = true, N(g.pageMenu = null);
-    }), F(8, " Eliminar carpeta "), I()();
+    }), h(8, " Eliminar carpeta "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -57517,7 +57523,7 @@ function QCA(e103, A) {
   }
 }
 function oCA(e103, A) {
-  if (e103 & 1 && (w(0, "option", 130), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 128), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     x("value", B), Y(), cA(B);
   }
@@ -57525,11 +57531,11 @@ function oCA(e103, A) {
 function rCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1, "Carpeta del vault"), w(2, "select", 183), G("change", function(g) {
+    w(0, "label"), h(1, "Carpeta del vault"), w(2, "select", 181), G("change", function(g) {
       U(B);
       let n = a(3);
       return N(n.moveVault(n.editor.vault.activePath, n.value(g)));
-    }), w(3, "option", 129), F(4, "Ra\xEDz del vault"), I(), nA(5, oCA, 2, 2, "option", 130, ZB), I()();
+    }), w(3, "option", 127), h(4, "Ra\xEDz del vault"), I(), nA(5, oCA, 2, 2, "option", 128, ZB), I()();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -57539,11 +57545,11 @@ function rCA(e103, A) {
 function CCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "button", 149), G("click", function() {
+    w(0, "button", 147), G("click", function() {
       U(B);
       let g = a(3);
       return g.pendingNotebookDelete = g.editor.vault.activePath, g.pageMenu = null, N(g.sidebarView = "library");
-    }), F(1, " Eliminar cuaderno "), I();
+    }), h(1, " Eliminar cuaderno "), I();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -57553,19 +57559,19 @@ function CCA(e103, A) {
 function cCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "strong"), F(1), I(), b(2, rCA, 7, 2, "label"), w(3, "div", 139)(4, "button", 149), G("click", function() {
+    w(0, "strong"), h(1), I(), b(2, rCA, 7, 2, "label"), w(3, "div", 137)(4, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("notebook"), N(g.pageMenu = null);
-    }), F(5, " Renombrar cuaderno "), I(), b(6, CCA, 2, 1, "button", 182), w(7, "button", 149), G("click", function() {
+    }), h(5, " Renombrar cuaderno "), I(), b(6, CCA, 2, 1, "button", 180), w(7, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.folder = null, g.edit("page"), N(g.pageMenu = null);
-    }), F(8, " Nueva p\xE1gina "), I(), w(9, "button", 149), G("click", function() {
+    }), h(8, " Nueva p\xE1gina "), I(), w(9, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit(g.actions.createVaultFolder ? "vault_folder" : "folder"), N(g.pageMenu = null);
-    }), F(10, " Nueva carpeta "), I()();
+    }), h(10, " Nueva carpeta "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -57573,7 +57579,7 @@ function cCA(e103, A) {
   }
 }
 function ECA(e103, A) {
-  if (e103 & 1 && (w(0, "option", 130), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "option", 128), h(1), I()), e103 & 2) {
     let B = A.$implicit;
     x("value", B.id), Y(), cA(B.name);
   }
@@ -57581,11 +57587,11 @@ function ECA(e103, A) {
 function wCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "label"), F(1, "Carpeta"), w(2, "select", 187), G("change", function(g) {
+    w(0, "label"), h(1, "Carpeta"), w(2, "select", 185), G("change", function(g) {
       U(B);
       let n = a(3);
       return N(n.movePage(g));
-    }), w(3, "option", 129), F(4, "Sin carpeta"), I(), nA(5, ECA, 2, 2, "option", 130, oI), I()();
+    }), w(3, "option", 127), h(4, "Sin carpeta"), I(), nA(5, ECA, 2, 2, "option", 128, oI), I()();
   }
   if (e103 & 2) {
     let B = a(3);
@@ -57595,23 +57601,23 @@ function wCA(e103, A) {
 function sCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "strong"), F(1), I(), b(2, wCA, 7, 2, "label"), w(3, "div", 139)(4, "button", 184), G("click", function() {
+    w(0, "strong"), h(1), I(), b(2, wCA, 7, 2, "label"), w(3, "div", 137)(4, "button", 182), G("click", function() {
       U(B);
       let g = a(2);
       return g.edit("rename_page"), N(g.pageMenu = null);
-    }), F(5, " Renombrar"), I(), w(6, "button", 185), G("click", function() {
+    }), h(5, " Renombrar"), I(), w(6, "button", 183), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.editor.organize({ action: "reorder_page", id: g.activePage.id, offset: -1 }));
-    }), F(7, " \u2191"), I(), w(8, "button", 186), G("click", function() {
+    }), h(7, " \u2191"), I(), w(8, "button", 184), G("click", function() {
       U(B);
       let g = a(2);
       return N(g.editor.organize({ action: "reorder_page", id: g.activePage.id, offset: 1 }));
-    }), F(9, " \u2193"), I(), w(10, "button", 149), G("click", function() {
+    }), h(9, " \u2193"), I(), w(10, "button", 147), G("click", function() {
       U(B);
       let g = a(2);
       return g.pendingDelete = "page", N(g.pageMenu = null);
-    }), F(11, " Eliminar "), I()();
+    }), h(11, " Eliminar "), I()();
   }
   if (e103 & 2) {
     let B = a(2);
@@ -57621,13 +57627,13 @@ function sCA(e103, A) {
 function aCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 180), G("click", function(g) {
+    w(0, "section", 178), G("click", function(g) {
       return g.stopPropagation();
-    }), w(1, "button", 181), G("click", function() {
+    }), w(1, "button", 179), G("click", function() {
       U(B);
       let g = a();
       return N(g.pageMenu = null);
-    }), F(2, " \xD7 "), I(), b(3, iCA, 9, 4)(4, QCA, 9, 4)(5, cCA, 11, 6)(6, sCA, 12, 6), I();
+    }), h(2, " \xD7 "), I(), b(3, iCA, 9, 4)(4, QCA, 9, 4)(5, cCA, 11, 6)(6, sCA, 12, 6), I();
   }
   if (e103 & 2) {
     let B = A;
@@ -57637,19 +57643,19 @@ function aCA(e103, A) {
 function ICA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 65)(1, "form", 188), G("submit", function(g) {
+    w(0, "section", 65)(1, "form", 186), G("submit", function(g) {
       U(B);
       let n = a();
       return N(n.submit(g));
-    }), w(2, "label"), F(3), I(), w(4, "input", 189), G("input", function(g) {
+    }), w(2, "label"), h(3), I(), w(4, "input", 187), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.draftName = n.value(g));
-    }), I(), w(5, "div", 139)(6, "button", 190), F(7, " Aceptar"), I(), w(8, "button", 171), G("click", function() {
+    }), I(), w(5, "div", 137)(6, "button", 188), h(7, " Aceptar"), I(), w(8, "button", 169), G("click", function() {
       U(B);
       let g = a();
       return N(g.form = null);
-    }), F(9, " Cancelar "), I()()()();
+    }), h(9, " Cancelar "), I()()()();
   }
   if (e103 & 2) {
     let B = a();
@@ -57663,7 +57669,7 @@ function DCA(e103, A) {
   }
 }
 function YCA(e103, A) {
-  if (e103 & 1 && (w(0, "p", 193), F(1), I()), e103 & 2) {
+  if (e103 & 1 && (w(0, "p", 191), h(1), I()), e103 & 2) {
     let B = a(2);
     Y(), cA(B.equationError);
   }
@@ -57671,23 +57677,23 @@ function YCA(e103, A) {
 function MCA(e103, A) {
   if (e103 & 1) {
     let B = S();
-    w(0, "section", 191), G("dismissed", function() {
+    w(0, "section", 189), G("dismissed", function() {
       U(B);
       let g = a();
       return N(g.equationEdit = null);
-    }), w(1, "strong"), F(2, "Editar ecuaci\xF3n"), I(), w(3, "label"), F(4, "LaTeX reconocido"), w(5, "textarea", 192), G("input", function(g) {
+    }), w(1, "strong"), h(2, "Editar ecuaci\xF3n"), I(), w(3, "label"), h(4, "LaTeX reconocido"), w(5, "textarea", 190), G("input", function(g) {
       U(B);
       let n = a();
       return N(n.equationEdit.latex = g.target.value);
-    }), I()(), b(6, YCA, 2, 1, "p", 193), w(7, "button", 194), G("click", function() {
+    }), I()(), b(6, YCA, 2, 1, "p", 191), w(7, "button", 192), G("click", function() {
       U(B);
       let g = a();
       return N(g.saveEquationEdit());
-    }), F(8), I(), w(9, "button", 171), G("click", function() {
+    }), h(8), I(), w(9, "button", 169), G("click", function() {
       U(B);
       let g = a();
       return N(g.equationEdit = null);
-    }), F(10, " Cerrar "), I()();
+    }), h(10, " Cerrar "), I()();
   }
   if (e103 & 2) {
     let B = a();
@@ -57697,7 +57703,9 @@ function MCA(e103, A) {
 var FCA = 0;
 var Lh = class e102 {
   constructor() {
-    this.pagesOnly = false, this.canvasActionsOpen = false, this.cdr = tA(Ie), this.destroyed = false, this.expansionPending = false, this.element = tA(CB), this.equationEdit = null, this.equationError = "", this.equationBusy = false, this.tooltip = null, this.tooltipId = `era-control-tooltip-${++FCA}`, this.tooltipTarget = null, this.previousDescription = null, this.pageMenu = null, this.dragged = null, this.dropTarget = null, this.notebookOrder = {}, this.selectedVaultFolder = "", this.pendingNotebookDelete = null, this.vaultFolderMenu = "", this.sidebarOpen = true, this.expandedSidebarOpen = false, this.pagesOpen = false, this.sidebarView = "library", this.pageTabs = [], this.tabVault = "", this.suspendTabSync = false, this.settingsOpen = false, this.renamingTitle = false, this.titleDraft = "", this.exportOpen = false, this.brushesOpen = false, this.busy = false, this.searchOpen = false, this.notebookExpanded = true, this.folder = null, this.query = "", this.draftName = "", this.form = null, this.pendingDelete = null;
+    this.pagesOnly = false, this.canvasActionsOpen = false, this.cdr = tA(Ie), this.destroyed = false, this.expansionPending = false, this.element = tA(CB), this.equationEdit = null, this.equationError = "", this.equationBusy = false, this.tooltip = null, this.tooltipId = `era-control-tooltip-${++FCA}`, this.tooltipTarget = null, this.previousDescription = null, this.pageMenu = null, this.dragged = null, this.dropTarget = null, this.notebookOrder = {}, this.selectedVaultFolder = "", this.pendingNotebookDelete = null, this.vaultFolderMenu = "", this.sidebarOpen = true, this.expandedSidebarOpen = false, this.pagesOpen = false, this.sidebarView = "library", this.pageTabs = [], this.tabVault = "", this.suspendTabSync = false, this.settingsOpen = false, this.renamingTitle = false, this.titleDraft = "", this.finishTitleOutside = (A) => {
+      !this.renamingTitle || A.target?.closest?.(".era-title-edit") || (this.saveTitle(), this.cdr.markForCheck());
+    }, this.exportOpen = false, this.brushesOpen = false, this.busy = false, this.searchOpen = false, this.notebookExpanded = true, this.folder = null, this.query = "", this.draftName = "", this.form = null, this.pendingDelete = null;
   }
   ngOnInit() {
     this.syncPageTabs();
@@ -57928,9 +57936,9 @@ var Lh = class e102 {
     });
   }
   saveTitle(A) {
-    A.preventDefault();
+    if (A?.preventDefault(), !this.renamingTitle) return;
     let B = this.titleDraft.trim();
-    B && (B !== this.notebook.name && this.editor.organize({ action: "rename_notebook", name: B }), this.cancelTitle());
+    this.cancelTitle(), B && B !== this.notebook.name && this.editor.organize({ action: "rename_notebook", name: B });
   }
   cancelTitle() {
     this.renamingTitle = false;
@@ -58022,10 +58030,10 @@ var Lh = class e102 {
     this.editor.onStateChange = () => {
       let g = this.editor.vault?.activePath ?? this.editor.title;
       (g !== A || this.editor.organization.active_page !== B || this.editor.engine !== t) && (this.settingsOpen = false, this.brushesOpen = false, A = g, B = this.editor.organization.active_page, t = this.editor.engine), this.syncPageTabs(), this.folder !== null && !this.notebook.folders.some((n) => n.id === this.folder) && (this.folder = null), this.cdr.markForCheck();
-    }, this.editor.onToggleExpanded = () => void this.toggleExpanded(), this.editor.attach(this.canvas.nativeElement);
+    }, this.editor.onToggleExpanded = () => void this.toggleExpanded(), this.element.nativeElement.ownerDocument.addEventListener("pointerdown", this.finishTitleOutside, true), this.editor.attach(this.canvas.nativeElement);
   }
   ngOnDestroy() {
-    this.destroyed = true, this.hideTooltip(), this.editor.onStateChange = () => {
+    this.destroyed = true, this.element.nativeElement.ownerDocument.removeEventListener("pointerdown", this.finishTitleOutside, true), this.hideTooltip(), this.editor.onStateChange = () => {
     }, this.editor.onToggleExpanded = () => {
     }, this.editor.detach();
   }
@@ -58098,14 +58106,14 @@ var Lh = class e102 {
       }, Ue)("keydown.escape", function() {
         return t.editor.cancelColorPicker(), t.editor.clearMeasurement(), t.editor.endArtboardPlacement(false), t.editor.pdfReader || t.exportOpen ? null : t.exitExpanded();
       }, Ue), B & 2 && HA("era-focus-mode", t.focused)("era-library-open", t.sidebarVisible)("era-pages-only", t.pagesOnly)("era-reading-pdf", !!t.editor.pdfReader);
-    }, inputs: { editor: "editor", actions: "actions", pagesOnly: "pagesOnly" }, decls: 88, vars: 57, consts: [["floating", "floatingControls"], ["precision", ""], ["layers", ""], ["canvas", ""], ["resources", ""], ["vaultTree", ""], ["notebookTree", ""], ["pdfWorkspace", "pdfWorkspace"], [1, "era-titlebar"], [1, "era-header"], [1, "era-identity"], ["eraTouchActivate", "", "aria-label", "Ir al inicio", "data-era-tooltip", "Volver a cuadernos", 1, "era-icon-button", "era-home-toggle", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Mostrar u ocultar panel lateral", "aria-label", "Mostrar u ocultar panel lateral", 1, "era-icon-button", "era-menu-toggle", 3, "click"], [1, "era-title-edit"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cambiar nombre del cuaderno", "data-era-tooltip", "Cambiar nombre del cuaderno", 1, "era-wordmark", 3, "disabled"], [1, "era-document-name"], ["eraTouchActivate", "", "aria-label", "Acciones del Lienzo", 1, "era-actions-menu", "era-icon-button", 3, "click"], [1, "era-actions"], ["eraTouchActivate", "", "aria-label", "Guardar cuaderno", 1, "era-icon-button", "era-save-toggle", "era-drawing-action", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Exportar cuaderno", "data-era-tooltip", "Exportar cuaderno o p\xE1gina", "aria-haspopup", "dialog", 1, "era-icon-button", "era-export-toggle", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-linecap", "round", "stroke-linejoin", "round", "aria-hidden", "true"], ["d", "M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"], ["eraTouchActivate", "", "aria-label", "Mover hoja", "data-era-tooltip", "Mover hoja para encuadrar el dibujo", 1, "era-icon-button", "era-artboard-toggle", "era-drawing-action", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Configurar lienzo", "data-era-tooltip", "Configurar lienzo", 1, "era-icon-button", "era-settings-toggle", "era-drawing-action", 3, "click"], ["d", "M3 6h7m4 0h7M3 12h3m4 0h11M3 18h11m4 0h3"], ["cx", "12", "cy", "6", "r", "2"], ["cx", "8", "cy", "12", "r", "2"], ["cx", "16", "cy", "18", "r", "2"], ["eraTouchActivate", "", 1, "era-icon-button", "era-expand-toggle", "era-drawing-action", 3, "click"], ["viewBox", "0 0 24 24", "fill", "none", "aria-hidden", "true"], ["aria-label", "Organizaci\xF3n del cuaderno", 1, "era-library", "era-sidebar"], ["aria-label", "P\xE1ginas del cuaderno activo", 1, "era-page-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior", "data-era-tooltip", "P\xE1gina anterior", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Mostrar p\xE1ginas del cuaderno", "data-era-tooltip", "Ver p\xE1ginas", 1, "era-page-counter", 3, "click"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente", 3, "click", "disabled"], ["aria-hidden", "true", 1, "era-wheel-dock-hint"], ["aria-label", "Controles del lienzo", 1, "era-drawing-controls", 3, "eraFloatingControls"], [1, "era-toolbar", 3, "appearance", "horizontal", "editor", "appearanceOpen"], ["aria-label", "Ayudas y capas", 1, "era-bottom-tools"], [3, "opened", "settings", "editor", "notebookWide", "save"], [1, "era-lettering-actions"], ["eraTouchActivate", "", "type", "button", 1, "era-restore-lettering", 3, "disabled"], ["eraTouchActivate", "", "type", "button", "data-era-equation-edit", "", 1, "era-restore-lettering", 3, "disabled"], [3, "opened", "editor"], ["eraDismissible", ".wheel-color, [data-era-brush-picker], [aria-label='M\xE1s pinceles y colores']", 3, "editor"], ["eraDismissible", ".era-settings-toggle, [data-era-settings-toggle]", 3, "editor", "save"], [3, "editor", "actions"], ["aria-label", "Ubicar hoja", 1, "era-artboard-placement"], [1, "era-canvas-workspace"], ["tabindex", "0", "aria-label", "Lienzo de dibujo", 1, "era-canvas", 3, "dragover", "drop"], [3, "editor", "actions", "revision", "tool"], ["aria-label", "Selecci\xF3n de elementos del Lienzo", "tabindex", "0", "role", "group", 1, "era-area-selection", 3, "era-area-dragging", "left", "top", "width", "height", "pointer-events"], [1, "era-footer"], ["role", "status", 1, "era-status"], [1, "era-footer-right"], ["eraTouchActivate", ""], ["eraTouchActivate", "", "aria-label", "Volver al contenido", 1, "era-return-content", 3, "disabled"], ["aria-label", "Medidas de la selecci\xF3n", 1, "era-selection-measurement"], ["role", "group", "aria-label", "Controles de zoom del lienzo", 1, "era-canvas-zoom"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del lienzo", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Restablecer zoom del lienzo", "data-era-tooltip", "Volver al 100% del lienzo", 3, "click", "disabled"], ["aria-label", "Zoom del lienzo", "aria-live", "polite"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del lienzo", 3, "click", "disabled"], ["role", "tooltip", 1, "era-tooltip", 3, "id", "left", "top"], ["role", "dialog", 1, "era-library", "era-page-details", "era-page-menu", 3, "left", "top"], ["role", "dialog", "aria-label", "Nombre del elemento", 1, "era-library", "era-name-dialog"], [3, "editor"], ["role", "dialog", "aria-label", "Editar ecuaci\xF3n", "eraDismissible", "[data-era-equation-edit]", 1, "era-equation-editor"], [1, "era-titlebar", 3, "pointerdown", "dblclick"], ["role", "tablist", "aria-label", "P\xE1ginas abiertas", 1, "era-page-strip"], [1, "era-page-tab", 3, "era-page-active"], ["eraTouchActivate", "", "aria-label", "Crear p\xE1gina", "data-era-tooltip", "A\xF1adir un lienzo nuevo al cuaderno", 1, "era-add-page", 3, "click", "disabled"], ["role", "group", "aria-label", "Controles de ventana", 1, "era-window-controls"], [1, "era-page-tab"], ["eraTouchActivate", "", "role", "tab", 1, "era-tab-label", 3, "click", "disabled"], [1, "era-tab-page-name"], [1, "era-tab-notebook-name"], ["eraTouchActivate", "", "data-era-tooltip", "Cerrar pesta\xF1a", 1, "era-tab-close", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Cerrar pesta\xF1a", 1, "era-tab-close", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Minimizar ventana", "data-era-tooltip", "Minimizar", 3, "click"], ["eraTouchActivate", "", "aria-label", "Maximizar o restaurar ventana", "data-era-tooltip", "Maximizar o restaurar", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar ventana", "data-era-tooltip", "Cerrar ventana", 1, "era-window-close", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ir al inicio", "data-era-tooltip", "Volver a cuadernos", 1, "era-icon-button", "era-home-toggle", 3, "click", "disabled"], [1, "era-title-edit", 3, "submit", "keydown", "keydown.escape"], ["aria-label", "Nombre del cuaderno", "required", "", "maxlength", "120", 1, "era-title-input", 3, "input", "value"], ["type", "submit", "aria-label", "Guardar nombre del cuaderno"], ["type", "button", "aria-label", "Cancelar nombre del cuaderno", 3, "click"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cambiar nombre del cuaderno", "data-era-tooltip", "Cambiar nombre del cuaderno", 1, "era-wordmark", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Guardar cuaderno", 1, "era-icon-button", "era-save-toggle", "era-drawing-action", 3, "click", "disabled"], ["d", "M21 12a9 9 0 1 1-9-9"], ["d", "m5 12 4 4 10-10", 1, "era-save-check"], ["d", "M12 4 2 21h20L12 4Zm0 6v5m0 3v.1"], ["d", "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2ZM7 3v6h10V3M7 21v-8h10v8"], ["role", "status", "aria-live", "polite", 1, "era-visually-hidden"], ["eraTouchActivate", "", "aria-label", "Mover hoja", "data-era-tooltip", "Mover hoja para encuadrar el dibujo", 1, "era-icon-button", "era-artboard-toggle", "era-drawing-action", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "aria-hidden", "true"], ["x", "5", "y", "3", "width", "14", "height", "18", "rx", "2"], ["d", "M8 12h8m-4-4v8m-4-4 2-2m-2 2 2 2m6-2-2-2m2 2-2 2"], ["d", "M8 3v3a2 2 0 0 1-2 2H3"], ["d", "M21 8h-3a2 2 0 0 1-2-2V3"], ["d", "M3 16h3a2 2 0 0 1 2 2v3"], ["d", "M16 21v-3a2 2 0 0 1 2-2h3"], ["d", "M8 3H5a2 2 0 0 0-2 2v3"], ["d", "M21 8V5a2 2 0 0 0-2-2h-3"], ["d", "M3 16v3a2 2 0 0 0 2 2h3"], ["d", "M16 21h3a2 2 0 0 0 2-2v-3"], ["role", "group", "aria-label", "Vista del panel lateral", 1, "era-sidebar-views"], ["role", "toolbar", "aria-label", "Acciones del explorador", 1, "era-explorer-actions"], ["aria-label", "P\xE1ginas del cuaderno", 1, "era-page-panel"], [3, "editor", "actions", "revision"], ["eraTouchActivate", "", 3, "click"], ["eraTouchActivate", "", "aria-label", "Nuevo cuaderno", "data-era-tooltip", "Nuevo cuaderno", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Nueva carpeta", "data-era-tooltip", "Nueva carpeta", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "M3 7V4h7l2 3h9v13H3zM12 10v7M8.5 13.5h7"], ["eraTouchActivate", "", "aria-label", "Nuevo cuaderno", "data-era-tooltip", "Nuevo cuaderno", 3, "click", "disabled"], ["d", "M5 3h12v18H5zM8 3v18M14 8v6M11 11h6"], [1, "era-library-heading"], ["eraTouchActivate", "", "aria-label", "Mostrar u ocultar p\xE1ginas", 1, "era-pages-toggle", 3, "click"], ["aria-hidden", "true"], ["role", "group", "aria-label", "Acciones de p\xE1ginas", 1, "era-page-actions"], ["eraTouchActivate", "", "aria-label", "Crear p\xE1gina", "data-era-tooltip", "A\xF1adir p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Nueva carpeta", "data-era-tooltip", "Nueva carpeta", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Buscar p\xE1ginas", "data-era-tooltip", "Buscar p\xE1ginas", 3, "click"], ["aria-label", "Carpeta del cuaderno", 1, "era-vault-organizer"], ["aria-label", "Texto de b\xFAsqueda", "placeholder", "Buscar en el cuaderno\u2026", 1, "era-search", 3, "value"], [3, "ngTemplateOutlet"], ["draggable", "true", 1, "era-current-notebook", 3, "dragstart", "dragend"], ["aria-label", "Mover cuaderno a carpeta del Vault", 3, "change", "value", "disabled"], ["value", ""], [3, "value"], ["aria-label", "Arrastra el cuaderno a una carpeta", 1, "era-vault-drop-folders"], ["eraTouchActivate", "", 3, "dragover", "drop", "disabled"], ["eraTouchActivate", "", 3, "era-drop-target", "disabled"], ["aria-label", "Texto de b\xFAsqueda", "placeholder", "Buscar en el cuaderno\u2026", 1, "era-search", 3, "input", "value"], ["aria-label", "Vault", 1, "era-vault", "era-vault-root", 3, "era-drop-target"], ["aria-label", "Vault", 1, "era-vault", "era-vault-root", 3, "click", "dragover", "drop"], [1, "era-vault-settings"], [1, "era-vault-path"], [1, "era-library-buttons"], ["eraTouchActivate", "", "data-era-tooltip", "Cambiar vault", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Actualizar cuadernos", "aria-label", "Actualizar cuadernos", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Importar .era", 3, "disabled"], ["aria-label", "Cuadernos del vault", 1, "era-vault-notebooks"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], ["role", "alert", 1, "era-delete-confirm"], ["eraTouchActivate", "", "data-era-tooltip", "Cambiar vault", 3, "click", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Actualizar cuadernos", "aria-label", "Actualizar cuadernos", 3, "click", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Importar .era", 3, "click", "disabled"], ["eraTouchActivate", "", 3, "click", "disabled"], ["open", "", 1, "era-vault-folder"], [1, "era-notebook-branch"], [1, "era-empty"], ["draggable", "true", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop"], [1, "era-tree-children"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "dragstart", "dragend", "dragover", "drop", "click", "contextmenu", "disabled"], ["eraTouchActivate", "", 1, "era-row-more", 3, "click", "disabled"], ["aria-label", "P\xE1ginas", 1, "era-pages", "era-tree"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "era-page-active", "disabled", "era-drop-target"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop", "disabled"], [1, "era-page-icon"], ["eraTouchActivate", "", "data-era-tooltip", "Seleccionar p\xE1ginas sin carpeta", 1, "era-tree-root", 3, "era-drop-target", "era-row-active"], ["open", "", 1, "era-tree-folder"], ["eraTouchActivate", "", "data-era-tooltip", "Seleccionar p\xE1ginas sin carpeta", 1, "era-tree-root", 3, "dragover", "drop", "click"], ["draggable", "true", "aria-haspopup", "dialog", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop"], ["eraTouchActivate", "", "data-era-tooltip", "Confirmar eliminaci\xF3n", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "era-restore-lettering", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", "data-era-equation-edit", "", 1, "era-restore-lettering", 3, "click", "disabled"], ["eraDismissible", ".wheel-color, [data-era-brush-picker], [aria-label='M\xE1s pinceles y colores']", 3, "closed", "dismissed", "editor"], ["eraDismissible", ".era-settings-toggle, [data-era-settings-toggle]", 3, "dismissed", "closed", "editor", "save"], [3, "closed", "editor", "actions"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["aria-label", "Selecci\xF3n de elementos del Lienzo", "tabindex", "0", "role", "group", 1, "era-area-selection", 3, "pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture", "keydown.delete", "keydown.escape"], ["eraTouchActivate", "", "aria-label", "Copiar selecci\xF3n", 1, "era-selection-copy", 3, "top", "disabled"], ["type", "button", "title", "Arrastra hasta otro elemento para conectar", 3, "class"], ["type", "button", "title", "Arrastra hasta otro elemento para conectar", 3, "pointerdown", "click", "keydown.enter", "keydown.space"], ["eraTouchActivate", "", "aria-label", "Copiar selecci\xF3n", 1, "era-selection-copy", 3, "pointerdown", "click", "disabled"], [3, "eraPdfWorkspace", "editor", "actions", "revision", "citationFocus", "tool"], ["eraTouchActivate", "", "aria-label", "Volver al contenido", 1, "era-return-content", 3, "click", "disabled"], ["role", "tooltip", 1, "era-tooltip", 3, "id"], ["role", "dialog", 1, "era-library", "era-page-details", "era-page-menu", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar acciones", 1, "era-menu-close", 3, "click"], ["eraTouchActivate", "", 3, "disabled"], ["aria-label", "Mover cuaderno a carpeta", 3, "change", "value", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Renombrar p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Subir p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Bajar p\xE1gina", 3, "click", "disabled"], ["aria-label", "Mover p\xE1gina a carpeta", 3, "change", "value", "disabled"], [1, "era-name-form", 3, "submit"], ["aria-label", "Nombre", "maxlength", "120", "required", "", 3, "input", "value"], ["eraTouchActivate", "", "data-era-tooltip", "Confirmar nombre", "type", "submit", 3, "disabled"], ["role", "dialog", "aria-label", "Editar ecuaci\xF3n", "eraDismissible", "[data-era-equation-edit]", 1, "era-equation-editor", 3, "dismissed"], ["aria-label", "LaTeX de la ecuaci\xF3n", 3, "input", "value", "disabled"], ["role", "alert"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"]], template: function(B, t) {
+    }, inputs: { editor: "editor", actions: "actions", pagesOnly: "pagesOnly" }, decls: 88, vars: 57, consts: [["floating", "floatingControls"], ["precision", ""], ["layers", ""], ["canvas", ""], ["resources", ""], ["vaultTree", ""], ["notebookTree", ""], ["pdfWorkspace", "pdfWorkspace"], [1, "era-titlebar"], [1, "era-header"], [1, "era-identity"], ["eraTouchActivate", "", "aria-label", "Ir al inicio", "data-era-tooltip", "Volver a cuadernos", 1, "era-icon-button", "era-home-toggle", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Mostrar u ocultar panel lateral", "aria-label", "Mostrar u ocultar panel lateral", 1, "era-icon-button", "era-menu-toggle", 3, "click"], [1, "era-title-edit"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cambiar nombre del cuaderno", "data-era-tooltip", "Cambiar nombre del cuaderno", 1, "era-wordmark", 3, "disabled"], [1, "era-document-name"], ["eraTouchActivate", "", "aria-label", "Acciones del Lienzo", 1, "era-actions-menu", "era-icon-button", 3, "click"], [1, "era-actions"], ["eraTouchActivate", "", "aria-label", "Guardar cuaderno", 1, "era-icon-button", "era-save-toggle", "era-drawing-action", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Exportar cuaderno", "data-era-tooltip", "Exportar cuaderno o p\xE1gina", "aria-haspopup", "dialog", 1, "era-icon-button", "era-export-toggle", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-linecap", "round", "stroke-linejoin", "round", "aria-hidden", "true"], ["d", "M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"], ["eraTouchActivate", "", "aria-label", "Mover hoja", "data-era-tooltip", "Mover hoja para encuadrar el dibujo", 1, "era-icon-button", "era-artboard-toggle", "era-drawing-action", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Configurar lienzo", "data-era-tooltip", "Configurar lienzo", 1, "era-icon-button", "era-settings-toggle", "era-drawing-action", 3, "click"], ["d", "M3 6h7m4 0h7M3 12h3m4 0h11M3 18h11m4 0h3"], ["cx", "12", "cy", "6", "r", "2"], ["cx", "8", "cy", "12", "r", "2"], ["cx", "16", "cy", "18", "r", "2"], ["eraTouchActivate", "", 1, "era-icon-button", "era-expand-toggle", "era-drawing-action", 3, "click"], ["viewBox", "0 0 24 24", "fill", "none", "aria-hidden", "true"], ["aria-label", "Organizaci\xF3n del cuaderno", 1, "era-library", "era-sidebar"], ["aria-label", "P\xE1ginas del cuaderno activo", 1, "era-page-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior", "data-era-tooltip", "P\xE1gina anterior", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Mostrar p\xE1ginas del cuaderno", "data-era-tooltip", "Ver p\xE1ginas", 1, "era-page-counter", 3, "click"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente", 3, "click", "disabled"], ["aria-hidden", "true", 1, "era-wheel-dock-hint"], ["aria-label", "Controles del lienzo", 1, "era-drawing-controls", 3, "eraFloatingControls"], [1, "era-toolbar", 3, "appearance", "horizontal", "editor", "appearanceOpen"], ["aria-label", "Ayudas y capas", 1, "era-bottom-tools"], [3, "opened", "settings", "editor", "notebookWide", "save"], [1, "era-lettering-actions"], ["eraTouchActivate", "", "type", "button", 1, "era-restore-lettering", 3, "disabled"], ["eraTouchActivate", "", "type", "button", "data-era-equation-edit", "", 1, "era-restore-lettering", 3, "disabled"], [3, "opened", "editor"], ["eraDismissible", ".wheel-color, [data-era-brush-picker], [aria-label='M\xE1s pinceles y colores']", 3, "editor"], ["eraDismissible", ".era-settings-toggle, [data-era-settings-toggle]", 3, "editor", "save"], [3, "editor", "actions"], ["aria-label", "Ubicar hoja", 1, "era-artboard-placement"], [1, "era-canvas-workspace"], ["tabindex", "0", "aria-label", "Lienzo de dibujo", 1, "era-canvas", 3, "dragover", "drop"], [3, "editor", "actions", "revision", "tool"], ["aria-label", "Selecci\xF3n de elementos del Lienzo", "tabindex", "0", "role", "group", 1, "era-area-selection", 3, "era-area-dragging", "left", "top", "width", "height", "pointer-events"], [1, "era-footer"], ["role", "status", 1, "era-status"], [1, "era-footer-right"], ["eraTouchActivate", ""], ["eraTouchActivate", "", "aria-label", "Volver al contenido", 1, "era-return-content", 3, "disabled"], ["aria-label", "Medidas de la selecci\xF3n", 1, "era-selection-measurement"], ["role", "group", "aria-label", "Controles de zoom del lienzo", 1, "era-canvas-zoom"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del lienzo", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Restablecer zoom del lienzo", "data-era-tooltip", "Volver al 100% del lienzo", 3, "click", "disabled"], ["aria-label", "Zoom del lienzo", "aria-live", "polite"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del lienzo", 3, "click", "disabled"], ["role", "tooltip", 1, "era-tooltip", 3, "id", "left", "top"], ["role", "dialog", 1, "era-library", "era-page-details", "era-page-menu", 3, "left", "top"], ["role", "dialog", "aria-label", "Nombre del elemento", 1, "era-library", "era-name-dialog"], [3, "editor"], ["role", "dialog", "aria-label", "Editar ecuaci\xF3n", "eraDismissible", "[data-era-equation-edit]", 1, "era-equation-editor"], [1, "era-titlebar", 3, "pointerdown", "dblclick"], ["role", "tablist", "aria-label", "P\xE1ginas abiertas", 1, "era-page-strip"], [1, "era-page-tab", 3, "era-page-active"], ["eraTouchActivate", "", "aria-label", "Crear p\xE1gina", "data-era-tooltip", "A\xF1adir un lienzo nuevo al cuaderno", 1, "era-add-page", 3, "click", "disabled"], ["role", "group", "aria-label", "Controles de ventana", 1, "era-window-controls"], [1, "era-page-tab"], ["eraTouchActivate", "", "role", "tab", 1, "era-tab-label", 3, "click", "disabled"], [1, "era-tab-page-name"], [1, "era-tab-notebook-name"], ["eraTouchActivate", "", "data-era-tooltip", "Cerrar pesta\xF1a", 1, "era-tab-close", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Cerrar pesta\xF1a", 1, "era-tab-close", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Minimizar ventana", "data-era-tooltip", "Minimizar", 3, "click"], ["eraTouchActivate", "", "aria-label", "Maximizar o restaurar ventana", "data-era-tooltip", "Maximizar o restaurar", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar ventana", "data-era-tooltip", "Cerrar ventana", 1, "era-window-close", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ir al inicio", "data-era-tooltip", "Volver a cuadernos", 1, "era-icon-button", "era-home-toggle", 3, "click", "disabled"], [1, "era-title-edit", 3, "submit", "keydown", "keydown.escape"], ["aria-label", "Nombre del cuaderno", "maxlength", "120", 1, "era-title-input", 3, "input", "blur", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cambiar nombre del cuaderno", "data-era-tooltip", "Cambiar nombre del cuaderno", 1, "era-wordmark", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Guardar cuaderno", 1, "era-icon-button", "era-save-toggle", "era-drawing-action", 3, "click", "disabled"], ["d", "M21 12a9 9 0 1 1-9-9"], ["d", "m5 12 4 4 10-10", 1, "era-save-check"], ["d", "M12 4 2 21h20L12 4Zm0 6v5m0 3v.1"], ["d", "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2ZM7 3v6h10V3M7 21v-8h10v8"], ["role", "status", "aria-live", "polite", 1, "era-visually-hidden"], ["eraTouchActivate", "", "aria-label", "Mover hoja", "data-era-tooltip", "Mover hoja para encuadrar el dibujo", 1, "era-icon-button", "era-artboard-toggle", "era-drawing-action", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "aria-hidden", "true"], ["x", "5", "y", "3", "width", "14", "height", "18", "rx", "2"], ["d", "M8 12h8m-4-4v8m-4-4 2-2m-2 2 2 2m6-2-2-2m2 2-2 2"], ["d", "M8 3v3a2 2 0 0 1-2 2H3"], ["d", "M21 8h-3a2 2 0 0 1-2-2V3"], ["d", "M3 16h3a2 2 0 0 1 2 2v3"], ["d", "M16 21v-3a2 2 0 0 1 2-2h3"], ["d", "M8 3H5a2 2 0 0 0-2 2v3"], ["d", "M21 8V5a2 2 0 0 0-2-2h-3"], ["d", "M3 16v3a2 2 0 0 0 2 2h3"], ["d", "M16 21h3a2 2 0 0 0 2-2v-3"], ["role", "group", "aria-label", "Vista del panel lateral", 1, "era-sidebar-views"], ["role", "toolbar", "aria-label", "Acciones del explorador", 1, "era-explorer-actions"], ["aria-label", "P\xE1ginas del cuaderno", 1, "era-page-panel"], [3, "editor", "actions", "revision"], ["eraTouchActivate", "", 3, "click"], ["eraTouchActivate", "", "aria-label", "Nuevo cuaderno", "data-era-tooltip", "Nuevo cuaderno", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Nueva carpeta", "data-era-tooltip", "Nueva carpeta", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "M3 7V4h7l2 3h9v13H3zM12 10v7M8.5 13.5h7"], ["eraTouchActivate", "", "aria-label", "Nuevo cuaderno", "data-era-tooltip", "Nuevo cuaderno", 3, "click", "disabled"], ["d", "M5 3h12v18H5zM8 3v18M14 8v6M11 11h6"], [1, "era-library-heading"], ["eraTouchActivate", "", "aria-label", "Mostrar u ocultar p\xE1ginas", 1, "era-pages-toggle", 3, "click"], ["aria-hidden", "true"], ["role", "group", "aria-label", "Acciones de p\xE1ginas", 1, "era-page-actions"], ["eraTouchActivate", "", "aria-label", "Crear p\xE1gina", "data-era-tooltip", "A\xF1adir p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Nueva carpeta", "data-era-tooltip", "Nueva carpeta", 3, "disabled"], ["eraTouchActivate", "", "aria-label", "Buscar p\xE1ginas", "data-era-tooltip", "Buscar p\xE1ginas", 3, "click"], ["aria-label", "Carpeta del cuaderno", 1, "era-vault-organizer"], ["aria-label", "Texto de b\xFAsqueda", "placeholder", "Buscar en el cuaderno\u2026", 1, "era-search", 3, "value"], [3, "ngTemplateOutlet"], ["draggable", "true", 1, "era-current-notebook", 3, "dragstart", "dragend"], ["aria-label", "Mover cuaderno a carpeta del Vault", 3, "change", "value", "disabled"], ["value", ""], [3, "value"], ["aria-label", "Arrastra el cuaderno a una carpeta", 1, "era-vault-drop-folders"], ["eraTouchActivate", "", 3, "dragover", "drop", "disabled"], ["eraTouchActivate", "", 3, "era-drop-target", "disabled"], ["aria-label", "Texto de b\xFAsqueda", "placeholder", "Buscar en el cuaderno\u2026", 1, "era-search", 3, "input", "value"], ["aria-label", "Vault", 1, "era-vault", "era-vault-root", 3, "era-drop-target"], ["aria-label", "Vault", 1, "era-vault", "era-vault-root", 3, "click", "dragover", "drop"], [1, "era-vault-settings"], [1, "era-vault-path"], [1, "era-library-buttons"], ["eraTouchActivate", "", "data-era-tooltip", "Cambiar vault", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Actualizar cuadernos", "aria-label", "Actualizar cuadernos", 3, "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Importar .era", 3, "disabled"], ["aria-label", "Cuadernos del vault", 1, "era-vault-notebooks"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], ["role", "alert", 1, "era-delete-confirm"], ["eraTouchActivate", "", "data-era-tooltip", "Cambiar vault", 3, "click", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Actualizar cuadernos", "aria-label", "Actualizar cuadernos", 3, "click", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Importar .era", 3, "click", "disabled"], ["eraTouchActivate", "", 3, "click", "disabled"], ["open", "", 1, "era-vault-folder"], [1, "era-notebook-branch"], [1, "era-empty"], ["draggable", "true", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop"], [1, "era-tree-children"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "dragstart", "dragend", "dragover", "drop", "click", "contextmenu", "disabled"], ["eraTouchActivate", "", 1, "era-row-more", 3, "click", "disabled"], ["aria-label", "P\xE1ginas", 1, "era-pages", "era-tree"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "era-page-active", "disabled", "era-drop-target"], ["eraTouchActivate", "", "draggable", "true", "aria-haspopup", "dialog", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop", "disabled"], [1, "era-page-icon"], ["eraTouchActivate", "", "data-era-tooltip", "Seleccionar p\xE1ginas sin carpeta", 1, "era-tree-root", 3, "era-drop-target", "era-row-active"], ["open", "", 1, "era-tree-folder"], ["eraTouchActivate", "", "data-era-tooltip", "Seleccionar p\xE1ginas sin carpeta", 1, "era-tree-root", 3, "dragover", "drop", "click"], ["draggable", "true", "aria-haspopup", "dialog", 3, "click", "contextmenu", "dragstart", "dragend", "dragover", "drop"], ["eraTouchActivate", "", "data-era-tooltip", "Confirmar eliminaci\xF3n", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "era-restore-lettering", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", "data-era-equation-edit", "", 1, "era-restore-lettering", 3, "click", "disabled"], ["eraDismissible", ".wheel-color, [data-era-brush-picker], [aria-label='M\xE1s pinceles y colores']", 3, "closed", "dismissed", "editor"], ["eraDismissible", ".era-settings-toggle, [data-era-settings-toggle]", 3, "dismissed", "closed", "editor", "save"], [3, "closed", "editor", "actions"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["aria-label", "Selecci\xF3n de elementos del Lienzo", "tabindex", "0", "role", "group", 1, "era-area-selection", 3, "pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture", "keydown.delete", "keydown.escape"], ["eraTouchActivate", "", "aria-label", "Copiar selecci\xF3n", 1, "era-selection-copy", 3, "top", "disabled"], ["type", "button", "title", "Arrastra hasta otro elemento para conectar", 3, "class"], ["type", "button", "title", "Arrastra hasta otro elemento para conectar", 3, "pointerdown", "click", "keydown.enter", "keydown.space"], ["eraTouchActivate", "", "aria-label", "Copiar selecci\xF3n", 1, "era-selection-copy", 3, "pointerdown", "click", "disabled"], [3, "eraPdfWorkspace", "editor", "actions", "revision", "citationFocus", "tool"], ["eraTouchActivate", "", "aria-label", "Volver al contenido", 1, "era-return-content", 3, "click", "disabled"], ["role", "tooltip", 1, "era-tooltip", 3, "id"], ["role", "dialog", 1, "era-library", "era-page-details", "era-page-menu", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar acciones", 1, "era-menu-close", 3, "click"], ["eraTouchActivate", "", 3, "disabled"], ["aria-label", "Mover cuaderno a carpeta", 3, "change", "value", "disabled"], ["eraTouchActivate", "", "data-era-tooltip", "Renombrar p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Subir p\xE1gina", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Bajar p\xE1gina", 3, "click", "disabled"], ["aria-label", "Mover p\xE1gina a carpeta", 3, "change", "value", "disabled"], [1, "era-name-form", 3, "submit"], ["aria-label", "Nombre", "maxlength", "120", "required", "", 3, "input", "value"], ["eraTouchActivate", "", "data-era-tooltip", "Confirmar nombre", "type", "submit", 3, "disabled"], ["role", "dialog", "aria-label", "Editar ecuaci\xF3n", "eraDismissible", "[data-era-equation-edit]", 1, "era-equation-editor", 3, "dismissed"], ["aria-label", "LaTeX de la ecuaci\xF3n", 3, "input", "value", "disabled"], ["role", "alert"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"]], template: function(B, t) {
       if (B & 1) {
         let g = S();
         b(0, qoA, 7, 2, "div", 8), w(1, "header", 9)(2, "div", 10), b(3, _oA, 2, 1, "button", 11), w(4, "button", 12), G("click", function() {
           return t.toggleSidebar();
-        }), F(5, " \u2630 "), I(), b(6, $oA, 6, 1, "form", 13)(7, ArA, 2, 2, "button", 14), w(8, "span", 15), F(9), I()(), w(10, "button", 16), G("click", function() {
+        }), h(5, " \u2630 "), I(), b(6, $oA, 2, 1, "form", 13)(7, ArA, 2, 2, "button", 14), w(8, "span", 15), h(9), I()(), w(10, "button", 16), G("click", function() {
           return t.canvasActionsOpen = !t.canvasActionsOpen;
-        }), F(11, " \u2630 "), I(), w(12, "div", 17), b(13, nrA, 8, 10, "button", 18), w(14, "button", 19), G("click", function() {
+        }), h(11, " \u2630 "), I(), w(12, "div", 17), b(13, nrA, 8, 10, "button", 18), w(14, "button", 19), G("click", function() {
           return U(g), t.exportOpen = true, t.settingsOpen = false, t.brushesOpen = false, N(t.pageMenu = null);
         }), AA(), w(15, "svg", 20), $(16, "path", 21), I()(), b(17, irA, 4, 1, "button", 22), jA(), w(18, "button", 23), G("click", function() {
           return U(g), t.settingsOpen = !t.settingsOpen, N(t.brushesOpen = false);
@@ -58113,11 +58121,11 @@ var Lh = class e102 {
           return t.toggleExpanded();
         }), AA(), w(25, "svg", 29), b(26, QrA, 4, 0)(27, orA, 4, 0), I()()()(), b(28, vrA, 10, 7, "aside", 30), jA(), w(29, "section", 31)(30, "button", 32), G("click", function() {
           return t.stepPage(-1);
-        }), F(31, " \u2039 "), I(), w(32, "button", 33), G("click", function() {
+        }), h(31, " \u2039 "), I(), w(32, "button", 33), G("click", function() {
           return U(g), t.sidebarOpen = true, t.sidebarView = "pages", t.pagesOpen = true, N(t.focused = false);
-        }), F(33), I(), w(34, "button", 34), G("click", function() {
+        }), h(33), I(), w(34, "button", 34), G("click", function() {
           return t.stepPage(1);
-        }), F(35, " \u203A "), I()(), w(36, "div", 35)(37, "span"), F(38, "\u2022\u2022\u2022"), I(), $(39, "i")(40, "i")(41, "i")(42, "i")(43, "i")(44, "i"), I(), w(45, "section", 36, 0)(47, "era-tool-wheel", 37), G("appearance", function() {
+        }), h(35, " \u203A "), I()(), w(36, "div", 35)(37, "span"), h(38, "\u2022\u2022\u2022"), I(), $(39, "i")(40, "i")(41, "i")(42, "i")(43, "i")(44, "i"), I(), w(45, "section", 36, 0)(47, "era-tool-wheel", 37), G("appearance", function() {
           return U(g), t.brushesOpen = true, N(t.settingsOpen = false);
         }), I()(), w(48, "section", 38)(49, "era-precision-panel", 39, 1), G("opened", function() {
           U(g);
@@ -58137,11 +58145,11 @@ var Lh = class e102 {
           return t.editor.dropResources(i);
         }), I(), $(65, "era-resource-canvas", 50, 4), b(67, _rA, 5, 15, "div", 51), I(), b(68, ACA, 2, 2), w(69, "footer", 52), b(70, BCA, 2, 1, "div", 53), w(71, "div", 54), b(72, eCA, 2, 0, "button", 55), b(73, tCA, 2, 1, "button", 56), b(74, gCA, 2, 1, "output", 57), w(75, "div", 58)(76, "button", 59), G("click", function() {
           return t.editor.zoomCanvas(1 / 1.2);
-        }), F(77, " \u2212 "), I(), w(78, "button", 60), G("click", function() {
+        }), h(77, " \u2212 "), I(), w(78, "button", 60), G("click", function() {
           return t.editor.resetCanvasZoom();
-        }), w(79, "output", 61), F(80), I()(), w(81, "button", 62), G("click", function() {
+        }), w(79, "output", 61), h(80), I()(), w(81, "button", 62), G("click", function() {
           return t.editor.zoomCanvas(1.2);
-        }), F(82, " + "), I()()()(), b(83, nCA, 2, 6, "div", 63), b(84, aCA, 7, 6, "section", 64), b(85, ICA, 10, 3, "section", 65), b(86, DCA, 1, 1, "era-selection-layers", 66), b(87, MCA, 11, 5, "section", 67);
+        }), h(82, " + "), I()()()(), b(83, nCA, 2, 6, "div", 63), b(84, aCA, 7, 6, "section", 64), b(85, ICA, 10, 3, "section", 65), b(86, DCA, 1, 1, "era-selection-layers", 66), b(87, MCA, 11, 5, "section", 67);
       }
       if (B & 2) {
         let g, n, i, Q = qB(46);
@@ -58230,11 +58238,12 @@ var Lh = class e102 {
   flex: 0 1 auto;
   padding: 4px 8px;
   border: 1px solid var(--era-line);
-  border-radius: 12px;
-  background: var(--era-surface);
-  box-shadow: 0 2px 8px #0002;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--era-surface), var(--era-paper));
+  box-shadow: 0 3px 14px #0001;
 }
-.era-wordmark[_ngcontent-%COMP%] {
+.era-wordmark[_ngcontent-%COMP%], 
+.era-title-input[_ngcontent-%COMP%] {
   pointer-events: auto;
   min-width: 0;
   max-width: min(260px, 45vw);
@@ -58253,30 +58262,19 @@ var Lh = class e102 {
 }
 .era-title-edit[_ngcontent-%COMP%] {
   display: flex;
-  gap: 4px;
   align-items: center;
   min-width: 0;
   pointer-events: auto;
 }
 .era-title-input[_ngcontent-%COMP%] {
-  min-width: 40px;
   width: 180px;
-  max-width: 30vw;
-  font: inherit;
-  background: var(--era-surface);
-  color: var(--era-ink);
-  border: 1px solid var(--era-accent);
-  border-radius: 6px;
-  padding: 6px;
+  max-width: min(260px, 38vw);
+  border-radius: 5px;
+  box-shadow: 0 1px 0 var(--era-accent);
+  outline: none;
 }
-.era-title-edit[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {
-  min-width: 28px;
-  height: 30px;
-  padding: 4px;
-  border: 1px solid var(--era-line);
-  border-radius: 6px;
-  background: var(--era-surface);
-  color: var(--era-ink);
+[_nghost-%COMP%]   .era-title-input[_ngcontent-%COMP%]:focus-visible {
+  outline: none;
 }
 .era-document-name[_ngcontent-%COMP%] {
   font-size: 14px;
@@ -58419,6 +58417,9 @@ var Lh = class e102 {
 .era-menu-toggle[_ngcontent-%COMP%], 
 .era-home-toggle[_ngcontent-%COMP%] {
   pointer-events: auto;
+}
+.era-focus-mode[_nghost-%COMP%] {
+  --era-tabs-height: 0px;
 }
 .era-focus-mode[_nghost-%COMP%]   .era-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:not(.era-drawing-action), 
 .era-focus-mode[_nghost-%COMP%]   .era-titlebar[_ngcontent-%COMP%], 
@@ -59274,8 +59275,8 @@ var Lh = class e102 {
 }
 
 .era-focus-mode[_nghost-%COMP%]   .era-drawing-controls[_ngcontent-%COMP%] {
-  top: 14px;
-  max-height: calc(100% - 70px);
+  top: 80px;
+  max-height: calc(100% - 136px);
   left: 12px;
   max-width: calc(100% - 24px);
 }
@@ -59815,7 +59816,7 @@ var Lh = class e102 {
 
 
 .era-wheel-dock-hint[_ngcontent-%COMP%] {
-  top: calc(var(--era-canvas-top, 0px) + var(--era-tabs-height, 50px) + 8px);
+  top: calc(var(--era-canvas-top, 0px) + var(--era-tabs-height, 50px) + 80px);
   left: calc(
     var(--era-canvas-left, 0px) +
       (100% - var(--era-canvas-left, 0px) - var(--era-canvas-right, 0px)) / 2
@@ -59888,11 +59889,8 @@ var Lh = class e102 {
 .era-pdf-split[_nghost-%COMP%]   .era-header[_ngcontent-%COMP%]:has(.era-actions-open) {
   z-index: 16;
 }
-.era-pdf-split[_nghost-%COMP%]:has(.era-wheel-horizontal)   .era-header[_ngcontent-%COMP%] {
-  top: calc(var(--era-canvas-top, 0px) + var(--era-tabs-height, 0px) + 96px);
-}
 .era-pdf-split[_nghost-%COMP%]:has(.era-wheel-horizontal)   .era-library.era-sidebar[_ngcontent-%COMP%] {
-  top: calc(var(--era-canvas-top, 0px) + var(--era-tabs-height, 0px) + 158px);
+  top: calc(var(--era-canvas-top, 0px) + var(--era-tabs-height, 0px) + 168px);
 }
 @media (max-width: 900px) {
   [_nghost-%COMP%]:has(.era-wheel-horizontal)   .era-actions-menu[_ngcontent-%COMP%] {
@@ -60025,7 +60023,7 @@ function pS(e103 = globalThis) {
     try {
       for (let s of Q) {
         let D = new B();
-        for (let [h, l] of s.points) D.addPoint({ x: h, y: l });
+        for (let [F, l] of s.points) D.addPoint({ x: F, y: l });
         C.addStroke(D);
       }
       let c = await C.getPrediction();
@@ -60114,8 +60112,8 @@ function fS(e103, A, B) {
   if (g.length === 1 && !B.length) return Cr(i, lCA(n, g[0], t, r));
   let C = new Set(B), c = /* @__PURE__ */ new Map();
   Q.strokes = Q.strokes.filter((l, u) => C.has(u) ? (c.set(u, c.size), true) : false);
-  let E = (t.anchors ?? []).filter((l) => l.strokes.every((u) => C.has(u))).map((l) => ({ ...l, strokes: l.strokes.map((u) => c.get(u)) })), s = new Set([...g, ...E].map((l) => l.id)), D = { id: e103.organization.active_page, name: "Selecci\xF3n", folder: "", scene: Q, settings: { ...e103.canvasSettings, artboard: "infinite" }, objects: g, anchors: E, connections: t.connections.filter((l) => s.has(l.from) && s.has(l.to)) }, h = QI({ name: "Selecci\xF3n", pages: [D], resources: t.resources, viewport: _G(D) }, 0, { ...PF, format: "png", scope: "viewport", background: false, grid: false, attachments: false }, n, r).then((l) => new Blob([l.bytes.slice().buffer], { type: "image/png" }));
-  return Cr(i, h);
+  let E = (t.anchors ?? []).filter((l) => l.strokes.every((u) => C.has(u))).map((l) => ({ ...l, strokes: l.strokes.map((u) => c.get(u)) })), s = new Set([...g, ...E].map((l) => l.id)), D = { id: e103.organization.active_page, name: "Selecci\xF3n", folder: "", scene: Q, settings: { ...e103.canvasSettings, artboard: "infinite" }, objects: g, anchors: E, connections: t.connections.filter((l) => s.has(l.from) && s.has(l.to)) }, F = QI({ name: "Selecci\xF3n", pages: [D], resources: t.resources, viewport: _G(D) }, 0, { ...PF, format: "png", scope: "viewport", background: false, grid: false, attachments: false }, n, r).then((l) => new Blob([l.bytes.slice().buffer], { type: "image/png" }));
+  return Cr(i, F);
 }
 var vm = class {
   cancelInkFrame() {
@@ -60290,11 +60288,11 @@ var vm = class {
     } else {
       let D = A.text;
       if (s) {
-        let h = "";
+        let F = "";
         if (B && this.resourceActions.previewLink) {
           let l;
           try {
-            h = await Promise.race([this.resourceActions.previewLink(s.href), new Promise((u, p) => {
+            F = await Promise.race([this.resourceActions.previewLink(s.href), new Promise((u, p) => {
               l = setTimeout(() => p(new Error("Tiempo de vista previa agotado")), 6e3);
             })]);
           } catch {
@@ -60302,7 +60300,7 @@ var vm = class {
             clearTimeout(l);
           }
         }
-        D = s4(s, typeof h == "string" ? h : "", this.canvas.ownerDocument);
+        D = s4(s, typeof F == "string" ? F : "", this.canvas.ownerDocument);
       }
       if (!r()) return;
       Q ? this.resourceCommand({ action: "edit_text", id: Q.id, text: Q.text.slice(0, Q.start) + D + Q.text.slice(Q.end) }) : this.addText(D, c);
@@ -60415,8 +60413,8 @@ var vm = class {
         return;
       }
       let Q = n.width / 2, o = { x: A.x - Q, y: A.y - Q, width: A.width + Q * 2, height: A.height + Q * 2 }, r = (c) => c.x >= o.x && c.x <= o.x + o.width && c.y >= o.y && c.y <= o.y + o.height, C = (c, E) => {
-        let s = 0, D = 1, h = E.x - c.x, l = E.y - c.y;
-        for (let [u, p] of [[-h, c.x - o.x], [h, o.x + o.width - c.x], [-l, c.y - o.y], [l, o.y + o.height - c.y]]) if (u === 0) {
+        let s = 0, D = 1, F = E.x - c.x, l = E.y - c.y;
+        for (let [u, p] of [[-F, c.x - o.x], [F, o.x + o.width - c.x], [-l, c.y - o.y], [l, o.y + o.height - c.y]]) if (u === 0) {
           if (p < 0) return false;
         } else {
           let y = p / u;
@@ -60442,8 +60440,8 @@ var vm = class {
       let o = A.strokes[Q];
       if (!o?.samples.length) continue;
       if (o.outline) {
-        let { min: D, max: h } = o.outline.bounds;
-        g.push({ x: D.x, y: D.y, width: h.x - D.x, height: h.y - D.y });
+        let { min: D, max: F } = o.outline.bounds;
+        g.push({ x: D.x, y: D.y, width: F.x - D.x, height: F.y - D.y });
         continue;
       }
       let r = 1 / 0, C = 1 / 0, c = -1 / 0, E = -1 / 0;
@@ -60561,12 +60559,12 @@ var vm = class {
     for (let C of A.strokes) {
       if (!B(C.layer ?? 1) || !C.samples.length) continue;
       if (C.bounds || C.outline) {
-        let { min: h, max: l } = C.bounds ?? C.outline.bounds;
-        this.contentBoxes.push({ x: h.x, y: h.y, width: l.x - h.x, height: l.y - h.y });
+        let { min: F, max: l } = C.bounds ?? C.outline.bounds;
+        this.contentBoxes.push({ x: F.x, y: F.y, width: l.x - F.x, height: l.y - F.y });
         continue;
       }
       let c = 1 / 0, E = 1 / 0, s = -1 / 0, D = -1 / 0;
-      for (let h of C.samples) c = Math.min(c, h.point.x), E = Math.min(E, h.point.y), s = Math.max(s, h.point.x), D = Math.max(D, h.point.y);
+      for (let F of C.samples) c = Math.min(c, F.point.x), E = Math.min(E, F.point.y), s = Math.max(s, F.point.x), D = Math.max(D, F.point.y);
       this.contentBoxes.push({ x: c - C.width / 2, y: E - C.width / 2, width: s - c + C.width, height: D - E + C.width });
     }
     let t = this.canvas?.getBoundingClientRect();
@@ -60822,21 +60820,21 @@ var vm = class {
         let r = await this.resourceActions.recognizeHandwriting(o, this.canvasSettings.handwriting_language ?? "es");
         if (this.wordEpoch !== B || this.engine !== t || this.resourceSession !== g || !this.acceptingInput || this.active || this.organization.active_page !== n || t.scene_revision() !== i || !this.recognitionEnabled) return;
         let C = new Set(o.map((D) => D.index));
-        if (r.some((D) => !D.strokes.length || D.strokes.some((h) => !C.has(h)))) throw new Error("El reconocedor devolvi\xF3 trazos ajenos a la escritura.");
+        if (r.some((D) => !D.strokes.length || D.strokes.some((F) => !C.has(F)))) throw new Error("El reconocedor devolvi\xF3 trazos ajenos a la escritura.");
         let c = this.handwritingStyle;
         if (r.length && this.canvas && c !== "natural" && await m2(this.canvas.ownerDocument, c), this.wordEpoch !== B || this.engine !== t || this.resourceSession !== g || this.active || !this.acceptingInput || !this.recognitionEnabled || this.organization.active_page !== n || t.scene_revision() !== i) return;
         this.recognizedText = r.map((D) => D.text).join(" ");
         let E = new Set(this.resources.objects.map((D) => D.id)), s = r.length && (c === "natural" ? t.beautify_handwriting.bind(t) : t.transcribe_handwriting.bind(t))(JSON.stringify(r.map((D) => ({ text: D.text, strokes: D.strokes, style: c, strength: this.canvasSettings.handwriting_strength ?? 0.8 }))));
         if (this.recognitionStatus = r.length ? "" : "No se pudo leer esta palabra. Tus trazos se conservan; prueba a escribirla completa y hacer una pausa.", s) {
           c !== "natural" && (this.resetWordRecognition(), this.clearObjectSelection(), this.selected = -1), this.changed();
-          let D = this.resources.objects.filter((p) => !E.has(p.id) && p.handwriting), h = D.flatMap((p) => p.handwriting.originals), l = [...D];
+          let D = this.resources.objects.filter((p) => !E.has(p.id) && p.handwriting), F = D.flatMap((p) => p.handwriting.originals), l = [...D];
           this.wordReadings = { engine: t, session: g, page: n, items: r.flatMap((p) => {
             let y = l.findIndex((v) => v.content.kind === "note" && v.content.text === p.text);
             if (y < 0) return [];
             let k = l.splice(y, 1)[0], H = [.../* @__PURE__ */ new Set([p.text, ...p.alternatives ?? []])];
             return H.length > 1 ? [{ id: k.id, values: H }] : [];
           }) };
-          let u = Q.strokes.filter((p) => h.some((y) => y.samples.length === p.samples.length && y.samples.every((k, H) => k.point.x === p.samples[H].point.x && k.point.y === p.samples[H].point.y && k.pressure === p.samples[H].pressure)));
+          let u = Q.strokes.filter((p) => F.some((y) => y.samples.length === p.samples.length && y.samples.every((k, H) => k.point.x === p.samples[H].point.x && k.point.y === p.samples[H].point.y && k.pressure === p.samples[H].pressure)));
           D.length && this.startHandwritingFade(u, new Set(D.map((p) => p.id))), this.render();
         }
       } catch (r) {
@@ -60957,8 +60955,8 @@ var vm = class {
           Q.convert_equation(JSON.stringify({ indices: s, id: y, latex: p.latex, paths: p.paths })), this.resetWordRecognition(), this.mathContinuation = { id: y, engine: Q, session: o, page: r }, this.recognizedText = p.latex, this.equationReadings = { id: y, session: o, values: [...new Set(Array.isArray(p.alternatives) ? p.alternatives : [])].filter((k) => typeof k == "string" && k.trim() && k.length <= 1024 && k !== p.latex).slice(0, 3) }, this.recognitionStatus = "Ecuaci\xF3n convertida \xB7 Volver a trazos recupera tu escritura", this.clearObjectSelection(), this.selected = -1, this.changed(false), this.render(), this.onStateChange();
           return;
         }
-        let h = Q.beautify_math(JSON.stringify(s));
-        this.resetWordRecognition(), this.recognizedText = "", this.recognitionStatus = "", h && (this.changed(false), this.render()), this.onStateChange();
+        let F = Q.beautify_math(JSON.stringify(s));
+        this.resetWordRecognition(), this.recognizedText = "", this.recognitionStatus = "", F && (this.changed(false), this.render()), this.onStateChange();
       } catch (D) {
         c() && (this.recognitionStatus = String(D), this.onStateChange());
       }
@@ -61112,9 +61110,9 @@ var vm = class {
       let c = C;
       if (!i(c) || this.pdfFullscreen || !this.acceptingInput || this.active) return;
       g.reset(), this.pendingArtboardFit = false, c.preventDefault();
-      let E = this.local(c), s = A.getBoundingClientRect(), D = c.deltaX * (c.deltaMode === 1 ? 16 : c.deltaMode === 2 ? s.width : 1), h = c.deltaY * (c.deltaMode === 1 ? 16 : c.deltaMode === 2 ? s.height : 1);
+      let E = this.local(c), s = A.getBoundingClientRect(), D = c.deltaX * (c.deltaMode === 1 ? 16 : c.deltaMode === 2 ? s.width : 1), F = c.deltaY * (c.deltaMode === 1 ? 16 : c.deltaMode === 2 ? s.height : 1);
       try {
-        c.ctrlKey || c.metaKey ? this.engine.zoom_at(E.x, E.y, Math.exp(-Math.max(-1e3, Math.min(1e3, h)) * 2e-3)) : this.engine.pan(-D, -h), this.changed(), this.render();
+        c.ctrlKey || c.metaKey ? this.engine.zoom_at(E.x, E.y, Math.exp(-Math.max(-1e3, Math.min(1e3, F)) * 2e-3)) : this.engine.pan(-D, -F), this.changed(), this.render();
       } catch (l) {
         this.fail(l);
       }
@@ -61675,8 +61673,8 @@ function dCA(e103) {
     n.length = 0;
   }, o = (C, c = []) => new Promise((E, s) => {
     if (t || !A) return s(Error("El reconocedor est\xE1 cerrado."));
-    let D = ++g, h = setTimeout(() => Q(Error("La preparaci\xF3n o lectura local tard\xF3 demasiado. Tus trazos se conservan.")), 12e4);
-    i.set(D, { resolve: E, reject: s, timer: h });
+    let D = ++g, F = setTimeout(() => Q(Error("La preparaci\xF3n o lectura local tard\xF3 demasiado. Tus trazos se conservan.")), 12e4);
+    i.set(D, { resolve: E, reject: s, timer: F });
     try {
       A.postMessage({ ...C, id: D }, c);
     } catch (l) {
@@ -61690,8 +61688,8 @@ function dCA(e103) {
       let u = i.get(l.id);
       u && (i.delete(l.id), clearTimeout(u.timer), l.error ? u.reject(Error(l.error)) : u.resolve(l.result));
     }, A.onerror = (l) => Q(Error("No se pudo iniciar la escritura local: " + (l.message || "error del Worker")));
-    let s = c[1].slice().buffer, D = c[2].slice().buffer, h = c[4].slice().buffer;
-    await o({ action: "init", encoder: s, decoder: D, wasm: h, tokenizer: JSON.parse(new TextDecoder().decode(c[3])) }, [s, D, h]);
+    let s = c[1].slice().buffer, D = c[2].slice().buffer, F = c[4].slice().buffer;
+    await o({ action: "init", encoder: s, decoder: D, wasm: F, tokenizer: JSON.parse(new TextDecoder().decode(c[3])) }, [s, D, F]);
   })().catch((C) => {
     throw Q(C instanceof Error ? C : Error(String(C))), C;
   });
@@ -62427,7 +62425,7 @@ function normalizeInk(strokes) {
   const heights = strokes.map((s) => {
     const y = s.points.map((p) => p[1]);
     return Math.max(...y) - Math.min(...y);
-  }).filter((h) => h > 0).sort((a10, b10) => a10 - b10);
+  }).filter((h10) => h10 > 0).sort((a10, b10) => a10 - b10);
   const height = heights[Math.floor((heights.length - 1) * 0.75)] ?? 48;
   const scale = Math.max(1e-5, Math.min(1e4, 48 / height));
   let x02 = Infinity, y02 = Infinity;
@@ -64033,13 +64031,13 @@ function Mash() {
     data = String(data);
     for (let i = 0; i < data.length; i++) {
       n += data.charCodeAt(i);
-      let h = 0.02519603282416938 * n;
-      n = h >>> 0;
-      h -= n;
-      h *= n;
-      n = h >>> 0;
-      h -= n;
-      n += h * 4294967296;
+      let h10 = 0.02519603282416938 * n;
+      n = h10 >>> 0;
+      h10 -= n;
+      h10 *= n;
+      n = h10 >>> 0;
+      h10 -= n;
+      n += h10 * 4294967296;
     }
     return (n >>> 0) * 23283064365386963e-26;
   };
@@ -69256,10 +69254,10 @@ var StudyView = class extends import_obsidian2.ItemView {
 var fromNumH = (n) => n / 2 ** 32 | 0;
 var fromNumL = (n) => n >>> 0;
 function setU64FromNum(view, byteOffset, n, isLE) {
-  const h = fromNumH(n);
+  const h10 = fromNumH(n);
   const l = fromNumL(n);
-  view.setUint32(byteOffset, isLE ? l : h, isLE);
-  view.setUint32(byteOffset + 4, isLE ? h : l, isLE);
+  view.setUint32(byteOffset, isLE ? l : h10, isLE);
+  view.setUint32(byteOffset + 4, isLE ? h10 : l, isLE);
 }
 
 // ../../node_modules/@noble/hashes/utils.js
@@ -69555,17 +69553,17 @@ var SHA2_32B = class extends HashMD {
     this.H = IV2[7] | 0;
   }
   get() {
-    const { A, B, C, D, E, F: F8, G: G10, H } = this;
-    return [A, B, C, D, E, F8, G10, H];
+    const { A, B, C, D, E, F, G: G10, H } = this;
+    return [A, B, C, D, E, F, G10, H];
   }
   // prettier-ignore
-  set(A, B, C, D, E, F8, G10, H) {
+  set(A, B, C, D, E, F, G10, H) {
     this.A = A | 0;
     this.B = B | 0;
     this.C = C | 0;
     this.D = D | 0;
     this.E = E | 0;
-    this.F = F8 | 0;
+    this.F = F | 0;
     this.G = G10 | 0;
     this.H = H | 0;
   }
@@ -69583,15 +69581,15 @@ var SHA2_32B = class extends HashMD {
       const s12 = rotr(W22, 17) ^ rotr(W22, 19) ^ W22 >>> 10;
       SHA256_W[i] = s12 + SHA256_W[i - 7] + s02 + SHA256_W[i - 16] | 0;
     }
-    let { A, B, C, D, E, F: F8, G: G10, H } = this;
+    let { A, B, C, D, E, F, G: G10, H } = this;
     for (let i = 0; i < 64; i++) {
       const sigma1 = rotr(E, 6) ^ rotr(E, 11) ^ rotr(E, 25);
-      const T12 = H + sigma1 + Chi(E, F8, G10) + SHA256_K[i] + SHA256_W[i] | 0;
+      const T12 = H + sigma1 + Chi(E, F, G10) + SHA256_K[i] + SHA256_W[i] | 0;
       const sigma0 = rotr(A, 2) ^ rotr(A, 13) ^ rotr(A, 22);
       const T22 = sigma0 + Maj(A, B, C) | 0;
       H = G10;
-      G10 = F8;
-      F8 = E;
+      G10 = F;
+      F = E;
       E = D + T12 | 0;
       D = C;
       C = B;
@@ -69603,10 +69601,10 @@ var SHA2_32B = class extends HashMD {
     C = C + this.C | 0;
     D = D + this.D | 0;
     E = E + this.E | 0;
-    F8 = F8 + this.F | 0;
+    F = F + this.F | 0;
     G10 = G10 + this.G | 0;
     H = H + this.H | 0;
-    this.set(A, B, C, D, E, F8, G10, H);
+    this.set(A, B, C, D, E, F, G10, H);
   }
   roundClean() {
     clean(SHA256_W);

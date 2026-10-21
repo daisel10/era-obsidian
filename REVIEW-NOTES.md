@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.12
+## Current release: 1.6.13
+
+Notebook naming is inline in the existing header surface, with matching typography and no confirm/cancel buttons. Enter and leaving the field commit the title, Escape cancels, and empty titles keep the previous name. Outside pointer contacts commit before the drawing input starts, so the first pen stroke is preserved.
+
+The horizontal palette is placed below the header with a 12 px gap, including expanded/restored views and all four PDF dock positions. The dock hint follows that anchor. The initial circular wheel placement also respects the header; users can still move and dock it freely. The header no longer shifts below the tools when a PDF is docked.
+
+Matching private source: tag `1.6.13` in `daisel10/era`, commit `cf2d8552c94ca600b4701c40589dc98c421205be`.
+`main.js` SHA-256: `c5f2058b61586df7634a2c1df0c4c650adc094addebc51e61f00ee2bcb55370d`.
+
+Validation: 235 UI and 110 plugin tests pass, plus five focused checks after the final title-input change. Angular/plugin compilation, both host type checks and formatting checks pass. Chrome at density 2 checks native Enter, leaving the title directly into a full pen stroke, toolbar/header separation at 1180 and 640 px in expanded/restored views, and all four dock positions. Existing PDF writing/erasing, COPIC scrolling and citation origin checks also pass with a controlled PDF backend. Physical iPad verification remains pending; prior Apple Pencil native-gesture limitations remain unchanged.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.12
 
 The canvas tool wheel is now shared with the docked and expanded PDF reader. PDF-only drawing favorites and the separate text-selection shortcut have been removed; document actions, native ink, eraser properties and independent undo remain available. The selected brush, width, opacity and color apply to either surface. PDF pen input uses the shared input state machine, including pen priority, standard barrel buttons and physical erasers.
 
