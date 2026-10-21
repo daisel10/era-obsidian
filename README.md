@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.8.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.9.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.8](https://github.com/daisel10/era-obsidian/releases/download/1.6.8/era-1.6.8.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.8)
+[Descargar Era 1.6.9](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.9)
 
 ## Installation
 
@@ -14,7 +14,7 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.8.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.8/era-1.6.8.zip).
+2. Download [era-1.6.9.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
    `equations/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
@@ -22,12 +22,12 @@ on Windows desktop. Community-directory approval is pending.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
 **BRAT:** add `https://github.com/daisel10/era-obsidian` through **BRAT: Add a beta
-plugin for testing**, or check for updates. Select `1.6.8` if using a pinned
+plugin for testing**, or check for updates. Select `1.6.9` if using a pinned
 version. BRAT installs the main files; local equation recognition also needs
 `equations/` from the complete ZIP of the same version. Copy that folder and
 reload Obsidian. Manual ZIP installation is sufficient; BRAT is optional.
 
-Use the attached `era-1.6.8.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.9.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -39,22 +39,23 @@ archives.
   paste actions.
 - Add pages with **+ Página** and import PDFs, images and text through
   **Recursos**. Selected objects and PDF regions offer **Copiar**.
-- Open PDFs in the expanded reader to annotate and navigate their pages.
+- Open PDFs from Resources or drag their name to dock them beside the canvas. Use the shared tool palette to write, select text and navigate.
 - Enable mathematics in handwriting settings to recognize formulas using the
   locally installed `equations/` files.
 - Use **Era: Abrir Estudio** for Anki imports, cards and FSRS review. Study is
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.8
+## Qué cambia en 1.6.9
 
-- Lector PDF para celular con barra superior centrada e iconos más pequeños.
-- Lectura en Página o Texto, ancho adaptable y tamaño de letra ajustable.
-- Hojas reúne Todas y Marcadas con miniaturas; los marcadores se guardan en este dispositivo.
-- Ir al origen no duplica el PDF; Ampliar PDF responde al dedo en modo pincel.
-- Estudio reproduce audio e imágenes mediante recursos nativos del Vault y conserva los mazos y repasos existentes.
+- PDF dividido a izquierda, derecha, arriba o abajo arrastrando su nombre. Durante el movimiento aparecen zonas transparentes y una previsualización del espacio que ocupará; al soltar se acopla. El divisor ajusta el tamaño y Ampliar recupera la pantalla completa.
+- Apertura directa desde Recursos en cualquiera de los cuatro lados, flotante o a pantalla completa. Los controles frecuentes de páginas, zoom, ajuste, índice, miniaturas, selección de texto, comentarios, lectura y extracción quedan accesibles fuera de los menús. Las barras estrechas conservan el desplazamiento con el scrollbar oculto.
+- Rueda de herramientas compartida entre PDF y Lienzo en la vista dividida. El historial actúa sobre el último documento tocado y la tinta PDF conserva su guardado nativo. La Rueda se acopla arriba como una barra horizontal o al separador como un círculo; la guía de acoplamiento aparece durante el arrastre.
+- Barra horizontal más pequeña, con herramientas principales e historial blanco sobre fondo oscuro. Una segunda barra fina reúne grosor, sensibilidad o suavizado, opacidad y tres colores rápidos personalizables. Marcador y flecha tienen accesos directos sin reemplazar los pinceles guardados.
+- Panel de colores horizontal desplegado debajo de una línea, con bandas curvas y controles flotantes. Mantiene Favoritos, COPIC por familias, búsqueda, HSL/RGB con gradientes y valores exactos, cuentagotas y selección por toque y teclado. La rueda circular conserva su distribución.
+- Zoom del PDF más fluido: agrupa los eventos por fotograma, conserva la imagen durante el gesto y refina su resolución después de una pausa, con un límite de píxeles por página.
+- Con un PDF abierto, el primer contacto de los dedos y el cambio entre PDF y Lienzo empiezan en movimiento. Elegir explícitamente una herramienta permite usarla con los dedos hasta cambiar de superficie. El lápiz conserva su herramienta sin este reinicio.
 
-Las imágenes, fórmulas y hojas escaneadas se consultan en Página. Los marcadores no se sincronizan entre equipos. No cambia el formato de los cuadernos.
 
 ## Escritura, dibujo y portapapeles
 
@@ -78,7 +79,7 @@ Las imágenes, fórmulas y hojas escaneadas se consultan en Página. Los marcado
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.8.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.8/era-1.6.8.zip)
+2. Descarga [era-1.6.9.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip)
    y copia su carpeta `era` completa, incluida `equations/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
@@ -89,7 +90,7 @@ Las imágenes, fórmulas y hojas escaneadas se consultan en Página. Los marcado
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.8`.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.9`.
 Para ecuaciones, añade `equations/` del ZIP completo de la misma versión;
 BRAT no instala esa carpeta. Después, recarga Obsidian.
 

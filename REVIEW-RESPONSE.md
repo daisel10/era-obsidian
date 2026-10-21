@@ -1,6 +1,6 @@
 # Review response for Era 1.6.0
 
-Historical evidence for 1.6.0. The current release is 1.6.5; the hash, line numbers and source reference below describe the older release and have not been remapped to the current bundle. See [README](README.md) and [Review notes](REVIEW-NOTES.md) for the current release.
+Historical evidence for 1.6.0. The current release is 1.6.9; the hash, line numbers and source reference below describe the older release and have not been remapped to the current bundle. See [README](README.md) and [Review notes](REVIEW-NOTES.md) for the current release.
 
 This report describes the exact released files. It does not assert that scanner warnings have been cleared or that directory approval has been granted. The author confirmed that Windows Ink word recognition must be retained. The existing license remains in force while restrictive standard-license alternatives are assessed.
 

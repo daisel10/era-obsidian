@@ -1,29 +1,18 @@
 # Review notes
 
-## Current release: 1.6.7
+## Current release: 1.6.9
 
-This release joins neighboring COPIC color boxes along shared radial and angular
-boundaries. It preserves color codes, the complete palette, rotation, favorites
-and notebook formats. The minimum Obsidian version remains 1.8.7.
+This release adds draggable, resizable PDF splits with visible docking targets, a compact shared tool palette, unfolded horizontal color bands, smoother PDF zoom and finger navigation defaults when changing between the PDF and canvas. Pen tools are preserved. The minimum Obsidian version remains 1.8.7 and notebook formats do not change.
 
-The matching private source is tag `1.6.7` in `daisel10/era`, commit
-`99cd634dacfd0521b5858531d0b5fa556c34c1d7`. The compiled `main.js` SHA-256 is
-`8ca64d07070d5887cd7155db461af4df33c0f444a2fdfa76d2719f9f0b85aa88`.
+The matching private source is tag `1.6.9` in `daisel10/era`, commit
+`19878947864f1018ce39a1ac54e1aa0a0614781a`. The compiled `main.js` SHA-256 is
+`7869524be79b0fa622ef0f0390867438cedbd01019618e4ba52de9d010185df9`.
 
-Validation: Angular and plugin compilation, five focused color tests and four
-layout tests pass. The tested runtime matches the local Vault installation.
-The release updates version metadata and verifies all ZIP entries and equation
-asset hashes. The complete 1.6.6 suites are not rerun for this focused change.
+Validation: 224 UI tests and 104 plugin tests pass. The rebuilt code bundle is byte-identical to the tested runtime. Angular/plugin compilation and host type checks pass. Chrome Windows exercises responsive layouts, real PDF rendering, touch navigation, explicit finger drawing, color selection and shaded docking targets; synthetic input tests also cover pen continuity. All ZIP entries match the frozen distribution byte for byte, and all nine equation assets match their declared hashes.
 
-The complete ZIP includes `equations/`, with local models, runtime and licenses.
-BRAT's main-file installation also needs that folder from the matching ZIP.
-Windows Ink remains limited to Windows desktop; browser handwriting depends on
-API and language availability. ML Kit is not integrated.
+The complete ZIP includes `equations/`, with local models, runtime and licenses. BRAT updates the main files and also needs that folder from the matching ZIP. Windows Ink remains limited to Windows desktop; browser handwriting depends on API and language availability. ML Kit is not integrated.
 
-The custom free-use license, private-source model and process capability remain
-in place. Physical pen/mobile and real external-sync validation remain pending.
-Directory approval is pending. Historical observations below do not establish
-directory approval for this release.
+The custom free-use license, private-source model and process capability remain in place. Physical pen/mobile and real external-sync validation remain pending. Directory approval is pending. Historical observations below do not establish directory approval for this release.
 
 ## Evidence for 1.6.0
 
