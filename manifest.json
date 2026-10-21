@@ -1,7 +1,7 @@
 {
   "id": "era",
   "name": "Era",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "minAppVersion": "1.8.7",
   "description": "Canvas vectorial con motor Rust: dibujo, pan, zoom y archivos .era.",
   "author": "Era",

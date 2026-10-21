@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.13
+## Current release: 1.6.14
+
+Each concentric COPIC ring unfolds into an independently scrolling vertical column: specials, grays and nine chromatic rings. Circular and linear palettes now share one ordering definition. All 358 official codes and the two existing white/black shortcuts are preserved. The three-copy native scroll buffers wrap in either direction with a bounded 1122 swatch buttons, including sufficient repetition for the single-color outer ring. Only the 360 canonical entries enter the accessibility and keyboard order; visual copies retain pointer selection. Search and numeric RGB/HSL controls remain available.
+
+The horizontal primary strip is centered between the two upper menu icons at the same vertical midpoint, including expanded/restored and split-PDF views. Notebook naming has been removed from the header at the user's request and remains in the sidebar. This supersedes the inline title editing in 1.6.13.
+
+Matching private source: tag `1.6.14` in `daisel10/era`, commit `40e70c482c5752cc64c16fb60029702d102b1943`.
+`main.js` SHA-256: `ea93147837b50bcc57e792dd59b118e58f94f09be48f34ac0cd04c3cc58c6d67`.
+
+Validation: 236 UI and 110 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. A data regression verifies exact ring order and all official colors. Chrome at density 2 checks independent mouse-wheel and native touch scrolling, unchanged colors at both wrap boundaries, bounded DOM size, keyboard wrap, no color/camera changes while scrolling, and primary-strip alignment at 1180 and 640 px in expanded/restored views and all four PDF dock positions. Existing PDF writing, erasing and citation-origin checks pass with a controlled PDF backend. Physical iPad verification remains pending; native Apple Pencil gesture limitations are unchanged.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.13
 
 Notebook naming is inline in the existing header surface, with matching typography and no confirm/cancel buttons. Enter and leaving the field commit the title, Escape cancels, and empty titles keep the previous name. Outside pointer contacts commit before the drawing input starts, so the first pen stroke is preserved.
 
