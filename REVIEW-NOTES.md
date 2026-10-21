@@ -1,18 +1,17 @@
 # Review notes
 
-## Current release: 1.6.9
+## Current release: 1.6.10
 
-This release adds draggable, resizable PDF splits with visible docking targets, a compact shared tool palette, unfolded horizontal color bands, smoother PDF zoom and finger navigation defaults when changing between the PDF and canvas. Pen tools are preserved. The minimum Obsidian version remains 1.8.7 and notebook formats do not change.
+This release separates Retina ink bitmaps from CSS-transformed objects and invalidates raster caches on size, density and viewport zoom changes. It adds an experimental local handwriting fallback, verified first-use model provisioning and shape recognition on pen lift. Obsidian minimum remains 1.8.7; notebook formats are unchanged.
 
-The matching private source is tag `1.6.9` in `daisel10/era`, commit
-`19878947864f1018ce39a1ac54e1aa0a0614781a`. The compiled `main.js` SHA-256 is
-`7869524be79b0fa622ef0f0390867438cedbd01019618e4ba52de9d010185df9`.
+Matching private source: tag `1.6.10` in `daisel10/era`, commit `18fbaf1c51de4374a0392f71526245e9e5b8ee21`.
+`main.js` SHA-256: `f4e190013f81ab49f65c1ce5d5c8546927f6bf1f9c8a08f0cd01462f36ad480a`.
 
-Validation: 224 UI tests and 104 plugin tests pass. The rebuilt code bundle is byte-identical to the tested runtime. Angular/plugin compilation and host type checks pass. Chrome Windows exercises responsive layouts, real PDF rendering, touch navigation, explicit finger drawing, color selection and shaded docking targets; synthetic input tests also cover pen continuity. All ZIP entries match the frozen distribution byte for byte, and all nine equation assets match their declared hashes.
+Validation: 227 UI and 110 plugin tests pass, plus focused recognizer tests, Angular/plugin compilation and both host type checks. Chrome exercises actual pen CDP input at Retina density, zoom 0.5/1/2 and viewport rotation, plus actual local word/math inference without Windows Ink. The English fixture reads hello; hola appears among the Spanish alternatives. This is not a general accuracy claim. The local WebKit test could not launch due to missing system libraries; Chrome simulation does not certify physical iPad/Apple Pencil behavior.
 
-The complete ZIP includes `equations/`, with local models, runtime and licenses. BRAT updates the main files and also needs that folder from the matching ZIP. Windows Ink remains limited to Windows desktop; browser handwriting depends on API and language availability. ML Kit is not integrated.
+The complete ZIP contains 21 verified files, including equations and handwriting models, runtime and licenses. BRAT installs the main files; missing recognition resources are downloaded from immutable upstream URLs and checked against bundled SHA-256 hashes. Strokes are not uploaded. Model preparation needs Internet the first time and stores verified files beside the plugin for offline reuse. SHA-256 also works without WebCrypto. Native/browser recognizers retain priority.
 
-The custom free-use license, private-source model and process capability remain in place. Physical pen/mobile and real external-sync validation remain pending. Directory approval is pending. Historical observations below do not establish directory approval for this release.
+The text fallback uses quantized TrOCR-small trained on IAM and remains experimental, particularly for Spanish. Alternatives and original ink remain recoverable. Windows Ink remains limited to Windows desktop. ML Kit and an Apple native bridge are not integrated. The existing free-use license and private-source model remain, with the applicable MIT and other third-party notices preserved. No community-directory approval is claimed.
 
 ## Evidence for 1.6.0
 

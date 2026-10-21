@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.9.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.10.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.9](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.9)
+[Descargar Era 1.6.10](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.10)
 
 ## Installation
 
@@ -14,20 +14,16 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.9.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip).
+2. Download [era-1.6.10.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
-   `equations/`. Merge and replace the distributed files while preserving
+   `equations/` and `handwriting/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
    if it differs from `.obsidian`.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
-**BRAT:** add `https://github.com/daisel10/era-obsidian` through **BRAT: Add a beta
-plugin for testing**, or check for updates. Select `1.6.9` if using a pinned
-version. BRAT installs the main files; local equation recognition also needs
-`equations/` from the complete ZIP of the same version. Copy that folder and
-reload Obsidian. Manual ZIP installation is sufficient; BRAT is optional.
+**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.10` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
 
-Use the attached `era-1.6.9.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.10.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -46,15 +42,14 @@ archives.
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.9
+## Qué cambia en 1.6.10
 
-- PDF dividido a izquierda, derecha, arriba o abajo arrastrando su nombre. Durante el movimiento aparecen zonas transparentes y una previsualización del espacio que ocupará; al soltar se acopla. El divisor ajusta el tamaño y Ampliar recupera la pantalla completa.
-- Apertura directa desde Recursos en cualquiera de los cuatro lados, flotante o a pantalla completa. Los controles frecuentes de páginas, zoom, ajuste, índice, miniaturas, selección de texto, comentarios, lectura y extracción quedan accesibles fuera de los menús. Las barras estrechas conservan el desplazamiento con el scrollbar oculto.
-- Rueda de herramientas compartida entre PDF y Lienzo en la vista dividida. El historial actúa sobre el último documento tocado y la tinta PDF conserva su guardado nativo. La Rueda se acopla arriba como una barra horizontal o al separador como un círculo; la guía de acoplamiento aparece durante el arrastre.
-- Barra horizontal más pequeña, con herramientas principales e historial blanco sobre fondo oscuro. Una segunda barra fina reúne grosor, sensibilidad o suavizado, opacidad y tres colores rápidos personalizables. Marcador y flecha tienen accesos directos sin reemplazar los pinceles guardados.
-- Panel de colores horizontal desplegado debajo de una línea, con bandas curvas y controles flotantes. Mantiene Favoritos, COPIC por familias, búsqueda, HSL/RGB con gradientes y valores exactos, cuentagotas y selección por toque y teclado. La rueda circular conserva su distribución.
-- Zoom del PDF más fluido: agrupa los eventos por fotograma, conserva la imagen durante el gesto y refina su resolución después de una pausa, con un límite de píxeles por página.
-- Con un PDF abierto, el primer contacto de los dedos y el cambio entre PDF y Lienzo empiezan en movimiento. Elegir explícitamente una herramienta permite usarla con los dedos hasta cambiar de superficie. El lápiz conserva su herramienta sin este reinicio.
+Correcciones del Lienzo para iPad y otros equipos con pantallas de alta densidad.
+
+- Las capas de tinta permanecen a resolución de pantalla, sin ampliar su bitmap mediante el contenedor CSS de los objetos. Se repintan al cambiar tamaño, densidad o zoom de viewport, conservando el orden de capas y la tinta vectorial original.
+- Reconocimiento local experimental de escritura cuando no hay un reconocedor nativo o del navegador disponible. Funciona en un Worker, conserva los trazos originales y ofrece alternativas. Puede confundir letras y palabras; no se afirma una precisión certificada en español.
+- Preparación automática de los modelos de matemáticas y escritura que falten en una instalación de BRAT. La primera vez requiere Internet: aproximadamente 80 MB para escritura y 20 MB para matemáticas. Las descargas se verifican por SHA-256 y se guardan para uso local; los trazos no se envían a ningún servicio.
+- En Formas, levantar el lápiz también reconoce la figura. Mantenerlo apoyado sigue permitiendo ajustar tamaño y giro; se conserva la construcción de flechas de varios trazos.
 
 
 ## Escritura, dibujo y portapapeles
@@ -64,7 +59,7 @@ archives.
 - Bloques de escritura editables y recuperables, lecturas alternativas y
   palabras como «Patrick» en una sola línea con Patrick Hand y Kalam.
 - Reconocedor elegido por disponibilidad e idioma: Windows Ink en Windows y
-  la API web como alternativa cuando el navegador la expone y admite el idioma.
+  la API web cuando está disponible y un modelo local experimental como alternativa para iPad y otros equipos. La lectura local puede requerir correcciones y ofrece alternativas.
   Si no hay un reconocedor disponible, la tinta se conserva. ML Kit no está
   integrado.
 - Fórmulas recuperables con LaTeX, edición, reintento y reconocimiento local.
@@ -79,8 +74,8 @@ archives.
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.9.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.9/era-1.6.9.zip)
-   y copia su carpeta `era` completa, incluida `equations/`, en
+2. Descarga [era-1.6.10.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.10/era-1.6.10.zip)
+   y copia su carpeta `era` completa, incluidas `equations/` y `handwriting/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
    cuadernos y los datos de Estudio. Recarga Obsidian y activa Era.
@@ -90,9 +85,8 @@ archives.
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.9`.
-Para ecuaciones, añade `equations/` del ZIP completo de la misma versión;
-BRAT no instala esa carpeta. Después, recarga Obsidian.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.10`.
+Era prepara los archivos locales que falten en el primer uso; mantén Internet mientras termina. El ZIP completo ya incluye `equations/` y `handwriting/`. Después, recarga Obsidian.
 
 ## Compatibilidad y funciones conservadas
 
@@ -181,3 +175,5 @@ al reconocer fórmulas. [Avisos de terceros](THIRD_PARTY_NOTICES.txt).
 Era todavía no está en el catálogo oficial. Usa BRAT o el ZIP completo para
 instalar y [abre un issue](https://github.com/daisel10/era-obsidian/issues) para
 informar un problema. Incluye la versión, el dispositivo y los pasos para repetirlo.
+
+Local recognition downloads pinned model/runtime files from Hugging Face, GitHub and jsDelivr on first use if missing (up to about 80 MB for handwriting; math uses about 20 MB and shares the runtime). Handwriting strokes stay on the device. Recognition then runs locally. The experimental text model can misread words, including Spanish; review alternatives or restore original ink. Physical verification on the reported iPad Air M4 remains pending.

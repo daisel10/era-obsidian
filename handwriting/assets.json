@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "repository": "Xenova/trocr-small-handwritten",
+  "modelCommit": "2432e24d184b1d964d07ed04f5d9e21d31a59141",
+  "files": [
+    {
+      "name": "worker.js",
+      "bytes": 75840,
+      "sha256": "1edbf49003e1ec7018344310d748b833b3bea72b43d72e48160c9219ac82679e"
+    },
+    {
+      "name": "encoder.onnx",
+      "bytes": 23082942,
+      "sha256": "2f29edbd925f8a49c9c7d1349895f960cf09d2efdc76fe23f957048d476e0d03"
+    },
+    {
+      "name": "decoder.onnx",
+      "bytes": 40159904,
+      "sha256": "40166e4f975b3cecd24bb422db80eb06912777c8e8a56ab44f6bd771ec5df553"
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 4494727,
+      "sha256": "68bcb5468c854362a615f3d2ff6a5e4091a85f4c8198993ed9a30afe0b143737"
+    },
+    {
+      "name": "LICENSE-trocr.txt",
+      "bytes": 1104,
+      "sha256": "904dc4d8749877f1dba1cda48200d2462dccbeb7c134d5e4ef6fa75e0198c8fe"
+    }
+  ]
+}
