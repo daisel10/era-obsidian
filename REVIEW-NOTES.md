@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.14
+## Current release: 1.6.15
+
+Dragging objects, individual ink strokes or mixed selections to the visible canvas edges now scrolls the viewport continuously. A bounded animation loop ramps speed toward the edge, compensates world coordinates to preserve the grip under the pointer at every zoom, and synchronizes object previews with the camera in the same frame. Release, cancellation and context changes stop the animation; center or PDF-pane entry pauses it. Existing object and ink transactions retain a single undo step. PDF title docking and resizing keep their established behavior.
+
+Explicit pencil tools remain respected and automatic finger navigation after pen use is preserved. Repeated native eraser enter/down events now ignore already removed objects rather than attempting to delete them again before Angular removes their DOM.
+
+Matching private source: tag `1.6.15` in `daisel10/era`, commit `bf5efb82c5bd09327f6e73946843c993f825840b`.
+`main.js` SHA-256: `eba12694e2b192f1e33aa84e93ef1f8214b85a5a00617d05f0d3fcc67930d8c0`.
+
+Validation: 239 UI and 110 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. Unit coverage checks eased edge velocities, actual canvas bounds, held-pointer animation, bounded frame deltas, pausing, cancellation and context invalidation. An eraser regression checks duplicate native enter/down events and one-step undo/redo. Chrome at density 2 uses native pen/touch input to verify all four edges at 0.5x/1x/2x zoom, stationary-pointer continuation, pointer anchoring, single-ink and mixed-selection history, split-PDF boundaries, release/cancel, unchanged writing, automatic finger navigation and explicitly selected pencil erasing. Physical iPad verification remains pending.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.14
 
 Each concentric COPIC ring unfolds into an independently scrolling vertical column: specials, grays and nine chromatic rings. Circular and linear palettes now share one ordering definition. All 358 official codes and the two existing white/black shortcuts are preserved. The three-copy native scroll buffers wrap in either direction with a bounded 1122 swatch buttons, including sufficient repetition for the single-color outer ring. Only the 360 canonical entries enter the accessibility and keyboard order; visual copies retain pointer selection. Search and numeric RGB/HSL controls remain available.
 

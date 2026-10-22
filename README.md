@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.14.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.15.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.14](https://github.com/daisel10/era-obsidian/releases/download/1.6.14/era-1.6.14.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.14)
+[Descargar Era 1.6.15](https://github.com/daisel10/era-obsidian/releases/download/1.6.15/era-1.6.15.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.15)
 
 ## Installation
 
@@ -14,16 +14,16 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.14.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.14/era-1.6.14.zip).
+2. Download [era-1.6.15.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.15/era-1.6.15.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
    `equations/` and `handwriting/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
    if it differs from `.obsidian`.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
-**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.14` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
+**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.15` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
 
-Use the attached `era-1.6.14.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.15.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -42,13 +42,15 @@ archives.
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.14
+## Qué cambia en 1.6.15
 
-Cada anillo del selector circular COPIC se despliega como una columna vertical independiente en la barra horizontal. Al llegar al final, los colores vuelven a empezar; también se puede continuar hacia arriba.
+Al arrastrar un objeto, un trazo o una selección mixta hacia un borde del Lienzo, la vista se desplaza para llevar el contenido más lejos. Mantener la punta junto al borde continúa el movimiento; acercarla al centro o soltar detiene el desplazamiento.
 
-- Las once columnas mantienen el orden del selector circular: especiales, grises y nueve anillos de tonos. Se conservan todos los códigos COPIC, la búsqueda, el color personalizado y la selección con teclado. Desplazar una columna no mueve las demás ni el Lienzo y no elige colores por accidente.
-- La barra horizontal queda centrada entre los dos iconos superiores, a su misma altura, tanto al ampliar la escritura como al tener un PDF lateral. La segunda fila conserva los ajustes del pincel.
-- Se oculta el nombre del cuaderno de la parte superior para dejar espacio a los dos iconos y la barra. El nombre y la organización siguen disponibles en el Panel lateral.
+- La velocidad aumenta al acercarse al borde. El contenido conserva el punto de agarre al cambiar el zoom y el movimiento completo se puede deshacer o rehacer de una vez.
+- Con un PDF dividido, los bordes corresponden al espacio visible del Lienzo. Entrar en el lector PDF detiene el desplazamiento del Lienzo. Arrastrar el PDF desde su nombre conserva el gesto para acoplarlo.
+- El lápiz respeta la herramienta elegida: escribir con un pincel, borrar con el borrador y mover con Seleccionar o Mano. El dedo conserva la navegación automática después de usar el lápiz. Dibujar o redimensionar no activa el desplazamiento de arrastre.
+- El borrador ignora eventos repetidos sobre un objeto que acaba de eliminarse y permite recuperarlo con un solo Deshacer.
+- Cancelar el gesto descarta la posición provisional y detiene la animación. Cambiar de página, herramienta o documento también finaliza el gesto.
 
 
 ## Escritura, dibujo y portapapeles
@@ -73,7 +75,7 @@ Cada anillo del selector circular COPIC se despliega como una columna vertical i
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.14.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.14/era-1.6.14.zip)
+2. Descarga [era-1.6.15.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.15/era-1.6.15.zip)
    y copia su carpeta `era` completa, incluidas `equations/` y `handwriting/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
@@ -84,7 +86,7 @@ Cada anillo del selector circular COPIC se despliega como una columna vertical i
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.14`.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.15`.
 Era prepara los archivos locales que falten en el primer uso; mantén Internet mientras termina. El ZIP completo ya incluye `equations/` y `handwriting/`. Después, recarga Obsidian.
 
 ## Compatibilidad y funciones conservadas
