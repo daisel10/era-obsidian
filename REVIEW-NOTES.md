@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.16
+## Current release: 1.6.17
+
+The PDF reader now stores a local reading checkpoint per vault and PDF path: page identity/index, offsets in PDF units, manual or fitted zoom, reading layout and text scroll/font size. Normal opens from Resources, inline PDF cards and title docking resume the checkpoint. Explicit page opens and citation origins take precedence.
+
+Checkpoints are throttled to one write per 500 ms during scrolling and synchronously flushed when closing/destroying the reader, on pagehide and when the document becomes hidden. Destruction flushes the last captured sample instead of rereading detached scroll boxes. Restore validates the record and PDF fingerprint, follows stable page IDs where available, and adapts fitted zoom to the current viewport. Reading state stays independent of notebook edits, undo history and PDF annotations. It is local to this device; no synchronization is introduced.
+
+Matching private source: tag `1.6.17` in `daisel10/era`, commit `601e35b1ca53a8396cf05d2873eb16347cb2daec`.
+`main.js` SHA-256: `592fd5fd909d2fc0789fabbc66409e538e2936c2f76f35257a193124c584d5a0`.
+
+Validation: 244 UI and 111 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. New tests cover independent vault/document keys, malformed and unrelated records, compatible fingerprints, stable page IDs across reordering, periodic writes during continuous scrolling, synchronous close flush and exact resume after editor remount. A citation regression confirms source navigation takes priority. Chrome uses a controlled asynchronous colored raster/text backend and three complete page reloads to verify manual zoom and offsets, fitted coordinates after viewport-width changes, text-mode scrolling, pagehide flushing and citation priority. The 49 expansion/restoration regressions also pass. Physical iPad verification remains pending.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.16
 
 Expanding and restoring an Obsidian Era view now preserves both PDF viewport scroll axes when moving the content element into or out of the overlay. Reparenting a scroll box can reset its native offsets; previously this returned the reader to page one while its raster cache still contained pages from the old reading position. Canvas focus now prevents automatic scrolling.
 

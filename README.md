@@ -1,11 +1,11 @@
 # Era para Obsidian
 
-**Versión 1.6.16.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión 1.6.17.** Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
-[Descargar Era 1.6.16](https://github.com/daisel10/era-obsidian/releases/download/1.6.16/era-1.6.16.zip)
-· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.16)
+[Descargar Era 1.6.17](https://github.com/daisel10/era-obsidian/releases/download/1.6.17/era-1.6.17.zip)
+· [Notas de versión](https://github.com/daisel10/era-obsidian/releases/tag/1.6.17)
 
 ## Installation
 
@@ -14,16 +14,16 @@ physical mobile-device validation is still pending. Windows Ink is available
 on Windows desktop. Community-directory approval is pending.
 
 1. Save your notebook and disable Era before updating.
-2. Download [era-1.6.16.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.16/era-1.6.16.zip).
+2. Download [era-1.6.17.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.17/era-1.6.17.zip).
 3. Extract the complete `era` folder into `<vault>/.obsidian/plugins/`, including
    `equations/` and `handwriting/`. Merge and replace the distributed files while preserving
    `data.json`, notebooks and Study data. Use your vault's configuration folder
    if it differs from `.obsidian`.
 4. Reload Obsidian and enable Era in **Settings → Community plugins**.
 
-**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.16` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
+**BRAT:** add `https://github.com/daisel10/era-obsidian` or check for updates. Choose `1.6.17` if a version is pinned. Era prepares missing recognition files on first use with an Internet connection and pinned SHA-256 checks, then reuses the local cache. The full ZIP includes `equations/` and `handwriting/` for manual installation.
 
-Use the attached `era-1.6.16.zip`, rather than GitHub's automatic “Source code”
+Use the attached `era-1.6.17.zip`, rather than GitHub's automatic “Source code”
 archives.
 
 ## Usage
@@ -42,12 +42,14 @@ archives.
   optional and can be disabled in Era settings.
 - Notebook changes save automatically; **Guardar cuaderno** requests a save.
 
-## Qué cambia en 1.6.16
+## Qué cambia en 1.6.17
 
-Expandir o restaurar el Lienzo con un PDF al lado conserva la posición de lectura y evita que el documento quede en blanco o vuelva a la primera página al tocarlo.
+Era recuerda automáticamente dónde dejaste cada PDF al volver a abrirlo desde Recursos, una tarjeta del Lienzo o al acoplarlo desde su nombre. Recupera la página, el punto dentro de ella, el desplazamiento horizontal y el zoom, incluso después de cerrar la app.
 
-- El modo expandido mueve la vista a otra zona de Obsidian. Ahora conserva el desplazamiento vertical y horizontal del PDF durante ese cambio y devuelve el foco al Lienzo sin provocar scroll automático.
-- El lector actualiza las páginas visibles cuando cambia su tamaño, incluso si el ancho y el zoom siguen iguales. Conserva las imágenes ya dibujadas y solicita solamente las páginas que faltan.
+- El guardado es local en este dispositivo, separado por Vault y ruta del PDF. Se actualiza durante la lectura y se completa al cerrar el lector, ocultar la ventana o pasar la app a segundo plano.
+- El zoom manual se conserva. Si estaba ajustado al ancho, se adapta al nuevo tamaño de la vista manteniendo el punto de lectura. También se recuperan el modo lectura de página o texto y su desplazamiento.
+- Ver origen y las aperturas que piden una página concreta tienen prioridad sobre la posición guardada. Las posiciones no modifican el PDF, el cuaderno ni el historial de Deshacer.
+- Se validan los datos guardados y la huella del PDF; los documentos reemplazados no reciben posiciones de otro contenido. Las identidades de página permiten seguir la lectura cuando se reorganizan las hojas. Si el almacenamiento local no está disponible, el lector sigue abriendo con normalidad.
 
 
 ## Escritura, dibujo y portapapeles
@@ -72,7 +74,7 @@ Expandir o restaurar el Lienzo con un PDF al lado conserva la posición de lectu
 ## Instalar y empezar
 
 1. Guarda el cuaderno y desactiva Era antes de actualizar.
-2. Descarga [era-1.6.16.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.16/era-1.6.16.zip)
+2. Descarga [era-1.6.17.zip](https://github.com/daisel10/era-obsidian/releases/download/1.6.17/era-1.6.17.zip)
    y copia su carpeta `era` completa, incluidas `equations/` y `handwriting/`, en
    `<vault>/.obsidian/plugins/`.
 3. Combina y sustituye los archivos distribuidos; conserva `data.json`, los
@@ -83,7 +85,7 @@ Expandir o restaurar el Lienzo con un PDF al lado conserva la posición de lectu
    pincel activo para abrir la biblioteca de pinceles.
 
 También puedes instalar con BRAT desde la paleta de comandos: **BRAT: Add a beta
-plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.16`.
+plugin for testing** → `https://github.com/daisel10/era-obsidian` → `1.6.17`.
 Era prepara los archivos locales que falten en el primer uso; mantén Internet mientras termina. El ZIP completo ya incluye `equations/` y `handwriting/`. Después, recarga Obsidian.
 
 ## Compatibilidad y funciones conservadas
