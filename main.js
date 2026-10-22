@@ -10474,9 +10474,9 @@ var __toBinary = /* @__PURE__ */ (() => {
   for (var i = 0; i < 64; i++) table[i < 26 ? i + 65 : i < 52 ? i + 71 : i < 62 ? i - 4 : i * 4 - 205] = i;
   return (base64) => {
     var n = base64.length, bytes = new Uint8Array((n - (base64[n - 1] == "=") - (base64[n - 2] == "=")) * 3 / 4 | 0);
-    for (var i10 = 0, j = 0; i10 < n; ) {
-      var c02 = table[base64.charCodeAt(i10++)], c12 = table[base64.charCodeAt(i10++)];
-      var c22 = table[base64.charCodeAt(i10++)], c32 = table[base64.charCodeAt(i10++)];
+    for (var i8 = 0, j = 0; i8 < n; ) {
+      var c02 = table[base64.charCodeAt(i8++)], c12 = table[base64.charCodeAt(i8++)];
+      var c22 = table[base64.charCodeAt(i8++)], c32 = table[base64.charCodeAt(i8++)];
       bytes[j++] = c02 << 2 | c12 >> 4;
       bytes[j++] = c12 << 4 | c22 >> 2;
       bytes[j++] = c22 << 6 | c32;
@@ -15783,7 +15783,7 @@ function AA() {
 function R0() {
   ne.lFrame.currentNamespace = tD;
 }
-function jA() {
+function JA() {
   $L();
 }
 function $L() {
@@ -15822,7 +15822,7 @@ var XB = class B {
 };
 var BB = new uA("");
 var Fg = class {
-  static __NG_ELEMENT_ID__ = A8;
+  static __NG_ELEMENT_ID__ = AV;
   static __NG_ENV_ID__ = (A) => A;
 };
 var Wl = class extends Fg {
@@ -15838,7 +15838,7 @@ var Wl = class extends Fg {
     return qE(e, A), () => iD(e, A);
   }
 };
-function A8() {
+function AV() {
   return new Wl(gA());
 }
 var Yf = false;
@@ -15936,7 +15936,7 @@ function Ff(B104) {
 }
 var j0 = "isAngularZone";
 var HE = j0 + "_ID";
-var e8 = 0;
+var eV = 0;
 var We = class B3 {
   hasPendingMacrotasks = false;
   hasPendingMicrotasks = false;
@@ -15950,7 +15950,7 @@ var We = class B3 {
     if (typeof Zone > "u") throw new NA(908, false);
     Zone.assertZonePatched();
     let i = this;
-    i._nesting = 0, i._outer = i._inner = Zone.current, Zone.TaskTrackingZoneSpec && (i._inner = i._inner.fork(new Zone.TaskTrackingZoneSpec())), e && Zone.longStackTraceZoneSpec && (i._inner = i._inner.fork(Zone.longStackTraceZoneSpec)), i.shouldCoalesceEventChangeDetection = !g && t, i.shouldCoalesceRunChangeDetection = g, i.callbackScheduled = false, i.scheduleInRootZone = n, g8(i);
+    i._nesting = 0, i._outer = i._inner = Zone.current, Zone.TaskTrackingZoneSpec && (i._inner = i._inner.fork(new Zone.TaskTrackingZoneSpec())), e && Zone.longStackTraceZoneSpec && (i._inner = i._inner.fork(Zone.longStackTraceZoneSpec)), i.shouldCoalesceEventChangeDetection = !g && t, i.shouldCoalesceRunChangeDetection = g, i.callbackScheduled = false, i.scheduleInRootZone = n, gV(i);
   }
   static isInAngularZone() {
     return typeof Zone < "u" && Zone.current.get(j0) === true;
@@ -15965,7 +15965,7 @@ var We = class B3 {
     return this._inner.run(A, e, t);
   }
   runTask(A, e, t, g) {
-    let n = this._inner, i = n.scheduleEventTask("NgZoneEvent: " + g, A, B8, WI, WI);
+    let n = this._inner, i = n.scheduleEventTask("NgZoneEvent: " + g, A, BV, WI, WI);
     try {
       return n.runTask(i, e, t);
     } finally {
@@ -15979,7 +15979,7 @@ var We = class B3 {
     return this._outer.run(A);
   }
 };
-var B8 = {};
+var BV = {};
 function b0(B104) {
   if (B104._nesting == 0 && !B104.hasPendingMicrotasks && !B104.isStable) try {
     B104._nesting++, B104.onMicrotaskEmpty.emit(null);
@@ -15991,7 +15991,7 @@ function b0(B104) {
     }
   }
 }
-function t8(B104) {
+function tV(B104) {
   if (B104.isCheckStableRunning || B104.callbackScheduled) return;
   B104.callbackScheduled = true;
   function A() {
@@ -16005,12 +16005,12 @@ function t8(B104) {
     A();
   }), Ll(B104);
 }
-function g8(B104) {
+function gV(B104) {
   let A = () => {
-    t8(B104);
-  }, e = e8++;
+    tV(B104);
+  }, e = eV++;
   B104._inner = B104._inner.fork({ name: "angular", properties: { [j0]: true, [HE]: e, [HE + e]: true }, onInvokeTask: (t, g, n, i, Q, o) => {
-    if (n8(o)) return t.invokeTask(n, i, Q, o);
+    if (nV(o)) return t.invokeTask(n, i, Q, o);
     try {
       return Vx(B104), t.invokeTask(n, i, Q, o);
     } finally {
@@ -16020,7 +16020,7 @@ function g8(B104) {
     try {
       return Vx(B104), t.invoke(n, i, Q, o, r);
     } finally {
-      B104.shouldCoalesceRunChangeDetection && !B104.callbackScheduled && !i8(o) && A(), zx(B104);
+      B104.shouldCoalesceRunChangeDetection && !B104.callbackScheduled && !iV(o) && A(), zx(B104);
     }
   }, onHasTask: (t, g, n, i) => {
     t.hasTask(n, i), g === n && (i.change == "microTask" ? (B104._hasPendingMicrotasks = i.microTask, Ll(B104), b0(B104)) : i.change == "macroTask" && (B104.hasPendingMacrotasks = i.macroTask));
@@ -16056,10 +16056,10 @@ var JE = class {
     return A.apply(e, t);
   }
 };
-function n8(B104) {
+function nV(B104) {
   return hf(B104, "__ignore_ng_zone__");
 }
-function i8(B104) {
+function iV(B104) {
   return hf(B104, "__scheduler_tick__");
 }
 function hf(B104, A) {
@@ -16117,15 +16117,15 @@ var MC = class {
   constructor(A, e) {
     this.view = A, this.node = e;
   }
-  static __NG_ELEMENT_ID__ = Q8;
+  static __NG_ELEMENT_ID__ = QV;
 };
-function Q8() {
+function QV() {
   return new MC(gA(), te());
 }
 var ui = class {
 };
 var As = new uA("", { factory: () => true });
-var o8 = new uA("", { factory: () => false });
+var oV = new uA("", { factory: () => false });
 var v0 = new uA("");
 var FC = class B4 {
   internalPendingTasks = tA(sn);
@@ -16261,12 +16261,12 @@ var Ry = Function;
 function Bs(B104) {
   return typeof B104 == "function";
 }
-var r8 = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*(arguments|(?:[^()]+\(\[\],)?[^()]+\(arguments\).*)\)/;
-var C8 = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{/;
-var c8 = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(/;
-var E8 = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(\)\s*{[^}]*super\(\.\.\.arguments\)/;
-function s8(B104) {
-  return r8.test(B104) || E8.test(B104) || C8.test(B104) && !c8.test(B104);
+var rV = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*(arguments|(?:[^()]+\(\[\],)?[^()]+\(arguments\).*)\)/;
+var CV = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{/;
+var cV = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(/;
+var EV = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(\)\s*{[^}]*super\(\.\.\.arguments\)/;
+function sV(B104) {
+  return rV.test(B104) || EV.test(B104) || CV.test(B104) && !cV.test(B104);
 }
 var HD = class {
   _reflect;
@@ -16284,7 +16284,7 @@ var HD = class {
   }
   _ownParameters(A, e) {
     let t = A.toString();
-    if (s8(t)) return null;
+    if (sV(t)) return null;
     if (A.parameters && A.parameters !== e.parameters) return A.parameters;
     let g = A.ctorParameters;
     if (g && g !== e.ctorParameters) {
@@ -16375,9 +16375,9 @@ var It = (() => {
   return B104.ngInherit = true, B104;
 })();
 function Jy(B104) {
-  return B104.type.prototype.ngOnChanges && (B104.setInput = a8), w8;
+  return B104.type.prototype.ngOnChanges && (B104.setInput = aV), wV;
 }
-function w8() {
+function wV() {
   let B104 = jy(this), A = B104?.current;
   if (A) {
     let e = B104.previous;
@@ -16386,15 +16386,15 @@ function w8() {
     B104.current = null, this.ngOnChanges(A);
   }
 }
-function a8(B104, A, e, t, g) {
-  let n = this.declaredInputs[t], i = jy(B104) || I8(B104, { previous: Sg, current: null }), Q = i.current || (i.current = {}), o = i.previous, r = o[n];
+function aV(B104, A, e, t, g) {
+  let n = this.declaredInputs[t], i = jy(B104) || IV(B104, { previous: Sg, current: null }), Q = i.current || (i.current = {}), o = i.previous, r = o[n];
   Q[n] = new JD(r && r.currentValue, e, o === Sg), Hy(B104, A, g, e);
 }
 var ky = "__ngSimpleChanges__";
 function jy(B104) {
   return B104[ky] || null;
 }
-function I8(B104, A) {
+function IV(B104, A) {
   return B104[ky] = A;
 }
 var df = [];
@@ -16408,7 +16408,7 @@ var pe;
 (function(B104) {
   B104[B104.TemplateCreateStart = 0] = "TemplateCreateStart", B104[B104.TemplateCreateEnd = 1] = "TemplateCreateEnd", B104[B104.TemplateUpdateStart = 2] = "TemplateUpdateStart", B104[B104.TemplateUpdateEnd = 3] = "TemplateUpdateEnd", B104[B104.LifecycleHookStart = 4] = "LifecycleHookStart", B104[B104.LifecycleHookEnd = 5] = "LifecycleHookEnd", B104[B104.OutputStart = 6] = "OutputStart", B104[B104.OutputEnd = 7] = "OutputEnd", B104[B104.BootstrapApplicationStart = 8] = "BootstrapApplicationStart", B104[B104.BootstrapApplicationEnd = 9] = "BootstrapApplicationEnd", B104[B104.BootstrapComponentStart = 10] = "BootstrapComponentStart", B104[B104.BootstrapComponentEnd = 11] = "BootstrapComponentEnd", B104[B104.ChangeDetectionStart = 12] = "ChangeDetectionStart", B104[B104.ChangeDetectionEnd = 13] = "ChangeDetectionEnd", B104[B104.ChangeDetectionSyncStart = 14] = "ChangeDetectionSyncStart", B104[B104.ChangeDetectionSyncEnd = 15] = "ChangeDetectionSyncEnd", B104[B104.AfterRenderHooksStart = 16] = "AfterRenderHooksStart", B104[B104.AfterRenderHooksEnd = 17] = "AfterRenderHooksEnd", B104[B104.ComponentStart = 18] = "ComponentStart", B104[B104.ComponentEnd = 19] = "ComponentEnd", B104[B104.DeferBlockStateStart = 20] = "DeferBlockStateStart", B104[B104.DeferBlockStateEnd = 21] = "DeferBlockStateEnd", B104[B104.DynamicComponentStart = 22] = "DynamicComponentStart", B104[B104.DynamicComponentEnd = 23] = "DynamicComponentEnd", B104[B104.HostBindingsUpdateStart = 24] = "HostBindingsUpdateStart", B104[B104.HostBindingsUpdateEnd = 25] = "HostBindingsUpdateEnd";
 })(pe || (pe = {}));
-function D8(B104, A, e) {
+function DV(B104, A, e) {
   let { ngOnChanges: t, ngOnInit: g, ngDoCheck: n } = A.type.prototype;
   if (t) {
     let i = Jy(A);
@@ -16436,7 +16436,7 @@ function Ty(B104, A, e, t) {
   let g = t !== void 0 ? B104[Ho] & 65535 : 0, n = t ?? -1, i = A.length - 1, Q = 0;
   for (let o = g; o < i; o++) if (typeof A[o + 1] == "number") {
     if (Q = A[o], t != null && Q >= t) break;
-  } else A[o] < 0 && (B104[Ho] += 65536), (Q < n || n == -1) && (Y8(B104, e, A, o), B104[Ho] = (B104[Ho] & 4294901760) + o + 2), o++;
+  } else A[o] < 0 && (B104[Ho] += 65536), (Q < n || n == -1) && (YV(B104, e, A, o), B104[Ho] = (B104[Ho] & 4294901760) + o + 2), o++;
 }
 function Uf(B104, A) {
   Te(pe.LifecycleHookStart, B104, A);
@@ -16447,7 +16447,7 @@ function Uf(B104, A) {
     bA(e), Te(pe.LifecycleHookEnd, B104, A);
   }
 }
-function Y8(B104, A, e, t) {
+function YV(B104, A, e, t) {
   let g = e[t] < 0, n = e[t + 1], i = g ? -e[t] : e[t], Q = B104[i];
   g ? B104[Ae] >> 14 < B104[Ho] >> 16 && (B104[Ae] & 3) === A && (B104[Ae] += 16384, Uf(Q, n)) : Uf(Q, n);
 }
@@ -16469,13 +16469,13 @@ var Lo = class {
 function vy(B104) {
   return B104 != null && typeof B104 == "object" && (B104.insertBeforeIndex === null || typeof B104.insertBeforeIndex == "number" || Array.isArray(B104.insertBeforeIndex));
 }
-function M8(B104) {
+function MV(B104) {
   return (B104.flags & 8) !== 0;
 }
-function F8(B104) {
+function FV(B104) {
   return (B104.flags & 16) !== 0;
 }
-function h8(B104, A, e) {
+function hV(B104, A, e) {
   let t = 0;
   for (; t < e.length; ) {
     let g = e[t];
@@ -16486,7 +16486,7 @@ function h8(B104, A, e) {
       B104.setAttribute(A, i, Q, n);
     } else {
       let n = g, i = e[++t];
-      l8(n) ? B104.setProperty(A, n, i) : B104.setAttribute(A, n, i), t++;
+      lV(n) ? B104.setProperty(A, n, i) : B104.setAttribute(A, n, i), t++;
     }
   }
   return t;
@@ -16494,7 +16494,7 @@ function h8(B104, A, e) {
 function Py(B104) {
   return B104 === 3 || B104 === 4 || B104 === 6;
 }
-function l8(B104) {
+function lV(B104) {
   return B104.charCodeAt(0) === 64;
 }
 function PC(B104, A) {
@@ -16540,11 +16540,11 @@ function Wy(B104) {
 function kD(B104) {
   return B104 & 32767;
 }
-function d8(B104) {
+function dV(B104) {
   return B104 >> 16;
 }
 function jD(B104, A) {
-  let e = d8(B104), t = A;
+  let e = dV(B104), t = A;
   for (; e > 0; ) t = t[Ro], e--;
   return t;
 }
@@ -16553,14 +16553,14 @@ function bD(B104) {
   let A = nd;
   return nd = B104, A;
 }
-var U8 = 256;
-var Sy = U8 - 1;
+var UV = 256;
+var Sy = UV - 1;
 var Ly = 5;
-var u8 = 0;
+var uV = 0;
 var Zn = {};
-function N8(B104, A, e) {
+function NV(B104, A, e) {
   let t;
-  typeof e == "string" ? t = e.charCodeAt(0) || 0 : e.hasOwnProperty(fo) && (t = e[fo]), t == null && (t = e[fo] = u8++);
+  typeof e == "string" ? t = e.charCodeAt(0) || 0 : e.hasOwnProperty(fo) && (t = e[fo]), t == null && (t = e[fo] = uV++);
   let g = t & Sy, n = 1 << g;
   A.data[B104 + (g >> Ly)] |= n;
 }
@@ -16592,9 +16592,9 @@ function CU(B104, A) {
   return kC;
 }
 function id(B104, A, e) {
-  N8(B104, A, e);
+  NV(B104, A, e);
 }
-function G8(B104, A) {
+function GV(B104, A) {
   if (A === "class") return B104.classes;
   if (A === "style") return B104.styles;
   let e = B104.attrs;
@@ -16631,7 +16631,7 @@ function Ky(B104, A, e, t) {
 function Oy(B104, A, e, t = 0, g) {
   if (B104 !== null) {
     if (A[Ae] & 2048 && !(t & 2)) {
-      let i = f8(B104, A, e, t, Zn);
+      let i = fV(B104, A, e, t, Zn);
       if (i !== Zn) return i;
     }
     let n = Xy(B104, A, e, t, Zn);
@@ -16640,7 +16640,7 @@ function Oy(B104, A, e, t = 0, g) {
   return Ky(A, e, t, g);
 }
 function Xy(B104, A, e, t, g) {
-  let n = m8(e);
+  let n = mV(e);
   if (typeof n == "function") {
     if (!f0(A, B104, t)) return t & 1 ? zy(g, e, t) : Ky(A, e, t, g);
     try {
@@ -16655,7 +16655,7 @@ function Xy(B104, A, e, t, g) {
     for ((Q === -1 || t & 4) && (o = Q === -1 ? CU(B104, A) : A[Q + 8], o === kC || !Gf(t, false) ? Q = -1 : (i = A[UA], Q = kD(o), A = jD(o, A))); Q !== -1; ) {
       let C = A[UA];
       if (Nf(n, Q, C.data)) {
-        let c = p8(Q, A, e, i, t, r);
+        let c = pV(Q, A, e, i, t, r);
         if (c !== Zn) return c;
       }
       o = A[Q + 8], o !== kC && Gf(t, A[UA].data[Q + 8] === r) && Nf(n, Q, A) ? (i = C, Q = kD(o), A = jD(o, A)) : Q = -1;
@@ -16663,7 +16663,7 @@ function Xy(B104, A, e, t, g) {
   }
   return g;
 }
-function p8(B104, A, e, t, g, n) {
+function pV(B104, A, e, t, g, n) {
   let i = A[UA], Q = i.data[B104 + 8], o = t == null ? Wn(Q) && nd : t != i && (Q.type & 3) !== 0, r = g & 1 && n === Q, C = pD(Q, i, e, o, r);
   return C !== null ? as(A, i, C, Q, g) : Zn;
 }
@@ -16688,17 +16688,17 @@ function as(B104, A, e, t, g) {
     Q.resolving = true;
     let r = i[e].type || i[e], C, c = Q.injectImpl ? Pt(Q.injectImpl) : null, E = f0(B104, t, 0);
     try {
-      n = B104[e] = Q.factory(void 0, g, i, B104, t), A.firstCreatePass && e >= t.directiveStart && D8(e, i[e], A);
+      n = B104[e] = Q.factory(void 0, g, i, B104, t), A.firstCreatePass && e >= t.directiveStart && DV(e, i[e], A);
     } finally {
       c !== null && Pt(c), bD(o), Q.resolving = false, y0();
     }
   }
   return n;
 }
-function m8(B104) {
+function mV(B104) {
   if (typeof B104 == "string") return B104.charCodeAt(0) || 0;
   let A = B104.hasOwnProperty(fo) ? B104[fo] : void 0;
-  return typeof A == "number" ? A >= 0 ? A & Sy : x8 : A;
+  return typeof A == "number" ? A >= 0 ? A & Sy : xV : A;
 }
 function Nf(B104, A, e) {
   let t = 1 << B104;
@@ -16717,7 +16717,7 @@ var Po = class {
     return Oy(this._tNode, this._lView, A, Go(t), e);
   }
 };
-function x8() {
+function xV() {
   return new Po(te(), gA());
 }
 function Hs(B104) {
@@ -16737,7 +16737,7 @@ function Qd(B104) {
     return A && A();
   } : IQ(B104);
 }
-function f8(B104, A, e, t, g) {
+function fV(B104, A, e, t, g) {
   let n = B104, i = A;
   for (; n !== null && i !== null && i[Ae] & 2048 && !lQ(i); ) {
     let Q = Xy(n, i, e, t | 2, Zn);
@@ -16760,7 +16760,7 @@ function Zy(B104) {
   return e === 2 ? A.declTNode : e === 1 ? B104[Et] : null;
 }
 function IY(B104) {
-  return G8(te(), B104);
+  return GV(te(), B104);
 }
 var qy = KC("Attribute", (B104) => ({ attributeName: B104, __NG_ELEMENT_ID__: () => IY(B104) }));
 var pf = null;
@@ -16771,9 +16771,9 @@ function DY(B104) {
   return _y(cU().parameters(B104));
 }
 function _y(B104) {
-  return B104.map((A) => y8(A));
+  return B104.map((A) => yV(A));
 }
-function y8(B104) {
+function yV(B104) {
   let A = { token: null, attribute: null, host: false, optional: false, self: false, skipSelf: false };
   if (Array.isArray(B104) && B104.length > 0) for (let e = 0; e < B104.length; e++) {
     let t = B104[e];
@@ -16792,9 +16792,9 @@ function y8(B104) {
   else B104 === void 0 || Array.isArray(B104) && B104.length === 0 ? A.token = null : A.token = B104;
   return A;
 }
-function R8(B104, A) {
+function RV(B104, A) {
   let e = null, t = null;
-  B104.hasOwnProperty(hC) || Object.defineProperty(B104, hC, { get: () => (e === null && (e = ug({ usage: 0, kind: "injectable", type: B104 }).compileInjectable(lf, `ng:///${B104.name}/\u0275prov.js`, j8(B104, A))), e) }), B104.hasOwnProperty(bn) || Object.defineProperty(B104, bn, { get: () => {
+  B104.hasOwnProperty(hC) || Object.defineProperty(B104, hC, { get: () => (e === null && (e = ug({ usage: 0, kind: "injectable", type: B104 }).compileInjectable(lf, `ng:///${B104.name}/\u0275prov.js`, jV(B104, A))), e) }), B104.hasOwnProperty(bn) || Object.defineProperty(B104, bn, { get: () => {
     if (t === null) {
       let g = ug({ usage: 0, kind: "injectable", type: B104 });
       t = g.compileFactory(lf, `ng:///${B104.name}/\u0275fac.js`, { name: B104.name, type: B104, typeArgumentCount: 0, deps: DY(B104), target: g.FactoryTarget.Injectable });
@@ -16802,25 +16802,25 @@ function R8(B104, A) {
     return t;
   }, configurable: true });
 }
-var H8 = je({ provide: String, useValue: je });
+var HV = je({ provide: String, useValue: je });
 function mf(B104) {
   return B104.useClass !== void 0;
 }
-function J8(B104) {
-  return H8 in B104;
+function JV(B104) {
+  return HV in B104;
 }
 function xf(B104) {
   return B104.useFactory !== void 0;
 }
-function k8(B104) {
+function kV(B104) {
   return B104.useExisting !== void 0;
 }
-function j8(B104, A) {
+function jV(B104, A) {
   let e = A || { providedIn: null }, t = { name: B104.name, type: B104, typeArgumentCount: 0, providedIn: e.providedIn };
-  return (mf(e) || xf(e)) && e.deps !== void 0 && (t.deps = _y(e.deps)), mf(e) ? t.useClass = e.useClass : J8(e) ? t.useValue = e.useValue : xf(e) ? t.useFactory = e.useFactory : k8(e) && (t.useExisting = e.useExisting), t;
+  return (mf(e) || xf(e)) && e.deps !== void 0 && (t.deps = _y(e.deps)), mf(e) ? t.useClass = e.useClass : JV(e) ? t.useValue = e.useValue : xf(e) ? t.useFactory = e.useFactory : kV(e) && (t.useExisting = e.useExisting), t;
 }
-var b8 = Rs("Injectable", void 0, void 0, void 0, (B104, A) => R8(B104, A));
-function T8() {
+var bV = Rs("Injectable", void 0, void 0, void 0, (B104, A) => RV(B104, A));
+function TV() {
   return OC(te(), gA());
 }
 function OC(B104, A) {
@@ -16831,12 +16831,12 @@ var ge = class {
   constructor(A) {
     this.nativeElement = A;
   }
-  static __NG_ELEMENT_ID__ = T8;
+  static __NG_ELEMENT_ID__ = TV;
 };
 function $y(B104) {
   return B104 instanceof ge ? B104.nativeElement : B104;
 }
-function v8() {
+function vV() {
   return this._results[Symbol.iterator]();
 }
 var vD = class {
@@ -16899,7 +16899,7 @@ var vD = class {
   destroy() {
     this._changes !== void 0 && (this._changes.complete(), this._changes.unsubscribe());
   }
-  [Symbol.iterator] = v8;
+  [Symbol.iterator] = vV;
 };
 function AR(B104) {
   return (B104.flags & 128) === 128;
@@ -16909,22 +16909,22 @@ var Is;
   B104[B104.OnPush = 0] = "OnPush", B104[B104.Eager = 1] = "Eager", B104[B104.Default = 1] = "Default";
 })(Is || (Is = {}));
 var EU = /* @__PURE__ */ new Map();
-var P8 = 0;
-function W8() {
-  return P8++;
+var PV = 0;
+function WV() {
+  return PV++;
 }
-function S8(B104) {
+function SV(B104) {
   EU.set(B104[Dn], B104);
 }
 function od(B104) {
   EU.delete(B104[Dn]);
 }
-function L8() {
+function LV() {
   return EU;
 }
 var ff = "__ngContext__";
 function NQ(B104, A) {
-  ig(A) ? (B104[ff] = A[Dn], S8(A)) : B104[ff] = A;
+  ig(A) ? (B104[ff] = A[Dn], SV(A)) : B104[ff] = A;
 }
 function eR(B104) {
   return tR(B104[MQ]);
@@ -16953,18 +16953,18 @@ function Js() {
   if (typeof document < "u") return document;
   throw new NA(210, false);
 }
-var ks = new uA("", { factory: () => V8 });
-var V8 = "ng";
+var ks = new uA("", { factory: () => VV });
+var VV = "ng";
 var YY = new uA("");
 var js = new uA("", { providedIn: "platform", factory: () => "unknown" });
-var z8 = new uA("");
+var zV = new uA("");
 var MY = new uA("", { factory: () => tA(BB).body?.querySelector("[ngCspNonce]")?.getAttribute("ngCspNonce") || null });
 var wU = { breakpoints: [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840], placeholderResolution: 30, disableImageSizeWarning: false, disableImageLazyLoadWarning: false };
 var FY = new uA("", { factory: () => wU });
 var PD = class B6 {
   static \u0275prov = yA({ token: B6, providedIn: "root", factory: () => {
     let A = new B6();
-    return (typeof ngServerMode > "u" || !ngServerMode) && (A.store = K8(tA(BB), tA(ks))), A;
+    return (typeof ngServerMode > "u" || !ngServerMode) && (A.store = KV(tA(BB), tA(ks))), A;
   } });
   store = {};
   onSerializeCallbacks = {};
@@ -16995,7 +16995,7 @@ var PD = class B6 {
     return JSON.stringify(this.store).replace(/</g, "\\u003C").replace(/\//g, "\\u002F");
   }
 };
-function K8(B104, A) {
+function KV(B104, A) {
   let e = B104.getElementById(A + "-state");
   if (e?.tagName === "SCRIPT" && e.textContent) try {
     return JSON.parse(e.textContent);
@@ -17008,14 +17008,14 @@ var gR = "r";
 var aU = "di";
 var IU = "s";
 var nR = "p";
-var O8 = new uA("");
+var OV = new uA("");
 var iR = false;
 var QR = new uA("", { factory: () => iR });
-var X8 = new uA("");
-var Z8 = new uA("");
-var q8 = new uA("", { factory: () => [] });
+var XV = new uA("");
+var ZV = new uA("");
+var qV = new uA("", { factory: () => [] });
 var oR = new uA("");
-var _8 = new uA("", { factory: () => /* @__PURE__ */ new Map() });
+var _V = new uA("", { factory: () => /* @__PURE__ */ new Map() });
 var rR = new uA("");
 var WD = { passive: true, capture: true };
 var L0 = /* @__PURE__ */ new WeakMap();
@@ -17058,13 +17058,13 @@ function cR(B104, A) {
     }
   };
 }
-function $8(B104) {
+function $V(B104) {
   let A = ER(B104);
   return new IntersectionObserver((e) => {
     for (let t of e) t.isIntersecting && uQ.has(t.target) && uQ.get(t.target)?.get(A)?.listener();
   }, B104);
 }
-function AV(B104, A, e, t) {
+function A8(B104, A, e, t) {
   let g = ER(t), n = uQ.get(B104)?.get(g);
   ID.has(g) || ID.set(g, { observer: e(t), count: 0 });
   let i = ID.get(g);
@@ -17088,27 +17088,27 @@ function ER(B104) {
   return B104 ? `${B104.rootMargin}/${typeof B104.threshold == "number" ? B104.threshold : B104.threshold?.join(`
 `)}` : "";
 }
-var eV = new uA("", { factory: () => ({}) });
+var e8 = new uA("", { factory: () => ({}) });
 var Hf = /* @__PURE__ */ new WeakMap();
-function BV(B104, A) {
+function B8(B104, A) {
   if (B104 == null || typeof B104 != "object") return;
   let e = Hf.get(B104);
   e || (e = /* @__PURE__ */ new WeakSet(), Hf.set(B104, e)), e.add(A);
 }
-var tV = (B104, A, e, t) => {
+var t8 = (B104, A, e, t) => {
 };
-function gV(B104, A, e, t) {
-  tV(B104, A, e, t);
+function g8(B104, A, e, t) {
+  t8(B104, A, e, t);
 }
 var bs = new uA("");
 function hY(B104) {
   return (B104.flags & 32) === 32;
 }
-var QV = "__nghDeferData__";
-var sR = QV;
-var oV = () => null;
+var Q8 = "__nghDeferData__";
+var sR = Q8;
+var o8 = () => null;
 function wR(B104, A, e = false) {
-  return oV(B104, A, e);
+  return o8(B104, A, e);
 }
 function aR(B104) {
   let A = B104._lView;
@@ -17121,7 +17121,7 @@ var Ed;
 function DU(B104) {
   return B104.get(oR, false, { optional: true });
 }
-function rV(B104, A) {
+function r8(B104, A) {
   let e = A.get(bs), g = A.get(PD).get(sR, {}), n = false, i = B104, Q = null, o = [];
   for (; !n && i; ) {
     n = e.has(i);
@@ -17195,7 +17195,7 @@ function FR() {
 function XC(B104) {
   return FR()?.createHTML(B104) || B104;
 }
-function CV(B104) {
+function C8(B104) {
   return FR()?.createScriptURL(B104) || B104;
 }
 var YD;
@@ -17280,7 +17280,7 @@ function UU(B104) {
 }
 function lR(B104) {
   let A = new Fd(B104);
-  return cV() ? new Md(A) : A;
+  return c8() ? new Md(A) : A;
 }
 var Md = class {
   inertDocumentHelper;
@@ -17308,16 +17308,16 @@ var Fd = class {
     return e.innerHTML = XC(A), e;
   }
 };
-function cV() {
+function c8() {
   try {
     return !!new window.DOMParser().parseFromString(XC(""), "text/html");
   } catch {
     return false;
   }
 }
-var EV = /^(?!javascript:)(?:[a-z0-9+.-]+:|[^&:\/?#]*(?:[\/?#]|$))/i;
+var E8 = /^(?!javascript:)(?:[a-z0-9+.-]+:|[^&:\/?#]*(?:[\/?#]|$))/i;
 function ZC(B104) {
-  return B104 = String(B104), B104.match(EV) ? B104 : "unsafe:" + B104;
+  return B104 = String(B104), B104.match(E8) ? B104 : "unsafe:" + B104;
 }
 function Hi(B104) {
   let A = {};
@@ -17332,15 +17332,15 @@ function Ts(...B104) {
 var dR = Hi("area,br,col,hr,img,wbr");
 var UR = Hi("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr");
 var uR = Hi("rp,rt");
-var sV = Ts(uR, UR);
-var wV = Ts(UR, Hi("address,article,aside,blockquote,caption,center,del,details,dialog,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,main,map,menu,nav,ol,pre,section,summary,table,ul"));
-var aV = Ts(uR, Hi("a,abbr,acronym,audio,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,picture,q,ruby,rp,rt,s,samp,small,source,span,strike,strong,sub,sup,time,track,tt,u,var,video"));
-var hd = Ts(dR, wV, aV, sV);
+var s8 = Ts(uR, UR);
+var w8 = Ts(UR, Hi("address,article,aside,blockquote,caption,center,del,details,dialog,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,main,map,menu,nav,ol,pre,section,summary,table,ul"));
+var a8 = Ts(uR, Hi("a,abbr,acronym,audio,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,picture,q,ruby,rp,rt,s,samp,small,source,span,strike,strong,sub,sup,time,track,tt,u,var,video"));
+var hd = Ts(dR, w8, a8, s8);
 var NR = Hi("background,cite,href,itemtype,longdesc,poster,src,xlink:href");
-var IV = Hi("abbr,accesskey,align,alt,autoplay,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,controls,coords,datetime,default,dir,download,face,headers,height,hidden,hreflang,hspace,ismap,itemscope,itemprop,kind,label,lang,language,loop,media,muted,nohref,nowrap,open,preload,rel,rev,role,rows,rowspan,rules,scope,scrolling,shape,size,sizes,span,srclang,srcset,start,summary,tabindex,target,title,translate,type,usemap,valign,value,vspace,width");
-var DV = Hi("aria-activedescendant,aria-atomic,aria-autocomplete,aria-busy,aria-checked,aria-colcount,aria-colindex,aria-colspan,aria-controls,aria-current,aria-describedby,aria-details,aria-disabled,aria-dropeffect,aria-errormessage,aria-expanded,aria-flowto,aria-grabbed,aria-haspopup,aria-hidden,aria-invalid,aria-keyshortcuts,aria-label,aria-labelledby,aria-level,aria-live,aria-modal,aria-multiline,aria-multiselectable,aria-orientation,aria-owns,aria-placeholder,aria-posinset,aria-pressed,aria-readonly,aria-relevant,aria-required,aria-roledescription,aria-rowcount,aria-rowindex,aria-rowspan,aria-selected,aria-setsize,aria-sort,aria-valuemax,aria-valuemin,aria-valuenow,aria-valuetext");
-var ld = Ts(NR, IV, DV);
-var YV = Hi("script,style,template");
+var I8 = Hi("abbr,accesskey,align,alt,autoplay,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,controls,coords,datetime,default,dir,download,face,headers,height,hidden,hreflang,hspace,ismap,itemscope,itemprop,kind,label,lang,language,loop,media,muted,nohref,nowrap,open,preload,rel,rev,role,rows,rowspan,rules,scope,scrolling,shape,size,sizes,span,srclang,srcset,start,summary,tabindex,target,title,translate,type,usemap,valign,value,vspace,width");
+var D8 = Hi("aria-activedescendant,aria-atomic,aria-autocomplete,aria-busy,aria-checked,aria-colcount,aria-colindex,aria-colspan,aria-controls,aria-current,aria-describedby,aria-details,aria-disabled,aria-dropeffect,aria-errormessage,aria-expanded,aria-flowto,aria-grabbed,aria-haspopup,aria-hidden,aria-invalid,aria-keyshortcuts,aria-label,aria-labelledby,aria-level,aria-live,aria-modal,aria-multiline,aria-multiselectable,aria-orientation,aria-owns,aria-placeholder,aria-posinset,aria-pressed,aria-readonly,aria-relevant,aria-required,aria-roledescription,aria-rowcount,aria-rowindex,aria-rowspan,aria-selected,aria-setsize,aria-sort,aria-valuemax,aria-valuemin,aria-valuenow,aria-valuetext");
+var ld = Ts(NR, I8, D8);
+var Y8 = Hi("script,style,template");
 var dd = class {
   sanitizedSomething = false;
   buf = [];
@@ -17348,12 +17348,12 @@ var dd = class {
     let e = A.firstChild, t = true, g = [];
     for (; e; ) {
       if (e.nodeType === Node.ELEMENT_NODE ? t = this.startElement(e) : e.nodeType === Node.TEXT_NODE ? this.chars(e.nodeValue) : this.sanitizedSomething = true, t && e.firstChild) {
-        g.push(e), e = hV(e);
+        g.push(e), e = h8(e);
         continue;
       }
       for (; e; ) {
         e.nodeType === Node.ELEMENT_NODE && this.endElement(e);
-        let n = FV(e);
+        let n = F8(e);
         if (n) {
           e = n;
           break;
@@ -17365,7 +17365,7 @@ var dd = class {
   }
   startElement(A) {
     let e = bf(A).toLowerCase();
-    if (!hd.hasOwnProperty(e)) return this.sanitizedSomething = true, !YV.hasOwnProperty(e);
+    if (!hd.hasOwnProperty(e)) return this.sanitizedSomething = true, !Y8.hasOwnProperty(e);
     this.buf.push("<"), this.buf.push(e);
     let t = A.attributes;
     for (let g = 0; g < t.length; g++) {
@@ -17387,17 +17387,17 @@ var dd = class {
     this.buf.push(Tf(A));
   }
 };
-function MV(B104, A) {
+function M8(B104, A) {
   return (B104.compareDocumentPosition(A) & Node.DOCUMENT_POSITION_CONTAINED_BY) !== Node.DOCUMENT_POSITION_CONTAINED_BY;
 }
-function FV(B104) {
+function F8(B104) {
   let A = B104.nextSibling;
   if (A && B104 !== A.previousSibling) throw GR(A);
   return A;
 }
-function hV(B104) {
+function h8(B104) {
   let A = B104.firstChild;
-  if (A && MV(B104, A)) throw GR(A);
+  if (A && M8(B104, A)) throw GR(A);
   return A;
 }
 function bf(B104) {
@@ -17407,13 +17407,13 @@ function bf(B104) {
 function GR(B104) {
   return new Error(`Failed to sanitize html because the element is clobbered: ${B104.outerHTML}`);
 }
-var lV = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-var dV = /([^\#-~ |!])/g;
+var l8 = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+var d8 = /([^\#-~ |!])/g;
 function Tf(B104) {
-  return B104.replace(/&/g, "&amp;").replace(lV, function(A) {
+  return B104.replace(/&/g, "&amp;").replace(l8, function(A) {
     let e = A.charCodeAt(0), t = A.charCodeAt(1);
     return "&#" + ((e - 55296) * 1024 + (t - 56320) + 65536) + ";";
-  }).replace(dV, function(A) {
+  }).replace(d8, function(A) {
     return "&#" + A.charCodeAt(0) + ";";
   }).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -17439,16 +17439,16 @@ function lY(B104, A) {
   }
 }
 function Ud(B104) {
-  return "content" in B104 && UV(B104) ? B104.content : null;
+  return "content" in B104 && U8(B104) ? B104.content : null;
 }
-function UV(B104) {
+function U8(B104) {
   return B104.nodeType === Node.ELEMENT_NODE && B104.nodeName === "TEMPLATE";
 }
-var uV = /^>|^->|<!--|-->|--!>|<!-$/g;
-var NV = /(<|>)/g;
-var GV = "\u200B$1\u200B";
-function pV(B104) {
-  return B104.replace(uV, (A) => A.replace(NV, GV));
+var u8 = /^>|^->|<!--|-->|--!>|<!-$/g;
+var N8 = /(<|>)/g;
+var G8 = "\u200B$1\u200B";
+function p8(B104) {
+  return B104.replace(u8, (A) => A.replace(N8, G8));
 }
 function pR(B104, A) {
   return B104.createText(A);
@@ -17457,7 +17457,7 @@ function mR(B104, A, e) {
   B104.setValue(A, e);
 }
 function xR(B104, A) {
-  return B104.createComment(pV(A));
+  return B104.createComment(p8(A));
 }
 function uU(B104, A, e) {
   return B104.createElement(A, e);
@@ -17474,17 +17474,17 @@ function vf(B104, A, e, t, g) {
 function vs(B104, A, e, t) {
   B104.removeChild(null, A, e, t);
 }
-function mV(B104, A, e) {
+function m8(B104, A, e) {
   B104.setAttribute(A, "style", e);
 }
-function xV(B104, A, e) {
+function x8(B104, A, e) {
   e === "" ? B104.removeAttribute(A, "class") : B104.setAttribute(A, "class", e);
 }
 function yR(B104, A, e) {
   let { mergedAttrs: t, classes: g, styles: n } = e;
-  t !== null && h8(B104, A, t), g !== null && xV(B104, A, g), n !== null && mV(B104, A, n);
+  t !== null && hV(B104, A, t), g !== null && x8(B104, A, g), n !== null && m8(B104, A, n);
 }
-function fV(B104) {
+function f8(B104) {
   let A = gA();
   B104.src = "", B104.srcdoc = XC(""), vs(A[Ce], B104);
 }
@@ -17526,9 +17526,9 @@ function RR(B104) {
   return XC(B104[0]);
 }
 function HR(B104) {
-  return CV(B104[0]);
+  return C8(B104[0]);
 }
-function yV(B104, A) {
+function y8(B104, A) {
   switch (kR(B104, A)) {
     case Ge.RESOURCE_URL:
       return dY;
@@ -17539,7 +17539,7 @@ function yV(B104, A) {
   }
 }
 function JR(B104, A, e) {
-  return yV(A, e)?.(B104) ?? B104;
+  return y8(A, e)?.(B104) ?? B104;
 }
 function Ws() {
   let B104 = gA();
@@ -17564,7 +17564,7 @@ function jR(B104) {
   return [g, B104];
 }
 var FD = /* @__PURE__ */ new Set(["href", "xlink:href"]);
-var RV = { animate: { to: FD, values: FD, from: FD }, set: { to: FD } };
+var R8 = { animate: { to: FD, values: FD, from: FD }, set: { to: FD } };
 function mU(B104, A, e) {
   let g = HB() === -1 ? null : Ug();
   if (g && g.type !== 2) return B104;
@@ -17574,12 +17574,12 @@ function mU(B104, A, e) {
   if (g) {
     if (i === "iframe") {
       let C = ZB(g, o);
-      fV(C);
+      f8(C);
     } else if (n === YC) {
-      let C = RV[i]?.[e.toLowerCase()];
+      let C = R8[i]?.[e.toLowerCase()];
       if (C) {
         let c = ZB(g, o);
-        if (HV(c, C)) throw new NA(-910, false);
+        if (H8(c, C)) throw new NA(-910, false);
         return B104;
       }
     }
@@ -17587,7 +17587,7 @@ function mU(B104, A, e) {
   let r = false;
   throw new NA(-910, r);
 }
-function HV(B104, A) {
+function H8(B104, A) {
   for (let e of B104.getAttributeNames()) {
     if (e.toLowerCase() !== "attributename") continue;
     let t = B104.getAttribute(e);
@@ -17595,8 +17595,8 @@ function HV(B104, A) {
   }
   return null;
 }
-var JV = false;
-var GsA = new uA("", { factory: () => JV });
+var J8 = false;
+var GsA = new uA("", { factory: () => J8 });
 function Ng(B104) {
   return B104.ownerDocument.defaultView;
 }
@@ -17609,7 +17609,7 @@ function bR(B104) {
 function HC(B104) {
   return B104 instanceof Function ? B104() : B104;
 }
-function kV(B104, A, e) {
+function k8(B104, A, e) {
   let t = B104.length;
   for (; ; ) {
     let g = B104.indexOf(A, e);
@@ -17622,10 +17622,10 @@ function kV(B104, A, e) {
   }
 }
 var TR = "ng-template";
-function jV(B104, A, e, t) {
+function j8(B104, A, e, t) {
   let g = 0;
   if (t) {
-    for (; g < A.length && typeof A[g] == "string"; g += 2) if (A[g] === "class" && kV(A[g + 1].toLowerCase(), e, 0) !== -1) return true;
+    for (; g < A.length && typeof A[g] == "string"; g += 2) if (A[g] === "class" && k8(A[g + 1].toLowerCase(), e, 0) !== -1) return true;
   } else if (xU(B104)) return false;
   if (g = A.indexOf(1, g), g > -1) {
     let n;
@@ -17636,12 +17636,12 @@ function jV(B104, A, e, t) {
 function xU(B104) {
   return B104.type === 4 && B104.value !== TR;
 }
-function bV(B104, A, e) {
+function b8(B104, A, e) {
   let t = B104.type === 4 && !e ? TR : B104.value;
   return A === t;
 }
-function TV(B104, A, e) {
-  let t = 4, g = B104.attrs, n = g !== null ? WV(g) : 0, i = false;
+function T8(B104, A, e) {
+  let t = 4, g = B104.attrs, n = g !== null ? W8(g) : 0, i = false;
   for (let Q = 0; Q < A.length; Q++) {
     let o = A[Q];
     if (typeof o == "number") {
@@ -17651,17 +17651,17 @@ function TV(B104, A, e) {
       continue;
     }
     if (!i) if (t & 4) {
-      if (t = 2 | t & 1, o !== "" && !bV(B104, o, e) || o === "" && A.length === 1) {
+      if (t = 2 | t & 1, o !== "" && !b8(B104, o, e) || o === "" && A.length === 1) {
         if (Mn(t)) return false;
         i = true;
       }
     } else if (t & 8) {
-      if (g === null || !jV(B104, g, o, e)) {
+      if (g === null || !j8(B104, g, o, e)) {
         if (Mn(t)) return false;
         i = true;
       }
     } else {
-      let r = A[++Q], C = vV(o, g, xU(B104), e);
+      let r = A[++Q], C = v8(o, g, xU(B104), e);
       if (C === -1) {
         if (Mn(t)) return false;
         i = true;
@@ -17681,7 +17681,7 @@ function TV(B104, A, e) {
 function Mn(B104) {
   return (B104 & 1) === 0;
 }
-function vV(B104, A, e, t) {
+function v8(B104, A, e, t) {
   if (A === null) return -1;
   let g = 0;
   if (t || !e) {
@@ -17704,13 +17704,13 @@ function vV(B104, A, e, t) {
       g += n ? 1 : 2;
     }
     return -1;
-  } else return SV(A, B104);
+  } else return S8(A, B104);
 }
 function vR(B104, A, e = false) {
-  for (let t = 0; t < A.length; t++) if (TV(B104, A[t], e)) return true;
+  for (let t = 0; t < A.length; t++) if (T8(B104, A[t], e)) return true;
   return false;
 }
-function PV(B104) {
+function P8(B104) {
   let A = B104.attrs;
   if (A != null) {
     let e = A.indexOf(5);
@@ -17718,14 +17718,14 @@ function PV(B104) {
   }
   return null;
 }
-function WV(B104) {
+function W8(B104) {
   for (let A = 0; A < B104.length; A++) {
     let e = B104[A];
     if (Py(e)) return A;
   }
   return B104.length;
 }
-function SV(B104, A) {
+function S8(B104, A) {
   let e = B104.indexOf(4);
   if (e > -1) for (e++; e < B104.length; ) {
     let t = B104[e];
@@ -17735,7 +17735,7 @@ function SV(B104, A) {
   }
   return -1;
 }
-function LV(B104, A) {
+function L8(B104, A) {
   A: for (let e = 0; e < A.length; e++) {
     let t = A[e];
     if (B104.length === t.length) {
@@ -17748,7 +17748,7 @@ function LV(B104, A) {
 function Pf(B104, A) {
   return B104 ? ":not(" + A.trim() + ")" : A;
 }
-function VV(B104) {
+function V8(B104) {
   let A = B104[0], e = 1, t = 2, g = "", n = false;
   for (; e < B104.length; ) {
     let i = B104[e];
@@ -17761,10 +17761,10 @@ function VV(B104) {
   }
   return g !== "" && (A += Pf(n, g)), A;
 }
-function zV(B104) {
-  return B104.map(VV).join(",");
+function z8(B104) {
+  return B104.map(V8).join(",");
 }
-function KV(B104) {
+function K8(B104) {
   let A = [], e = [], t = 1, g = 2;
   for (; t < B104.length; ) {
     let n = B104[t];
@@ -17779,10 +17779,10 @@ function KV(B104) {
 }
 var Se = {};
 function fU(B104, A, e, t, g, n, i, Q, o, r, C) {
-  let c = ie + t, E = c + g, w = OV(c, E), D = typeof r == "function" ? r() : r;
+  let c = ie + t, E = c + g, w = O8(c, E), D = typeof r == "function" ? r() : r;
   return w[UA] = { type: B104, blueprint: w, template: e, queries: null, viewQuery: Q, declTNode: A, data: w.slice().fill(null, c), bindingStartIndex: c, expandoStartIndex: E, hostBindingOpCodes: null, firstCreatePass: true, firstUpdatePass: true, staticViewQueries: false, staticContentQueries: false, preOrderHooks: null, preOrderCheckHooks: null, contentHooks: null, contentCheckHooks: null, viewHooks: null, viewCheckHooks: null, destroyHooks: null, cleanup: null, contentQueries: null, components: null, directiveRegistry: typeof n == "function" ? n() : n, pipeRegistry: typeof i == "function" ? i() : i, firstChild: null, schemas: o, consts: D, incompleteFirstPass: false, ssrId: C };
 }
-function OV(B104, A) {
+function O8(B104, A) {
   let e = [];
   for (let t = 0; t < A; t++) e.push(t < B104 ? null : Se);
   return e;
@@ -17793,9 +17793,9 @@ function PR(B104) {
 }
 function UY(B104, A, e, t, g, n, i, Q, o, r, C) {
   let c = A.blueprint.slice();
-  return c[Ct] = g, c[Ae] = t | 4 | 128 | 8 | 64 | 1024, (r !== null || B104 && B104[Ae] & 2048) && (c[Ae] |= 2048), E0(c), c[dB] = c[Ro] = B104, c[oB] = e, c[Lg] = i || B104 && B104[Lg], c[Ce] = Q || B104 && B104[Ce], c[Je] = o || B104 && B104[Je] || null, c[Et] = n, c[Dn] = W8(), c[YQ] = C, c[i0] = r, c[st] = A.type == 2 ? B104[st] : c, c;
+  return c[Ct] = g, c[Ae] = t | 4 | 128 | 8 | 64 | 1024, (r !== null || B104 && B104[Ae] & 2048) && (c[Ae] |= 2048), E0(c), c[dB] = c[Ro] = B104, c[oB] = e, c[Lg] = i || B104 && B104[Lg], c[Ce] = Q || B104 && B104[Ce], c[Je] = o || B104 && B104[Je] || null, c[Et] = n, c[Dn] = WV(), c[YQ] = C, c[i0] = r, c[st] = A.type == 2 ? B104[st] : c, c;
 }
-function XV(B104, A, e) {
+function X8(B104, A, e) {
   let t = ZB(A, B104), g = PR(e), n = B104[Lg].rendererFactory, i = RU(B104, UY(B104, g, null, yU(e), t, A, null, n.createRenderer(t, e), null, null, null));
   return B104[A.index] = i;
 }
@@ -17846,18 +17846,18 @@ var ud;
 function HU(B104, A) {
   return ud(B104, A);
 }
-function ZV(B104) {
+function Z8(B104) {
   ud === void 0 && (ud = B104());
 }
 var SR = new uA("", { factory: () => false });
-var LR = new uA("", { factory: () => qV });
-var qV = 4e3;
-var _V = false;
+var LR = new uA("", { factory: () => q8 });
+var q8 = 4e3;
+var _8 = false;
 var er = (typeof ngServerMode > "u" || !ngServerMode) && typeof document < "u" && typeof document?.documentElement?.getAnimations == "function";
 function uY(B104) {
-  return B104[Je].get(SR, _V);
+  return B104[Je].get(SR, _8);
 }
-function $V(B104, A, e) {
+function $8(B104, A, e) {
   let t = WC.get(B104);
   if (t) {
     for (let g of A) t.classList.push(g);
@@ -18448,7 +18448,7 @@ function CH(B104, A) {
 }
 function dz(B104, A, e) {
   let t = e.directiveStart, g = e.directiveEnd;
-  Wn(e) && XV(A, e, B104.data[t + e.componentOffset]), B104.firstCreatePass || TD(e, A);
+  Wn(e) && X8(A, e, B104.data[t + e.componentOffset]), B104.firstCreatePass || TD(e, A);
   let n = e.initialInputs;
   for (let i = t; i < g; i++) {
     let Q = B104.data[i], o = as(A, B104, i, e);
@@ -19511,7 +19511,7 @@ function zg(B104, A, e, t, g, n) {
 function So(B104, A, e) {
   return function t(g) {
     let n = t.__ngNativeEl__;
-    n !== void 0 && BV(g, n);
+    n !== void 0 && B8(g, n);
     let i = Wn(B104) ? Yn(B104.index, A) : A;
     kY(i, 5);
     let Q = A[oB], o = Xf(A, Q, e, g), r = t.__ngNextListenerFn__;
@@ -19536,7 +19536,7 @@ function Au(B104, A, e, t, g, n, i, Q) {
     c.__ngNextListenerFn__ = i, C.__ngLastListenerFn__ = i, r = true;
   } else {
     let c = ZB(B104, e), E = t ? t(c) : c;
-    gV(e, E, n, Q), t || (Q.__ngNativeEl__ = c);
+    g8(e, E, n, Q), t || (Q.__ngNativeEl__ = c);
     let w = g.listen(E, n, Q);
     if (!UK(n)) {
       let D = t ? (F) => t(og(F[B104.index])) : B104.index;
@@ -19726,7 +19726,7 @@ var Zo = class extends vY {
     return this.cachedOutputs ??= yK(this.componentDef.outputs), this.cachedOutputs;
   }
   constructor(A, e) {
-    super(), this.componentDef = A, this.ngModule = e, this.componentType = A.type, this.selector = zV(A.selectors), this.ngContentSelectors = A.ngContentSelectors ?? [], this.isBoundToModule = !!e;
+    super(), this.componentDef = A, this.ngModule = e, this.componentType = A.type, this.selector = z8(A.selectors), this.ngContentSelectors = A.ngContentSelectors ?? [], this.isBoundToModule = !!e;
   }
   create(A, e, t, g, n, i) {
     Te(pe.DynamicComponentStart);
@@ -19756,7 +19756,7 @@ var Zo = class extends vY {
   }
 };
 function jK(B104, A, e, t) {
-  let g = B104 ? ["ng-version", "21.2.25"] : KV(A.selectors[0]), n = null, i = null, Q = 0;
+  let g = B104 ? ["ng-version", "21.2.25"] : K8(A.selectors[0]), n = null, i = null, Q = 0;
   if (e) for (let C of e) Q += C[Jd].requiredVars, C.create && (C.targetIdx = 0, (n ??= []).push(C)), C.update && (C.targetIdx = 0, (i ??= []).push(C));
   if (t) for (let C = 0; C < t.length; C++) {
     let c = t[C];
@@ -20655,7 +20655,7 @@ function U3(B104, A) {
 }
 function DJ(B104, A, e, t) {
   let g = e.get(We);
-  return AV(B104, () => g.run(A), (n) => g.runOutsideAngular(() => $8(n)), t);
+  return A8(B104, () => g.run(A), (n) => g.runOutsideAngular(() => $V(n)), t);
 }
 function u3(B104, A, e) {
   return e == null ? B104 : e >= 0 ? w0(e, B104) : B104[A.index][rB] ?? null;
@@ -21351,7 +21351,7 @@ function Lt(B104, A, e) {
 async function qY(B104, A, e) {
   let t = B104.get(bs);
   if (t.hydrating.has(A)) return;
-  let { parentBlockPromise: n, hydrationQueue: i } = rV(A, B104);
+  let { parentBlockPromise: n, hydrationQueue: i } = r8(A, B104);
   if (i.length === 0) return;
   n !== null && i.shift(), J3(t, i), n !== null && await n;
   let Q = i[0];
@@ -21622,7 +21622,7 @@ function v3(B104, A, e, t) {
   if (i && i.length > 0) {
     t.runOutsideAngular(() => {
       Q.push(n.listen(g, "animationstart", r)), Q.push(n.listen(g, "transitionstart", r));
-    }), $V(g, i, Q);
+    }), $8(g, i, Q);
     for (let c of i) n.addClass(g, c);
     t.runOutsideAngular(() => {
       requestAnimationFrame(() => {
@@ -22015,7 +22015,7 @@ function Ey(B104, A, e, t, g) {
 }
 function I() {
   let B104 = Qe(), A = te(), e = RY(A);
-  return B104.firstCreatePass && _U(B104, e), M0(e) && l0(), D0(), e.classesWithoutHost != null && M8(e) && eU(B104, e, gA(), e.classesWithoutHost, true), e.stylesWithoutHost != null && F8(e) && eU(B104, e, gA(), e.stylesWithoutHost, false), I;
+  return B104.firstCreatePass && _U(B104, e), M0(e) && l0(), D0(), e.classesWithoutHost != null && MV(e) && eU(B104, e, gA(), e.classesWithoutHost, true), e.stylesWithoutHost != null && FV(e) && eU(B104, e, gA(), e.stylesWithoutHost, false), I;
 }
 function $(B104, A, e, t) {
   return s(B104, A, e, t), I(), $;
@@ -22347,7 +22347,7 @@ function IO(B104, A, e, t, g, n) {
 }
 function Ck(B104, A, e, t, g, n, i) {
   let Q = Ss(B104, t, 1, null), o = Q << Xn.SHIFT, r = mC();
-  A === r && (r = null), r === null && (o |= Xn.APPEND_EAGERLY), i && (o |= Xn.COMMENT, ZV(BK)), g.push(o, n === null ? "" : n);
+  A === r && (r = null), r === null && (o |= Xn.APPEND_EAGERLY), i && (o |= Xn.COMMENT, Z8(BK)), g.push(o, n === null ? "" : n);
   let C = XU(B104, Q, i ? 32 : 1, n === null ? "" : n, null);
   GH(e, C);
   let c = C.index;
@@ -22639,14 +22639,14 @@ function a(B104 = 1) {
   return If(B104);
 }
 function JO(B104, A) {
-  let e = null, t = PV(B104);
+  let e = null, t = P8(B104);
   for (let g = 0; g < A.length; g++) {
     let n = A[g];
     if (n === "*") {
       e = g;
       continue;
     }
-    if (t === null ? vR(B104, n, true) : LV(t, n)) return g;
+    if (t === null ? vR(B104, n, true) : L8(t, n)) return g;
   }
   return e;
 }
@@ -23356,7 +23356,7 @@ function Nj(B104, A, e, t, g = null, n = null) {
   A.apply(null, [B104, e, ...t]);
   let { newDef: Q, oldDef: o } = CX(i, wB(B104));
   if (B104[Ni] = Q, o.tView) {
-    let r = L8().values();
+    let r = LV().values();
     for (let C of r) lQ(C) && C[dB] === null && yD(g, n, Q, o, C);
   }
 }
@@ -23423,7 +23423,7 @@ function wX(B104) {
     B104.projection = null;
   }
 }
-var mi = { \u0275\u0275animateEnter: Cs, \u0275\u0275animateEnterListener: cs, \u0275\u0275animateLeave: Es, \u0275\u0275animateLeaveListener: QY, \u0275\u0275attribute: W, \u0275\u0275defineComponent: ee, \u0275\u0275defineDirective: _B, \u0275\u0275defineInjectable: yA, \u0275\u0275defineInjector: wn, \u0275\u0275defineNgModule: ji, \u0275\u0275definePipe: Qu, \u0275\u0275directiveInject: qn, \u0275\u0275getInheritedFactory: Hs, \u0275\u0275inject: VA, \u0275\u0275injectAttribute: IY, \u0275\u0275invalidFactory: JH, \u0275\u0275invalidFactoryDep: ZI, \u0275\u0275templateRefExtractor: fQ, \u0275\u0275resetView: u, \u0275\u0275HostDirectivesFeature: cJ, \u0275\u0275NgOnChangesFeature: It, \u0275\u0275ControlFeature: CJ, \u0275\u0275ProvidersFeature: Bj, \u0275\u0275InheritDefinitionFeature: ou, \u0275\u0275ExternalStylesFeature: tj, \u0275\u0275nextContext: a, \u0275\u0275namespaceHTML: jA, \u0275\u0275namespaceMathML: R0, \u0275\u0275namespaceSVG: AA, \u0275\u0275enableBindings: F0, \u0275\u0275disableBindings: h0, \u0275\u0275elementStart: s, \u0275\u0275elementEnd: I, \u0275\u0275element: $, \u0275\u0275elementContainerStart: $Y, \u0275\u0275elementContainerEnd: Os, \u0275\u0275domElement: Og, \u0275\u0275domElementStart: Ti, \u0275\u0275domElementEnd: vi, \u0275\u0275domElementContainer: Fu, \u0275\u0275domElementContainerStart: AM, \u0275\u0275domElementContainerEnd: Mu, \u0275\u0275domTemplate: ru, \u0275\u0275domListener: Gu, \u0275\u0275elementContainer: _n, \u0275\u0275pureFunction0: Vt, \u0275\u0275pureFunction1: $n, \u0275\u0275pureFunction2: ij, \u0275\u0275pureFunction3: Qj, \u0275\u0275pureFunction4: oj, \u0275\u0275pureFunction5: nM, \u0275\u0275pureFunction6: rj, \u0275\u0275pureFunction7: Cj, \u0275\u0275pureFunction8: cj, \u0275\u0275pureFunctionV: Ej, \u0275\u0275getCurrentView: L, \u0275\u0275restoreView: U, \u0275\u0275listener: G, \u0275\u0275projection: tM, \u0275\u0275syntheticHostProperty: hu, \u0275\u0275syntheticHostListener: Nu, \u0275\u0275pipeBind1: Mj, \u0275\u0275pipeBind2: Fj, \u0275\u0275pipeBind3: hj, \u0275\u0275pipeBind4: lj, \u0275\u0275pipeBindV: dj, \u0275\u0275projectionDef: BM, \u0275\u0275domProperty: Xs, \u0275\u0275ariaProperty: Yu, \u0275\u0275property: x, \u0275\u0275control: WH, \u0275\u0275controlCreate: PH, \u0275\u0275pipe: Yj, \u0275\u0275queryRefresh: TB, \u0275\u0275queryAdvance: Yk, \u0275\u0275viewQuery: Yt, \u0275\u0275viewQuerySignal: fu, \u0275\u0275loadQuery: vB, \u0275\u0275contentQuery: mu, \u0275\u0275contentQuerySignal: xu, \u0275\u0275reference: qe, \u0275\u0275classMap: tc, \u0275\u0275styleMap: dk, \u0275\u0275styleProp: hA, \u0275\u0275classProp: HA, \u0275\u0275advance: Y, \u0275\u0275template: bi, \u0275\u0275conditional: T, \u0275\u0275conditionalCreate: b, \u0275\u0275conditionalBranchCreate: _Y, \u0275\u0275defer: xJ, \u0275\u0275deferWhen: fJ, \u0275\u0275deferOnIdle: JJ, \u0275\u0275deferOnImmediate: bJ, \u0275\u0275deferOnTimer: PJ, \u0275\u0275deferOnHover: LJ, \u0275\u0275deferOnInteraction: KJ, \u0275\u0275deferOnViewport: ZJ, \u0275\u0275deferPrefetchWhen: yJ, \u0275\u0275deferPrefetchOnIdle: kJ, \u0275\u0275deferPrefetchOnImmediate: TJ, \u0275\u0275deferPrefetchOnTimer: WJ, \u0275\u0275deferPrefetchOnHover: VJ, \u0275\u0275deferPrefetchOnInteraction: OJ, \u0275\u0275deferPrefetchOnViewport: qJ, \u0275\u0275deferHydrateWhen: RJ, \u0275\u0275deferHydrateNever: HJ, \u0275\u0275deferHydrateOnIdle: jJ, \u0275\u0275deferHydrateOnImmediate: vJ, \u0275\u0275deferHydrateOnTimer: SJ, \u0275\u0275deferHydrateOnHover: zJ, \u0275\u0275deferHydrateOnInteraction: XJ, \u0275\u0275deferHydrateOnViewport: _J, \u0275\u0275deferEnableTimerScheduling: hJ, \u0275\u0275repeater: iA, \u0275\u0275repeaterCreate: nA, \u0275\u0275repeaterTrackByIndex: Ye, \u0275\u0275repeaterTrackByIdentity: Ke, \u0275\u0275componentInstance: $J, \u0275\u0275text: h, \u0275\u0275textInterpolate: cA, \u0275\u0275textInterpolate1: CA, \u0275\u0275textInterpolate2: tB, \u0275\u0275textInterpolate3: gr, \u0275\u0275textInterpolate4: yu, \u0275\u0275textInterpolate5: Ru, \u0275\u0275textInterpolate6: Hu, \u0275\u0275textInterpolate7: Ju, \u0275\u0275textInterpolate8: ku, \u0275\u0275textInterpolateV: ju, \u0275\u0275i18n: wk, \u0275\u0275i18nAttributes: ak, \u0275\u0275i18nExp: uu, \u0275\u0275i18nStart: du, \u0275\u0275i18nEnd: Uu, \u0275\u0275i18nApply: Ik, \u0275\u0275i18nPostprocess: Dk, \u0275\u0275resolveWindow: Ng, \u0275\u0275resolveDocument: UB, \u0275\u0275resolveBody: bR, \u0275\u0275setComponentScope: gj, \u0275\u0275setNgModuleScope: nj, \u0275\u0275registerNgModuleType: nu, \u0275\u0275getComponentDepsFactory: Uj, \u0275setClassDebugInfo: CB, \u0275\u0275declareLet: qs, \u0275\u0275storeLet: gM, \u0275\u0275arrowFunction: $k, \u0275\u0275readContextLet: Wi, \u0275\u0275attachSourceLocations: Wk, \u0275\u0275interpolate: Sk, \u0275\u0275interpolate1: Lk, \u0275\u0275interpolate2: Vk, \u0275\u0275interpolate3: zk, \u0275\u0275interpolate4: Kk, \u0275\u0275interpolate5: Ok, \u0275\u0275interpolate6: Xk, \u0275\u0275interpolate7: Zk, \u0275\u0275interpolate8: qk, \u0275\u0275interpolateV: _k, \u0275\u0275sanitizeHtml: Ps, \u0275\u0275sanitizeStyle: GU, \u0275\u0275sanitizeResourceUrl: dY, \u0275\u0275sanitizeScript: pU, \u0275\u0275validateAttribute: mU, \u0275\u0275sanitizeUrl: Ji, \u0275\u0275sanitizeUrlOrResourceUrl: JR, \u0275\u0275trustConstantHtml: RR, \u0275\u0275trustConstantResourceUrl: HR, forwardRef: bE, resolveForwardRef: Re, \u0275\u0275twoWayProperty: bu, \u0275\u0275twoWayBindingSet: vk, \u0275\u0275twoWayListener: Tu, \u0275\u0275replaceMetadata: Nj, \u0275\u0275getReplaceMetadataURL: uj };
+var mi = { \u0275\u0275animateEnter: Cs, \u0275\u0275animateEnterListener: cs, \u0275\u0275animateLeave: Es, \u0275\u0275animateLeaveListener: QY, \u0275\u0275attribute: W, \u0275\u0275defineComponent: ee, \u0275\u0275defineDirective: _B, \u0275\u0275defineInjectable: yA, \u0275\u0275defineInjector: wn, \u0275\u0275defineNgModule: ji, \u0275\u0275definePipe: Qu, \u0275\u0275directiveInject: qn, \u0275\u0275getInheritedFactory: Hs, \u0275\u0275inject: VA, \u0275\u0275injectAttribute: IY, \u0275\u0275invalidFactory: JH, \u0275\u0275invalidFactoryDep: ZI, \u0275\u0275templateRefExtractor: fQ, \u0275\u0275resetView: u, \u0275\u0275HostDirectivesFeature: cJ, \u0275\u0275NgOnChangesFeature: It, \u0275\u0275ControlFeature: CJ, \u0275\u0275ProvidersFeature: Bj, \u0275\u0275InheritDefinitionFeature: ou, \u0275\u0275ExternalStylesFeature: tj, \u0275\u0275nextContext: a, \u0275\u0275namespaceHTML: JA, \u0275\u0275namespaceMathML: R0, \u0275\u0275namespaceSVG: AA, \u0275\u0275enableBindings: F0, \u0275\u0275disableBindings: h0, \u0275\u0275elementStart: s, \u0275\u0275elementEnd: I, \u0275\u0275element: $, \u0275\u0275elementContainerStart: $Y, \u0275\u0275elementContainerEnd: Os, \u0275\u0275domElement: Og, \u0275\u0275domElementStart: Ti, \u0275\u0275domElementEnd: vi, \u0275\u0275domElementContainer: Fu, \u0275\u0275domElementContainerStart: AM, \u0275\u0275domElementContainerEnd: Mu, \u0275\u0275domTemplate: ru, \u0275\u0275domListener: Gu, \u0275\u0275elementContainer: _n, \u0275\u0275pureFunction0: Vt, \u0275\u0275pureFunction1: $n, \u0275\u0275pureFunction2: ij, \u0275\u0275pureFunction3: Qj, \u0275\u0275pureFunction4: oj, \u0275\u0275pureFunction5: nM, \u0275\u0275pureFunction6: rj, \u0275\u0275pureFunction7: Cj, \u0275\u0275pureFunction8: cj, \u0275\u0275pureFunctionV: Ej, \u0275\u0275getCurrentView: L, \u0275\u0275restoreView: U, \u0275\u0275listener: G, \u0275\u0275projection: tM, \u0275\u0275syntheticHostProperty: hu, \u0275\u0275syntheticHostListener: Nu, \u0275\u0275pipeBind1: Mj, \u0275\u0275pipeBind2: Fj, \u0275\u0275pipeBind3: hj, \u0275\u0275pipeBind4: lj, \u0275\u0275pipeBindV: dj, \u0275\u0275projectionDef: BM, \u0275\u0275domProperty: Xs, \u0275\u0275ariaProperty: Yu, \u0275\u0275property: x, \u0275\u0275control: WH, \u0275\u0275controlCreate: PH, \u0275\u0275pipe: Yj, \u0275\u0275queryRefresh: TB, \u0275\u0275queryAdvance: Yk, \u0275\u0275viewQuery: Yt, \u0275\u0275viewQuerySignal: fu, \u0275\u0275loadQuery: vB, \u0275\u0275contentQuery: mu, \u0275\u0275contentQuerySignal: xu, \u0275\u0275reference: qe, \u0275\u0275classMap: tc, \u0275\u0275styleMap: dk, \u0275\u0275styleProp: hA, \u0275\u0275classProp: HA, \u0275\u0275advance: Y, \u0275\u0275template: bi, \u0275\u0275conditional: T, \u0275\u0275conditionalCreate: b, \u0275\u0275conditionalBranchCreate: _Y, \u0275\u0275defer: xJ, \u0275\u0275deferWhen: fJ, \u0275\u0275deferOnIdle: JJ, \u0275\u0275deferOnImmediate: bJ, \u0275\u0275deferOnTimer: PJ, \u0275\u0275deferOnHover: LJ, \u0275\u0275deferOnInteraction: KJ, \u0275\u0275deferOnViewport: ZJ, \u0275\u0275deferPrefetchWhen: yJ, \u0275\u0275deferPrefetchOnIdle: kJ, \u0275\u0275deferPrefetchOnImmediate: TJ, \u0275\u0275deferPrefetchOnTimer: WJ, \u0275\u0275deferPrefetchOnHover: VJ, \u0275\u0275deferPrefetchOnInteraction: OJ, \u0275\u0275deferPrefetchOnViewport: qJ, \u0275\u0275deferHydrateWhen: RJ, \u0275\u0275deferHydrateNever: HJ, \u0275\u0275deferHydrateOnIdle: jJ, \u0275\u0275deferHydrateOnImmediate: vJ, \u0275\u0275deferHydrateOnTimer: SJ, \u0275\u0275deferHydrateOnHover: zJ, \u0275\u0275deferHydrateOnInteraction: XJ, \u0275\u0275deferHydrateOnViewport: _J, \u0275\u0275deferEnableTimerScheduling: hJ, \u0275\u0275repeater: iA, \u0275\u0275repeaterCreate: nA, \u0275\u0275repeaterTrackByIndex: Ye, \u0275\u0275repeaterTrackByIdentity: Ke, \u0275\u0275componentInstance: $J, \u0275\u0275text: h, \u0275\u0275textInterpolate: cA, \u0275\u0275textInterpolate1: CA, \u0275\u0275textInterpolate2: tB, \u0275\u0275textInterpolate3: gr, \u0275\u0275textInterpolate4: yu, \u0275\u0275textInterpolate5: Ru, \u0275\u0275textInterpolate6: Hu, \u0275\u0275textInterpolate7: Ju, \u0275\u0275textInterpolate8: ku, \u0275\u0275textInterpolateV: ju, \u0275\u0275i18n: wk, \u0275\u0275i18nAttributes: ak, \u0275\u0275i18nExp: uu, \u0275\u0275i18nStart: du, \u0275\u0275i18nEnd: Uu, \u0275\u0275i18nApply: Ik, \u0275\u0275i18nPostprocess: Dk, \u0275\u0275resolveWindow: Ng, \u0275\u0275resolveDocument: UB, \u0275\u0275resolveBody: bR, \u0275\u0275setComponentScope: gj, \u0275\u0275setNgModuleScope: nj, \u0275\u0275registerNgModuleType: nu, \u0275\u0275getComponentDepsFactory: Uj, \u0275setClassDebugInfo: CB, \u0275\u0275declareLet: qs, \u0275\u0275storeLet: gM, \u0275\u0275arrowFunction: $k, \u0275\u0275readContextLet: Wi, \u0275\u0275attachSourceLocations: Wk, \u0275\u0275interpolate: Sk, \u0275\u0275interpolate1: Lk, \u0275\u0275interpolate2: Vk, \u0275\u0275interpolate3: zk, \u0275\u0275interpolate4: Kk, \u0275\u0275interpolate5: Ok, \u0275\u0275interpolate6: Xk, \u0275\u0275interpolate7: Zk, \u0275\u0275interpolate8: qk, \u0275\u0275interpolateV: _k, \u0275\u0275sanitizeHtml: Ps, \u0275\u0275sanitizeStyle: GU, \u0275\u0275sanitizeResourceUrl: dY, \u0275\u0275sanitizeScript: pU, \u0275\u0275validateAttribute: mU, \u0275\u0275sanitizeUrl: Ji, \u0275\u0275sanitizeUrlOrResourceUrl: JR, \u0275\u0275trustConstantHtml: RR, \u0275\u0275trustConstantResourceUrl: HR, forwardRef: bE, resolveForwardRef: Re, \u0275\u0275twoWayProperty: bu, \u0275\u0275twoWayBindingSet: vk, \u0275\u0275twoWayListener: Tu, \u0275\u0275replaceMetadata: Nj, \u0275\u0275getReplaceMetadataURL: uj };
 var is = null;
 function Gj(B104) {
   is !== null && (B104.defaultEncapsulation !== is.defaultEncapsulation || B104.preserveWhitespaces !== is.preserveWhitespaces) || (is = B104);
@@ -26563,7 +26563,7 @@ function o9(B104, A) {
     s(0, "button", 22), G("click", function() {
       let g = U(e).$implicit, n = a(3);
       return u(n.editor.selectInkTool(g.id));
-    }), AA(), s(1, "svg", 23), nA(2, Q9, 1, 5, ":svg:path", 10, Ye), I(), jA(), s(4, "strong"), h(5), I(), s(6, "span"), h(7), I()();
+    }), AA(), s(1, "svg", 23), nA(2, Q9, 1, 5, ":svg:path", 10, Ye), I(), JA(), s(4, "strong"), h(5), I(), s(6, "span"), h(7), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a(3);
@@ -26634,7 +26634,7 @@ var xM = class B72 {
     this.\u0275cmp = ee({ type: B72, selectors: [["era-brush-panel"]], inputs: { editor: "editor" }, outputs: { closed: "closed" }, decls: 30, vars: 6, consts: [["gallery", ""], ["aria-label", "Colores y pinceles"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cerrar colores y pinceles", "data-era-tooltip", "Cerrar colores y pinceles", 1, "close", 3, "click"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "m6 6 12 12M18 6 6 18"], [1, "hint"], ["eraTouchActivate", "", "type", "button", 1, "restore-writing", 3, "disabled"], [1, "live-preview"], [1, "preview-heading"], ["viewBox", "0 0 180 50", "aria-label", "Vista previa del pincel", "role", "img", 1, "preview"], [3, "fill"], [1, "preview-tones"], ["type", "search", "aria-label", "Buscar pinceles", "placeholder", "Buscar pincel\u2026", 1, "brush-search", 3, "input", "value"], ["eraTouchActivate", "", "type", "button", 1, "restore-writing", 3, "click", "disabled"], [1, "tool-family"], ["role", "group", "aria-label", "Categor\xEDas de pintura", 1, "material-categories"], [1, "gallery-navigation"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["tabindex", "0", "role", "group", 1, "brush-types"], ["eraTouchActivate", "", "type", "button", 1, "brush-card", 3, "disabled"], ["eraTouchActivate", "", "type", "button", 3, "disabled"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "brush-card", 3, "click", "disabled"], ["viewBox", "0 0 180 50", "aria-hidden", "true"]], template: function(e, t) {
       e & 1 && (s(0, "section", 1)(1, "header")(2, "div")(3, "h2"), h(4, "Pinceles"), I()(), s(5, "button", 2), G("click", function() {
         return t.closed.emit();
-      }), AA(), s(6, "svg", 3), $(7, "path", 4), I()()(), b(8, B92, 2, 0, "p", 5), b(9, t9, 2, 1, "button", 6), jA(), s(10, "div", 7)(11, "div", 8)(12, "span"), h(13), I()(), AA(), s(14, "svg", 9)(15, "g"), nA(16, g9, 1, 5, ":svg:path", 10, Ye), I()(), jA(), s(18, "div", 11)(19, "span"), h(20, "Muestra del trazo"), I(), s(21, "span"), h(22, "Claro \xB7 Oscuro"), I()()(), s(23, "fieldset")(24, "legend"), h(25, "Pincel"), I(), s(26, "input", 12), G("input", function(n) {
+      }), AA(), s(6, "svg", 3), $(7, "path", 4), I()()(), b(8, B92, 2, 0, "p", 5), b(9, t9, 2, 1, "button", 6), JA(), s(10, "div", 7)(11, "div", 8)(12, "span"), h(13), I()(), AA(), s(14, "svg", 9)(15, "g"), nA(16, g9, 1, 5, ":svg:path", 10, Ye), I()(), JA(), s(18, "div", 11)(19, "span"), h(20, "Muestra del trazo"), I(), s(21, "span"), h(22, "Claro \xB7 Oscuro"), I()()(), s(23, "fieldset")(24, "legend"), h(25, "Pincel"), I(), s(26, "input", 12), G("input", function(n) {
         return t.search = t.value(n);
       }), I(), nA(27, C9, 1, 1, null, null, lN), b(29, c9, 2, 0, "p", 5), I()()), e & 2 && (Y(8), T(t.editor.pdfReader ? 8 : -1), Y(), T(t.editor.canRestoreWriting ? 9 : -1), Y(4), cA(t.brushName), Y(2), W("opacity", t.editor.opacityPercent / 100), Y(), iA(t.previewParts(t.editor.brush)), Y(10), x("value", t.search), Y(), iA(t.brushGroups), Y(2), T(t.brushTypes.length ? -1 : 29));
     }, dependencies: [Me], styles: [`[_nghost-%COMP%] {
@@ -28171,11 +28171,11 @@ var PM = class B76 {
         return t.editor.setColor(n.target.value);
       }), I(), s(5, "button", 4), G("click", function() {
         return t.editor.toggleColorPicker(), t.closed.emit();
-      }), AA(), s(6, "svg", 5), $(7, "path", 6), I()(), jA(), s(8, "button", 7), G("click", function() {
+      }), AA(), s(6, "svg", 5), $(7, "path", 6), I()(), JA(), s(8, "button", 7), G("click", function() {
         return t.editor.toggleFavoriteColor();
-      }), AA(), s(9, "svg", 5), $(10, "path", 8), I()(), jA(), s(11, "button", 9), G("click", function() {
+      }), AA(), s(9, "svg", 5), $(10, "path", 8), I()(), JA(), s(11, "button", 9), G("click", function() {
         return t.closed.emit();
-      }), AA(), s(12, "svg", 5), $(13, "path", 10), I()()(), b(14, X9, 5, 0, "div", 11), jA(), $(15, "div", 12), b(16, $9, 4, 1, ":svg:svg", 13)(17, g7, 6, 4)(18, i7, 3, 0, "div", 14), I()), e & 2 && (x("eraAnchoredPopup", t.anchor)("eraPopupBelow", t.below), Y(2), iA(t.modes), Y(2), x("value", t.editor.color), Y(4), x("disabled", !t.editor.isFavoriteColor(t.editor.color) && t.editor.favoriteColors.length >= t.editor.favoriteColorLimit), W("aria-label", t.editor.isFavoriteColor(t.editor.color) ? "Quitar este color de favoritos" : "Guardar este color")("aria-pressed", t.editor.isFavoriteColor(t.editor.color)), Y(6), T(t.quickColors.length ? 14 : -1), Y(2), T(t.mode === "favorites" ? 16 : t.mode === "palette" ? 17 : 18));
+      }), AA(), s(12, "svg", 5), $(13, "path", 10), I()()(), b(14, X9, 5, 0, "div", 11), JA(), $(15, "div", 12), b(16, $9, 4, 1, ":svg:svg", 13)(17, g7, 6, 4)(18, i7, 3, 0, "div", 14), I()), e & 2 && (x("eraAnchoredPopup", t.anchor)("eraPopupBelow", t.below), Y(2), iA(t.modes), Y(2), x("value", t.editor.color), Y(4), x("disabled", !t.editor.isFavoriteColor(t.editor.color) && t.editor.favoriteColors.length >= t.editor.favoriteColorLimit), W("aria-label", t.editor.isFavoriteColor(t.editor.color) ? "Quitar este color de favoritos" : "Guardar este color")("aria-pressed", t.editor.isFavoriteColor(t.editor.color)), Y(6), T(t.quickColors.length ? 14 : -1), Y(2), T(t.mode === "favorites" ? 16 : t.mode === "palette" ? 17 : 18));
     }, dependencies: [Me, Xg, Gt, vM], styles: [`[_nghost-%COMP%] {
   display: block;
 }
@@ -28913,7 +28913,7 @@ var WM = class B77 {
         return t.cancelPalette();
       })("lostpointercapture", function() {
         return t.cancelPalette();
-      }), b(1, E7, 5, 1, ":svg:g", 1)(2, a7, 2, 0), I(), jA(), s(3, "div", 2)(4, "button", 3), G("keydown", function(n) {
+      }), b(1, E7, 5, 1, ":svg:g", 1)(2, a7, 2, 0), I(), JA(), s(3, "div", 2)(4, "button", 3), G("keydown", function(n) {
         return t.paletteKey(n);
       })("click", function() {
         return t.setMode("palette");
@@ -28923,9 +28923,9 @@ var WM = class B77 {
         return t.setMode("rgb");
       }), h(9, " RGB "), I()(), s(10, "div", 5)(11, "button", 6), G("click", function() {
         return t.editor.toggleColorPicker(), t.closed.emit();
-      }), AA(), s(12, "svg", 7), $(13, "path", 8), I()(), jA(), s(14, "button", 9), G("click", function() {
+      }), AA(), s(12, "svg", 7), $(13, "path", 8), I()(), JA(), s(14, "button", 9), G("click", function() {
         return t.setMode("favorites");
-      }), AA(), s(15, "svg", 7), $(16, "path", 10), I()(), jA(), s(17, "button", 11), G("click", function() {
+      }), AA(), s(15, "svg", 7), $(16, "path", 10), I()(), JA(), s(17, "button", 11), G("click", function() {
         return t.saveColor();
       }), AA(), s(18, "svg", 7), b(19, I7, 1, 0, ":svg:path", 12)(20, D7, 1, 0, ":svg:path", 13), I()()(), b(21, Y7, 2, 4, "span", 14)), e & 2 && (W("viewBox", "0 0 " + t.width + " " + t.height)("data-palette-phase", t.phase)("data-color-mode", t.mode)("tabindex", t.isPalette ? 0 : null)("aria-description", t.isPalette ? "Arrastra o usa la rueda del mouse para girar. Con teclado, usa las flechas o ReP\xE1g y AvP\xE1g." : null), Y(), T(t.isPalette ? 1 : 2), Y(3), hA("left", t.controls.palette == null ? null : t.controls.palette.x, "px")("top", t.controls.palette == null ? null : t.controls.palette.y, "px"), HA("active", t.mode === "palette"), W("aria-pressed", t.mode === "palette"), Y(2), hA("left", t.controls.hsl == null ? null : t.controls.hsl.x, "px")("top", t.controls.hsl == null ? null : t.controls.hsl.y, "px"), HA("active", t.mode === "hsl"), W("aria-pressed", t.mode === "hsl"), Y(2), hA("left", t.controls.rgb == null ? null : t.controls.rgb.x, "px")("top", t.controls.rgb == null ? null : t.controls.rgb.y, "px"), HA("active", t.mode === "rgb"), W("aria-pressed", t.mode === "rgb"), Y(3), hA("left", t.controls.eyedropper == null ? null : t.controls.eyedropper.x, "px")("top", t.controls.eyedropper == null ? null : t.controls.eyedropper.y, "px"), Y(3), hA("left", t.controls.favorites == null ? null : t.controls.favorites.x, "px")("top", t.controls.favorites == null ? null : t.controls.favorites.y, "px"), HA("active", t.mode === "favorites"), W("aria-pressed", t.mode === "favorites"), Y(3), hA("left", t.controls.save == null ? null : t.controls.save.x, "px")("top", t.controls.save == null ? null : t.controls.save.y, "px"), x("disabled", !t.editor.isFavoriteColor(t.editor.color) && t.editor.favoriteColors.length >= t.editor.favoriteColorLimit), W("aria-label", t.editor.isFavoriteColor(t.editor.color) ? "Quitar este color de favoritos" : "Guardar este color")("data-era-tooltip", t.editor.isFavoriteColor(t.editor.color) ? "Quitar este color de favoritos" : t.editor.favoriteColors.length >= t.editor.favoriteColorLimit ? "Favoritos llenos \xB7 elige uno y qu\xEDtalo para guardar otro" : "Guardar este color")("aria-pressed", t.editor.isFavoriteColor(t.editor.color)), Y(2), T(t.editor.isFavoriteColor(t.editor.color) ? 19 : 20), Y(2), T(t.mode === "favorites" && !t.editor.favoriteColors.length ? 21 : -1));
     }, dependencies: [Me], styles: [`[_nghost-%COMP%] {
@@ -29359,7 +29359,7 @@ function b7(B104, A) {
       U(e);
       let g = a();
       return u(g.insertText());
-    }), AA(), s(2, "svg", 9), $(3, "path", 60), I(), h(4, "Texto "), I(), jA(), s(5, "button", 61), G("click", function() {
+    }), AA(), s(2, "svg", 9), $(3, "path", 60), I(), h(4, "Texto "), I(), JA(), s(5, "button", 61), G("click", function() {
       U(e);
       let g = a();
       return u(g.openPaste());
@@ -29775,17 +29775,17 @@ var SM = class B78 {
     }, inputs: { horizontal: "horizontal", vertical: "vertical", editor: "editor", appearanceOpen: "appearanceOpen", readingPdf: "readingPdf" }, outputs: { appearance: "appearance" }, decls: 44, vars: 45, consts: [["colorButton", ""], ["aria-label", "Herramientas de dibujo", 1, "wheel"], [1, "wheel-face"], ["role", "group", "aria-label", "Herramientas principales", 1, "wheel-main"], ["data-era-horizontal-drag", "", "tabindex", "0", "aria-label", "Mover barra de herramientas", "aria-description", "Arrastra hacia un lugar sombreado o usa Alt y flechas para elegir un lado. Arrastra fuera o pulsa flecha abajo para recuperar la rueda.", "title", "Arrastra fuera para recuperar la rueda", 1, "wheel-horizontal-grip"], ["role", "group", "aria-label", "Rueda de herramientas", 1, "wheel-ring"], ["aria-hidden", "true", 1, "wheel-brush-values"], ["aria-label", "Historial", 1, "wheel-history"], ["eraTouchActivate", "", "type", "button", "aria-label", "Deshacer", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "M8 4 3 9l5 5M3 9h10a7 7 0 0 1 7 7v4"], ["eraTouchActivate", "", "type", "button", "aria-label", "Rehacer", 3, "click", "disabled"], ["d", "m16 4 5 5-5 5M21 9H11a7 7 0 0 0-7 7v4"], ["eraTouchActivate", "", "type", "button", "aria-label", "Eliminar selecci\xF3n", 1, "wheel-delete", 3, "disabled"], ["data-era-controls-drag", "", "role", "group", 1, "wheel-hub"], ["eraTouchActivate", "", "type", "button", "aria-label", "Ajustar grosor", 1, "wheel-width", 3, "click", "disabled"], ["d", "M3 8h18M3 16h18"], ["eraTouchActivate", "", "type", "button", "aria-label", "Colores favoritos", "data-era-tooltip", "Colores favoritos", 1, "wheel-color", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", 1, "wheel-smoothing", 3, "click", "disabled"], ["viewBox", "0 0 32 32", "aria-hidden", "true"], ["d", "M3 18c4 0 4-12 8-12s4 12 8 12 4-12 8-12"], ["eraTouchActivate", "", "type", "button", "aria-label", "Ajustar opacidad", 1, "wheel-opacity", 3, "click", "disabled"], ["cx", "16", "cy", "16", "r", "10"], ["d", "M16 6a10 10 0 0 1 0 20Z", 1, "opacity-half"], ["role", "group", "aria-label", "Tres colores r\xE1pidos", 1, "wheel-quick-colors"], ["role", "dialog", "aria-label", "Pegar referencia", "eraDismissible", "[data-era-text-menu], .plain-note, .text-citation", 1, "wheel-paste", 3, "eraAnchoredPopup", "eraPopupPoint"], [3, "editor", "anchor", "below", "quickColors"], [3, "editor", "anchor"], ["role", "dialog", "aria-label", "Insertar en el Lienzo", "eraDismissible", "[data-era-insert-menu]", 1, "wheel-insert", 3, "eraAnchoredPopup"], ["eraTouchActivate", "", "type", "button", 3, "held", "click", "dblclick", "keydown", "eraHold", "disabled"], ["aria-hidden", "true"], [1, "sector"], [1, "slot-color-strip", 3, "fill"], [1, "mini-brush", 3, "fill", "stroke"], [1, "glyph"], ["eraTouchActivate", "", "aria-label", "Marcador", "data-era-tooltip", "Marcador", 1, "wheel-quick-brush", 3, "selected", "disabled"], ["eraTouchActivate", "", "aria-label", "Flecha", "data-era-tooltip", "Flecha", 1, "wheel-quick-brush", 3, "selected", "disabled"], ["eraTouchActivate", "", "aria-label", "Marcador", "data-era-tooltip", "Marcador", 1, "wheel-quick-brush", 3, "click", "disabled"], ["d", "m5 15 10-10 5 5-10 10H5v-5Zm3-3 5 5M15 5l2-2 5 5-2 2M4 21h8", 1, "glyph"], ["eraTouchActivate", "", "aria-label", "Flecha", "data-era-tooltip", "Flecha", 1, "wheel-quick-brush", 3, "click", "disabled"], ["d", "M4 20 20 4M8 4h12v12", 1, "glyph"], [1, "slot-color-strip"], [1, "mini-brush"], [1, "slot-width", 3, "selected", "font-size", "left", "top"], [1, "slot-width"], ["eraTouchActivate", "", "type", "button", "aria-label", "Eliminar selecci\xF3n", 1, "wheel-delete", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "wheel-quick-color", 3, "background-color", "disabled"], ["eraTouchActivate", "", 1, "wheel-quick-color", 3, "click", "disabled"], ["role", "dialog", "aria-label", "Pegar referencia", "eraDismissible", "[data-era-text-menu], .plain-note, .text-citation", 1, "wheel-paste", 3, "dismissed", "popupDismissed", "eraAnchoredPopup", "eraPopupPoint"], [1, "adjustment-heading"], ["eraTouchActivate", "", "type", "button", "aria-label", "Cerrar pegar", 3, "click"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["aria-label", "Pegar desde el sistema", "placeholder", "Mant\xE9n pulsado aqu\xED y elige Pegar, o usa Ctrl+V", 3, "paste", "keydown", "disabled"], [1, "paste-file"], ["type", "file", "aria-label", "Importar archivo como referencia", "multiple", "", "accept", ".pdf,.png,.jpg,.jpeg,.webp,.md,.txt", 3, "change", "disabled"], ["role", "alert"], [3, "quickColorChanged", "modeChanged", "closed", "editor", "anchor", "below", "quickColors"], [3, "modeChanged", "closed", "editor", "anchor"], ["role", "dialog", "aria-label", "Insertar en el Lienzo", "eraDismissible", "[data-era-insert-menu]", 1, "wheel-insert", 3, "dismissed", "popupDismissed", "eraAnchoredPopup"], ["eraTouchActivate", "", "type", "button", "aria-label", "A\xF1adir texto", 3, "held", "click", "eraHold"], ["d", "M4 5h16M12 5v15M8 20h8"], ["eraTouchActivate", "", "type", "button", 3, "click"], ["eraDismissible", ".wheel-width, .wheel-opacity, .wheel-smoothing", 1, "wheel-adjustment", 3, "popupDismissed", "dismissed", "eraAnchoredPopup"], ["aria-live", "polite", "aria-atomic", "true"], [1, "adjustment-actions"], ["eraTouchActivate", "", "type", "button", 1, "adjustment-step", 3, "click", "disabled"], [1, "adjustment-presets"], ["eraTouchActivate", "", "type", "button", 3, "disabled"], ["type", "range", "step", "1", "aria-label", "Grosor de la rueda", "min", "0", "max", "1000", 3, "value", "disabled"], ["type", "range", "min", "1", "max", "100", "step", "1", "aria-label", "Opacidad del pincel", 3, "value", "disabled"], ["type", "range", "min", "0", "max", "100", "step", "1", 3, "value", "disabled"], ["aria-hidden", "true", 1, "adjustment-scale"], [3, "left"], ["type", "range", "step", "1", "aria-label", "Grosor de la rueda", "min", "0", "max", "1000", 3, "keydown", "input", "value", "disabled"], ["type", "range", "min", "1", "max", "100", "step", "1", "aria-label", "Opacidad del pincel", 3, "keydown", "input", "value", "disabled"], ["type", "range", "min", "0", "max", "100", "step", "1", 3, "keydown", "input", "value", "disabled"]], template: function(e, t) {
       e & 1 && (s(0, "nav", 1)(1, "div", 2)(2, "div", 3)(3, "button", 4), h(4, " \u283F "), I(), s(5, "div", 5), nA(6, p7, 8, 21, null, null, j4), I(), s(8, "div", 6), nA(9, x7, 1, 1, null, null, j4), I(), s(11, "div", 7)(12, "button", 8), G("click", function() {
         return t.editor.paletteHistory(false);
-      }), AA(), s(13, "svg", 9), $(14, "path", 10), I()(), jA(), s(15, "button", 11), G("click", function() {
+      }), AA(), s(13, "svg", 9), $(14, "path", 10), I()(), JA(), s(15, "button", 11), G("click", function() {
         return t.editor.paletteHistory(true);
-      }), AA(), s(16, "svg", 9), $(17, "path", 12), I()()(), b(18, f7, 2, 1, "button", 13), I(), jA(), s(19, "div", 14)(20, "button", 15), G("click", function() {
+      }), AA(), s(16, "svg", 9), $(17, "path", 12), I()()(), b(18, f7, 2, 1, "button", 13), I(), JA(), s(19, "div", 14)(20, "button", 15), G("click", function() {
         return t.edit("width");
-      }), AA(), s(21, "svg", 9), $(22, "path", 16), I(), jA(), s(23, "span"), h(24), I()(), s(25, "button", 17, 0), G("click", function() {
+      }), AA(), s(21, "svg", 9), $(22, "path", 16), I(), JA(), s(23, "span"), h(24), I()(), s(25, "button", 17, 0), G("click", function() {
         return t.toggleColors();
       }), I(), s(27, "button", 18), G("click", function() {
         return t.edit("smoothing");
-      }), AA(), s(28, "svg", 19), $(29, "path", 20), I(), jA(), s(30, "span"), h(31), I()(), s(32, "button", 21), G("click", function() {
+      }), AA(), s(28, "svg", 19), $(29, "path", 20), I(), JA(), s(30, "span"), h(31), I()(), s(32, "button", 21), G("click", function() {
         return t.edit("opacity");
-      }), AA(), s(33, "svg", 19), $(34, "circle", 22)(35, "path", 23), I(), jA(), s(36, "span"), h(37), I()(), b(38, R7, 3, 0, "div", 24), I()(), b(39, J7, 17, 8, "section", 25), b(40, k7, 1, 4, "era-linear-color", 26), b(41, j7, 1, 2, "era-radial-color", 27), b(42, b7, 7, 2, "section", 28), b(43, L7, 21, 11), I()), e & 2 && (hA("--wheel-color", t.editor.color), HA("wheel-movable", !t.editor.pickingColor), Y(6), iA(t.slots), Y(3), iA(t.slots), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[0]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanUndo), W("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Deshacer en PDF" : "Deshacer en Lienzo"), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[1]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanRedo), W("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Rehacer en PDF" : "Rehacer en Lienzo"), Y(3), T((t.editor.selected >= 0 || t.editor.selectedObjects.size || t.editor.selectedConnection !== null) && !t.readingPdf ? 18 : -1), Y(), HA("wheel-settings-hidden", t.horizontal && t.editor.tool !== "draw"), W("tabindex", t.editor.pickingColor ? null : 0)("aria-label", t.horizontal ? "Ajustes de escritura" : "Centro de la rueda")("aria-description", "En un borde, arrastra para girar toda la rueda. Arrastra la bolita de color para moverla. Alt y flechas izquierda/derecha giran; Alt y flecha arriba acopla la barra horizontal; Inicio restablece.")("data-era-tooltip", "Gira la rueda en el borde; mueve desde la bolita de color"), Y(), x("disabled", !t.editor.acceptingInput || !!t.editor.active), W("aria-description", t.toolWidthLabel)("data-era-tooltip", "Grosor \xB7 " + t.toolWidthLabel)("aria-expanded", t.editing === "width"), Y(4), cA(t.toolWidthLabel), Y(), hA("background-color", t.editor.color), x("disabled", !t.editor.acceptingInput || !!t.editor.active), W("aria-expanded", t.colorsOpen), Y(2), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), W("aria-label", t.editor.inkMode === "write" ? "Ajustar sensibilidad" : "Ajustar suavizado")("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : t.editor.inkMode === "write" ? "Sensibilidad \xB7 " + t.editor.writingStrength + "%" : "Suavizado \xB7 " + t.editor.smoothing + "%")("aria-expanded", t.editing === "smoothing"), Y(4), tB("", t.editor.tool === "erase" ? 0 : t.editor.inkMode === "write" ? t.editor.writingAssist ? t.editor.writingStrength : 0 : t.editor.smoothing, "", t.horizontal ? "" : "%"), Y(), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), W("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : "Opacidad \xB7 " + t.editor.opacityPercent + "%")("aria-expanded", t.editing === "opacity"), Y(5), tB("", t.editor.tool === "erase" ? 100 : t.editor.opacityPercent, "", t.horizontal ? "" : "%"), Y(), T(t.horizontal ? 38 : -1), Y(), T(t.pasteOpen ? 39 : -1), Y(), T(t.colorsOpen && t.horizontal ? 40 : -1), Y(), T(t.colorsOpen && !t.horizontal ? 41 : -1), Y(), T(t.plusOpen ? 42 : -1), Y(), T(t.editing ? 43 : -1));
+      }), AA(), s(33, "svg", 19), $(34, "circle", 22)(35, "path", 23), I(), JA(), s(36, "span"), h(37), I()(), b(38, R7, 3, 0, "div", 24), I()(), b(39, J7, 17, 8, "section", 25), b(40, k7, 1, 4, "era-linear-color", 26), b(41, j7, 1, 2, "era-radial-color", 27), b(42, b7, 7, 2, "section", 28), b(43, L7, 21, 11), I()), e & 2 && (hA("--wheel-color", t.editor.color), HA("wheel-movable", !t.editor.pickingColor), Y(6), iA(t.slots), Y(3), iA(t.slots), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[0]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanUndo), W("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Deshacer en PDF" : "Deshacer en Lienzo"), Y(3), hA("color", t.horizontal ? "#ffffff" : t.historyColors[1]), x("disabled", t.readingPdf || !t.editor.acceptingInput || !t.editor.paletteCanRedo), W("data-era-tooltip", t.editor.paletteTarget === "pdf" && t.editor.pdfReader ? "Rehacer en PDF" : "Rehacer en Lienzo"), Y(3), T((t.editor.selected >= 0 || t.editor.selectedObjects.size || t.editor.selectedConnection !== null) && !t.readingPdf ? 18 : -1), Y(), HA("wheel-settings-hidden", t.horizontal && t.editor.tool !== "draw"), W("tabindex", t.editor.pickingColor ? null : 0)("aria-label", t.horizontal ? "Ajustes de escritura" : "Centro de la rueda")("aria-description", "En un borde, arrastra para girar toda la rueda. Arrastra la bolita de color para moverla. Alt y flechas izquierda/derecha giran; Alt y flecha arriba acopla la barra horizontal; Inicio restablece.")("data-era-tooltip", "Gira la rueda en el borde; mueve desde la bolita de color"), Y(), x("disabled", !t.editor.acceptingInput || !!t.editor.active), W("aria-description", t.toolWidthLabel)("data-era-tooltip", "Grosor \xB7 " + t.toolWidthLabel)("aria-expanded", t.editing === "width"), Y(4), cA(t.toolWidthLabel), Y(), hA("background-color", t.editor.color), x("disabled", !t.editor.acceptingInput || !!t.editor.active), W("aria-expanded", t.colorsOpen), Y(2), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), W("aria-label", t.editor.inkMode === "write" ? "Ajustar sensibilidad" : "Ajustar suavizado")("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : t.editor.inkMode === "write" ? "Sensibilidad \xB7 " + t.editor.writingStrength + "%" : "Suavizado \xB7 " + t.editor.smoothing + "%")("aria-expanded", t.editing === "smoothing"), Y(4), tB("", t.editor.tool === "erase" ? 0 : t.editor.inkMode === "write" ? t.editor.writingAssist ? t.editor.writingStrength : 0 : t.editor.smoothing, "", t.horizontal ? "" : "%"), Y(), x("disabled", t.editor.tool === "erase" || !t.editor.acceptingInput || !!t.editor.active), W("data-era-tooltip", t.editor.tool === "erase" ? "El borrador elimina trazos completos" : "Opacidad \xB7 " + t.editor.opacityPercent + "%")("aria-expanded", t.editing === "opacity"), Y(5), tB("", t.editor.tool === "erase" ? 100 : t.editor.opacityPercent, "", t.horizontal ? "" : "%"), Y(), T(t.horizontal ? 38 : -1), Y(), T(t.pasteOpen ? 39 : -1), Y(), T(t.colorsOpen && t.horizontal ? 40 : -1), Y(), T(t.colorsOpen && !t.horizontal ? 41 : -1), Y(), T(t.plusOpen ? 42 : -1), Y(), T(t.editing ? 43 : -1));
     }, dependencies: [Gt, Me, Xg, WM, PM, bM], styles: [`[_nghost-%COMP%] {
   display: block;
   width: 292px;
@@ -30798,7 +30798,7 @@ function z7(B104, A) {
     s(0, "button", 8), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.updateMath("style", g.value));
-    }), AA(), s(1, "svg", 9), $(2, "path"), I(), jA(), s(3, "strong"), h(4), I(), s(5, "span"), h(6), I()();
+    }), AA(), s(1, "svg", 9), $(2, "path"), I(), JA(), s(3, "strong"), h(4), I(), s(5, "span"), h(6), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a(2);
@@ -30877,7 +30877,7 @@ function q7(B104, A) {
     s(0, "button", 8), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.chooseFont(g.value));
-    }), AA(), s(1, "svg", 21), $(2, "path"), I(), jA(), s(3, "strong"), h(4), I(), s(5, "span", 22), h(6), I(), s(7, "span"), h(8), I()();
+    }), AA(), s(1, "svg", 21), $(2, "path"), I(), JA(), s(3, "strong"), h(4), I(), s(5, "span", 22), h(6), I(), s(7, "span"), h(8), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a(2);
@@ -37703,7 +37703,7 @@ var pF = class B86 {
         return t.open = false, t.options = null;
       }), s(1, "div", 1), b(2, h_, 8, 7, "div", 2), tM(3), I(), s(4, "button", 3), G("click", function() {
         return t.toggle();
-      }), AA(), s(5, "svg", 4), $(6, "path", 5), I(), jA(), s(7, "strong"), h(8, "Ayudas"), I()(), b(9, k_, 33, 18, "div", 6), I()), e & 2 && (Y(2), T(t.editor.recognitionEnabled && !t.editor.expanded ? 2 : -1), Y(2), W("aria-expanded", t.open), Y(5), T(t.open ? 9 : -1));
+      }), AA(), s(5, "svg", 4), $(6, "path", 5), I(), JA(), s(7, "strong"), h(8, "Ayudas"), I()(), b(9, k_, 33, 18, "div", 6), I()), e & 2 && (Y(2), T(t.editor.recognitionEnabled && !t.editor.expanded ? 2 : -1), Y(2), W("aria-expanded", t.open), Y(5), T(t.open ? 9 : -1));
     }, dependencies: [Me, Gt, XM, Nc], styles: [`[_nghost-%COMP%] {
   display: block;
   max-width: 100%;
@@ -38050,10 +38050,10 @@ function P_(B104, A) {
     s(0, "div", 18)(1, "button", 19), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return n.editor.organizeLayers({ action: "select", id: g.id }), n.renaming = false, u(n.confirming = false);
-    }), AA(), s(2, "svg", 20), b(3, b_, 3, 1, ":svg:g")(4, T_, 1, 4, ":svg:path", 21), I(), jA(), s(5, "span", 22)(6, "strong"), h(7), I(), s(8, "small"), h(9), I()()(), s(10, "button", 23), G("click", function() {
+    }), AA(), s(2, "svg", 20), b(3, b_, 3, 1, ":svg:g")(4, T_, 1, 4, ":svg:path", 21), I(), JA(), s(5, "span", 22)(6, "strong"), h(7), I(), s(8, "small"), h(9), I()()(), s(10, "button", 23), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.editor.organizeLayers({ action: "toggle_visibility", id: g.id }));
-    }), AA(), s(11, "svg", 3), $(12, "path", 24)(13, "circle", 25), b(14, v_, 1, 0, ":svg:path", 26), I()(), jA(), s(15, "button", 23), G("click", function() {
+    }), AA(), s(11, "svg", 3), $(12, "path", 24)(13, "circle", 25), b(14, v_, 1, 0, ":svg:path", 26), I()(), JA(), s(15, "button", 23), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.editor.organizeLayers({ action: "toggle_lock", id: g.id }));
     }), AA(), s(16, "svg", 3), $(17, "rect", 27)(18, "path"), I()()();
@@ -38215,7 +38215,7 @@ var mF = class B87 {
           return U(g), t.open = false, t.renaming = false, u(t.confirming = false);
         }), s(2, "button", 2, 0), G("click", function() {
           return t.toggle();
-        }), AA(), s(4, "svg", 3), $(5, "path", 4), I(), jA(), s(6, "strong"), h(7, "Capas"), I()(), b(8, z_, 23, 9, "div", 5), I();
+        }), AA(), s(4, "svg", 3), $(5, "path", 4), I(), JA(), s(6, "strong"), h(7, "Capas"), I()(), b(8, z_, 23, 9, "div", 5), I();
       }
       e & 2 && (gM(t.editor.layerState), Y(2), W("aria-expanded", t.open), Y(6), T(t.open ? 8 : -1));
     }, dependencies: [Me, Gt, Xg], styles: [`[_nghost-%COMP%] {
@@ -38804,7 +38804,7 @@ function O_(B104, A) {
     s(0, "button", 28), G("click", function() {
       let g = U(e).$implicit, n = a();
       return u(n.update("background", g.value));
-    }), s(1, "span", 29), AA(), s(2, "svg", 30), $(3, "path", 31), I()(), jA(), s(4, "span"), h(5), I()();
+    }), s(1, "span", 29), AA(), s(2, "svg", 30), $(3, "path", 31), I()(), JA(), s(4, "span"), h(5), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a();
@@ -38831,7 +38831,7 @@ function Z_(B104, A) {
     s(0, "button", 28), G("click", function() {
       let g = U(e).$implicit, n = a();
       return u(n.update("grid", g.value));
-    }), s(1, "span", 33), AA(), s(2, "svg", 34), $(3, "path"), I()(), jA(), s(4, "span"), h(5), I()();
+    }), s(1, "span", 33), AA(), s(2, "svg", 34), $(3, "path"), I()(), JA(), s(4, "span"), h(5), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a();
@@ -39015,7 +39015,7 @@ var fF = class B89 {
     this.\u0275cmp = ee({ type: B89, selectors: [["era-canvas-settings"]], inputs: { editor: "editor", save: "save" }, outputs: { closed: "closed" }, decls: 76, vars: 23, consts: [["aria-label", "Configuraci\xF3n del lienzo"], ["eraTouchActivate", "", "aria-label", "Cerrar configuraci\xF3n del lienzo", "data-era-tooltip", "Cerrar configuraci\xF3n", 1, "close", 3, "click"], ["aria-label", "Vista previa del lienzo", 1, "canvas-preview", "grid-preview"], ["viewBox", "0 0 300 90", "fill", "none", "stroke", "#6692cd", "stroke-width", "2.5", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "M22 28h112M22 40h84M22 52h102M178 58c16-51 33 22 61-22M190 66h72"], ["viewBox", "0 0 300 90", "preserveAspectRatio", "none", "aria-hidden", "true", 1, "special-grid-preview"], ["role", "group", "aria-label", "Tipo de fondo", 1, "option-grid"], ["eraTouchActivate", "", 1, "option-card", 3, "disabled"], ["role", "group", "aria-label", "Tipo de cuadr\xEDcula", 1, "option-grid"], ["role", "group", "aria-label", "Tama\xF1o del lienzo", 1, "option-grid"], [1, "artboard-hint"], ["aria-label", "Medidas del lienzo", 1, "canvas-measurement"], ["aria-label", "Unidad de medida", 3, "change", "value", "disabled"], [3, "value", "selected"], [1, "dimensions"], ["type", "number", "aria-label", "Escala del dibujo", "min", "0.001", "max", "100000", "step", "any", 3, "change", "value", "disabled"], ["aria-label", "Precisi\xF3n de medidas", 3, "change", "value", "disabled"], ["value", "0"], ["value", "1"], ["value", "2"], ["value", "3"], ["value", "4"], [1, "help"], [1, "settings-footer"], ["role", "group", "aria-label", "Aplicar configuraci\xF3n a", 1, "settings-scope"], ["eraTouchActivate", "", "type", "button", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "save-settings", 3, "click", "disabled"], ["role", "status", 1, "save-message"], ["eraTouchActivate", "", 1, "option-card", 3, "click", "disabled"], [1, "option-preview"], ["viewBox", "0 0 80 48", "fill", "none", "stroke-width", "2", "stroke-linecap", "round", "aria-hidden", "true"], ["d", "M14 18h35M14 25h50M14 32h24M45 34c8-18 12 9 20-6"], ["type", "color", "aria-label", "Color del lienzo", 3, "change", "value", "disabled"], ["aria-hidden", "true", 1, "option-preview", "grid-preview"], ["viewBox", "0 0 80 48", "preserveAspectRatio", "none"], ["type", "number", "aria-label", "Separaci\xF3n de cuadr\xEDcula", "min", "0.0001", "step", "any", 3, "change", "value", "disabled"], ["aria-hidden", "true", 1, "option-preview", "size-preview"], ["viewBox", "0 0 80 48", "fill", "none", "stroke", "currentColor", "stroke-width", "2"], [1, "mini-sheet", 3, "landscape", "custom-sheet"], ["d", "M40 24c-15-23-32-7-24 4 9 14 24-4 24-4s15-18 24-4c8 11-9 27-24 4Z"], [1, "mini-sheet"], ["aria-label", "Unidad del \xE1rea de dibujo", 3, "change", "value", "disabled"], ["type", "number", "aria-label", "Ancho del lienzo", "step", "any", 3, "change", "min", "max", "value", "disabled"], ["type", "number", "aria-label", "Alto del lienzo", "step", "any", 3, "change", "min", "max", "value", "disabled"]], template: function(e, t) {
       e & 1 && (s(0, "section", 0)(1, "header")(2, "div")(3, "h2"), h(4, "Lienzo y medidas"), I(), s(5, "p"), h(6, " Los cambios se guardan en esta p\xE1gina al salir o empezar a escribir. "), I()(), s(7, "button", 1), G("click", function() {
         return t.closed.emit();
-      }), h(8, " \xD7 "), I()(), s(9, "div", 2), AA(), s(10, "svg", 3), $(11, "path", 4), I(), s(12, "svg", 5), $(13, "path"), I(), jA(), s(14, "span"), h(15), I()(), s(16, "fieldset")(17, "legend"), h(18, "Fondo"), I(), s(19, "div", 6), nA(20, O_, 6, 7, "button", 7, bw), I(), b(22, X_, 3, 2, "label"), I(), s(23, "fieldset")(24, "legend"), h(25, "Cuadr\xEDcula"), I(), s(26, "div", 8), nA(27, Z_, 6, 6, "button", 7, bw), I(), b(29, q_, 3, 3, "label"), I(), s(30, "fieldset")(31, "legend"), h(32, "Tama\xF1o del lienzo"), I(), s(33, "div", 9), nA(34, A$, 6, 5, "button", 7, bw), I(), b(36, B$, 12, 10), b(37, t$, 2, 0, "p", 10), s(38, "output", 11), h(39), I()(), s(40, "fieldset")(41, "legend"), h(42, "Medidas"), I(), s(43, "label"), h(44, "Unidad para medir "), s(45, "select", 12), G("change", function(n) {
+      }), h(8, " \xD7 "), I()(), s(9, "div", 2), AA(), s(10, "svg", 3), $(11, "path", 4), I(), s(12, "svg", 5), $(13, "path"), I(), JA(), s(14, "span"), h(15), I()(), s(16, "fieldset")(17, "legend"), h(18, "Fondo"), I(), s(19, "div", 6), nA(20, O_, 6, 7, "button", 7, bw), I(), b(22, X_, 3, 2, "label"), I(), s(23, "fieldset")(24, "legend"), h(25, "Cuadr\xEDcula"), I(), s(26, "div", 8), nA(27, Z_, 6, 6, "button", 7, bw), I(), b(29, q_, 3, 3, "label"), I(), s(30, "fieldset")(31, "legend"), h(32, "Tama\xF1o del lienzo"), I(), s(33, "div", 9), nA(34, A$, 6, 5, "button", 7, bw), I(), b(36, B$, 12, 10), b(37, t$, 2, 0, "p", 10), s(38, "output", 11), h(39), I()(), s(40, "fieldset")(41, "legend"), h(42, "Medidas"), I(), s(43, "label"), h(44, "Unidad para medir "), s(45, "select", 12), G("change", function(n) {
         return t.update("unit", t.value(n));
       }), nA(46, g$, 2, 3, "option", 13, bw), I()(), s(48, "div", 14)(49, "label"), h(50, "Escala \xB7 1 : "), s(51, "input", 15), G("change", function(n) {
         return t.update("scale", t.number(n));
@@ -43606,7 +43606,7 @@ var xeA = (B104, A) => A.partOfSpeech;
 function feA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 70), G("keydown", function(g) {
+    s(0, "div", 72), G("keydown", function(g) {
       U(e);
       let n = a();
       return u(n.workspace.resizeKey(g));
@@ -43620,7 +43620,7 @@ function feA(B104, A) {
 function yeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 71), G("click", function() {
+    s(0, "button", 73), G("click", function() {
       U(e);
       let g = a();
       return g.pdfViewMenuOpen = !g.pdfViewMenuOpen, u(g.pdfActionsMenuOpen = false);
@@ -43634,21 +43634,21 @@ function yeA(B104, A) {
 function ReA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 13)(1, "button", 72), G("click", function() {
+    s(0, "button", 74), G("click", function() {
       U(e);
       let g = a();
       return u(g.workspace.toggleFull());
-    }), AA(), s(2, "svg", 23), $(3, "path"), I()()();
+    }), AA(), s(1, "svg", 14), $(2, "path"), I()();
   }
   if (B104 & 2) {
     let e = a();
-    Y(3), W("d", e.workspace.layout === "full" ? "M8 3v5H3m13-5v5h5M3 16h5v5m13-5h-5v5" : "M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5");
+    Y(2), W("d", e.workspace.layout === "full" ? "M8 3v5H3m13-5v5h5M3 16h5v5m13-5h-5v5" : "M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5");
   }
 }
 function HeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 73), G("click", function() {
+    s(0, "button", 75), G("click", function() {
       U(e);
       let g = a();
       return g.pdfActionsMenuOpen = !g.pdfActionsMenuOpen, u(g.pdfViewMenuOpen = false);
@@ -43662,7 +43662,7 @@ function HeA(B104, A) {
 function JeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 74), G("click", function() {
+    s(0, "button", 76), G("click", function() {
       U(e);
       let g = a();
       return u(g.dictionaryOpen ? g.closeDictionary() : g.openDictionary(g.selectedWord ?? ""));
@@ -43676,51 +43676,51 @@ function JeA(B104, A) {
 function keA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 44)(1, "div", 75)(2, "button", 76), G("click", function() {
+    s(0, "div", 46)(1, "div", 77)(2, "button", 78), G("click", function() {
       U(e);
       let g = a();
       return u(g.go(g.page - 1));
-    }), h(3, " \u2039 "), I(), s(4, "input", 77), G("change", function(g) {
+    }), h(3, " \u2039 "), I(), s(4, "input", 79), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.inputPage(g));
-    }), I(), s(5, "span"), h(6), I(), s(7, "button", 78), G("click", function() {
+    }), I(), s(5, "span"), h(6), I(), s(7, "button", 80), G("click", function() {
       U(e);
       let g = a();
       return u(g.go(g.page + 1));
-    }), h(8, " \u203A "), I()(), s(9, "div", 79)(10, "button", 80), G("click", function() {
+    }), h(8, " \u203A "), I()(), s(9, "div", 81)(10, "button", 82), G("click", function() {
       U(e);
       let g = a();
       return u(g.toggleOutline());
-    }), AA(), s(11, "svg", 23), $(12, "path", 81), I()(), jA(), s(13, "button", 82), G("click", function() {
+    }), AA(), s(11, "svg", 14), $(12, "path", 83), I()(), JA(), s(13, "button", 84), G("click", function() {
       U(e);
       let g = a();
       return u(g.togglePages());
-    }), AA(), s(14, "svg", 23), $(15, "path", 83), I()(), jA(), s(16, "button", 84), G("click", function() {
+    }), AA(), s(14, "svg", 14), $(15, "path", 85), I()(), JA(), s(16, "button", 86), G("click", function() {
       U(e);
       let g = a();
       return u(g.chooseEraser());
-    }), AA(), s(17, "svg", 23), $(18, "path", 85), I()(), jA(), s(19, "button", 86), G("click", function() {
+    }), AA(), s(17, "svg", 14), $(18, "path", 87), I()(), JA(), s(19, "button", 88), G("click", function() {
       U(e);
       let g = a();
       return g.placeComment(), g.pdfViewMenuOpen = false, u(g.pdfActionsMenuOpen = false);
-    }), AA(), s(20, "svg", 23), $(21, "path", 87), I()(), jA(), s(22, "button", 88), G("click", function() {
+    }), AA(), s(20, "svg", 14), $(21, "path", 89), I()(), JA(), s(22, "button", 90), G("click", function() {
       U(e);
       let g = a();
       return g.toggleReading(), u(g.pdfViewMenuOpen = false);
-    }), AA(), s(23, "svg", 23), $(24, "path", 24), I()(), jA(), s(25, "button", 89), G("click", function() {
+    }), AA(), s(23, "svg", 14), $(24, "path", 26), I()(), JA(), s(25, "button", 91), G("click", function() {
       U(e);
       let g = a();
       return g.choosePdfTool(g.tool === "pdf-region" ? "select" : "pdf-region"), u(g.pdfViewMenuOpen = false);
-    }), AA(), s(26, "svg", 23), $(27, "path", 43), I()()(), jA(), s(28, "div", 90)(29, "button", 91), G("click", function() {
+    }), AA(), s(26, "svg", 14), $(27, "path", 45), I()()(), JA(), s(28, "div", 92)(29, "button", 93), G("click", function() {
       U(e);
       let g = a();
       return u(g.setZoom(g.zoom / 1.2));
-    }), h(30, " \u2212 "), I(), s(31, "output", 92), h(32), I(), s(33, "button", 93), G("click", function() {
+    }), h(30, " \u2212 "), I(), s(31, "output", 94), h(32), I(), s(33, "button", 95), G("click", function() {
       U(e);
       let g = a();
       return u(g.setZoom(g.zoom * 1.2));
-    }), h(34, " + "), I(), s(35, "button", 94), G("click", function() {
+    }), h(34, " + "), I(), s(35, "button", 96), G("click", function() {
       U(e);
       let g = a();
       return u(g.fit());
@@ -43734,11 +43734,11 @@ function keA(B104, A) {
 function jeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 96)(1, "button", 97), G("click", function() {
+    s(0, "div", 98)(1, "button", 99), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.changeReadingFont(-2));
-    }), h(2, " A\u2212 "), I(), s(3, "output"), h(4), I(), s(5, "button", 98), G("click", function() {
+    }), h(2, " A\u2212 "), I(), s(3, "output"), h(4), I(), s(5, "button", 100), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.changeReadingFont(2));
@@ -43752,15 +43752,15 @@ function jeA(B104, A) {
 function beA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 45)(1, "div", 95)(2, "button", 42), G("click", function() {
+    s(0, "div", 47)(1, "div", 97)(2, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.setReadingLayout("page"));
-    }), h(3, " P\xE1gina "), I(), s(4, "button", 42), G("click", function() {
+    }), h(3, " P\xE1gina "), I(), s(4, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.setReadingLayout("text"));
-    }), h(5, " Texto "), I()(), b(6, jeA, 7, 3, "div", 96), I();
+    }), h(5, " Texto "), I()(), b(6, jeA, 7, 3, "div", 98), I();
   }
   if (B104 & 2) {
     let e = a();
@@ -43774,7 +43774,7 @@ function TeA(B104, A) {
   }
 }
 function veA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "svg", 99), nA(1, TeA, 1, 4, ":svg:path", null, Ye), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "svg", 101), nA(1, TeA, 1, 4, ":svg:path", null, Ye), I()), B104 & 2) {
     let e = A.$implicit, t = a();
     Y(), iA(t.presetPreview(e));
   }
@@ -43782,7 +43782,7 @@ function veA(B104, A) {
 function PeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.setEraserSize(g));
     }), h(1), I();
@@ -43795,47 +43795,47 @@ function PeA(B104, A) {
 function WeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 47)(1, "div", 100)(2, "strong"), h(3, "Borrador"), I(), s(4, "button", 101), G("click", function() {
+    s(0, "section", 49)(1, "div", 102)(2, "strong"), h(3, "Borrador"), I(), s(4, "button", 103), G("click", function() {
       U(e);
       let g = a();
       return u(g.eraserPropertiesOpen = false);
-    }), h(5, " \xD7 "), I()(), s(6, "div", 102), $(7, "span"), s(8, "output"), h(9), I()(), s(10, "div", 103)(11, "label", 104), h(12, "Tama\xF1o "), s(13, "output"), h(14), I()(), s(15, "div", 105)(16, "input", 106), G("input", function(g) {
+    }), h(5, " \xD7 "), I()(), s(6, "div", 104), $(7, "span"), s(8, "output"), h(9), I()(), s(10, "div", 105)(11, "label", 106), h(12, "Tama\xF1o "), s(13, "output"), h(14), I()(), s(15, "div", 107)(16, "input", 108), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.setEraserSize(+g.target.value));
-    }), I(), s(17, "input", 107), G("change", function(g) {
+    }), I(), s(17, "input", 109), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.setEraserSize(+g.target.value));
-    }), I()(), s(18, "div", 108)(19, "button", 109), G("click", function() {
+    }), I()(), s(18, "div", 110)(19, "button", 111), G("click", function() {
       U(e);
       let g = a();
       return u(g.setEraserSize(g.Math.max(1, g.eraserSize - 1)));
-    }), h(20, " \u2212 "), I(), s(21, "div", 110), nA(22, PeA, 2, 3, "button", 111, Ke), I(), s(24, "button", 112), G("click", function() {
+    }), h(20, " \u2212 "), I(), s(21, "div", 112), nA(22, PeA, 2, 3, "button", 113, Ke), I(), s(24, "button", 114), G("click", function() {
       U(e);
       let g = a();
       return u(g.setEraserSize(g.Math.min(200, g.eraserSize + 1)));
-    }), h(25, " + "), I()()(), s(26, "div", 103)(27, "label", 113), h(28, "Opacidad "), s(29, "output"), h(30), I()(), s(31, "div", 108)(32, "button", 114), G("click", function() {
+    }), h(25, " + "), I()()(), s(26, "div", 105)(27, "label", 115), h(28, "Opacidad "), s(29, "output"), h(30), I()(), s(31, "div", 110)(32, "button", 116), G("click", function() {
       U(e);
       let g = a();
       return u(g.setEraserOpacity(g.Math.max(1, g.eraserOpacity - 1)));
-    }), h(33, " \u2212 "), I(), s(34, "div", 105)(35, "input", 115), G("input", function(g) {
+    }), h(33, " \u2212 "), I(), s(34, "div", 107)(35, "input", 117), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.setEraserOpacity(+g.target.value));
-    }), I(), s(36, "input", 116), G("change", function(g) {
+    }), I(), s(36, "input", 118), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.setEraserOpacity(+g.target.value));
-    }), I()(), s(37, "button", 117), G("click", function() {
+    }), I()(), s(37, "button", 119), G("click", function() {
       U(e);
       let g = a();
       return u(g.setEraserOpacity(g.Math.min(100, g.eraserOpacity + 1)));
-    }), h(38, " + "), I()()(), s(39, "label", 118), h(40, "Borrar "), s(41, "select", 119), G("change", function(g) {
+    }), h(38, " + "), I()()(), s(39, "label", 120), h(40, "Borrar "), s(41, "select", 121), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.setEraserMode(g.target.value));
-    }), s(42, "option", 120), h(43, "Parte del trazo"), I(), s(44, "option", 121), h(45, "Anotaci\xF3n completa"), I()()(), s(46, "p", 122), h(47), I()();
+    }), s(42, "option", 122), h(43, "Parte del trazo"), I(), s(44, "option", 123), h(45, "Anotaci\xF3n completa"), I()()(), s(46, "p", 124), h(47), I()();
   }
   if (B104 & 2) {
     let e = a();
@@ -43845,23 +43845,23 @@ function WeA(B104, A) {
 function SeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 48)(1, "button", 123), G("click", function() {
+    s(0, "section", 50)(1, "button", 125), G("click", function() {
       U(e);
       let g = a();
       return g.toggleAnnotations(), u(g.pdfActionsMenuOpen = false);
-    }), h(2, " Anotaciones "), I(), s(3, "button", 42), G("click", function() {
+    }), h(2, " Anotaciones "), I(), s(3, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return g.placeComment(), u(g.pdfActionsMenuOpen = false);
-    }), h(4, " Comentar "), I(), s(5, "button", 124), G("click", function() {
+    }), h(4, " Comentar "), I(), s(5, "button", 126), G("click", function() {
       U(e);
       let g = a();
       return g.toggleInsert(), u(g.pdfActionsMenuOpen = false);
-    }), h(6, " A\xF1adir texto o p\xE1gina "), I(), s(7, "button", 42), G("click", function() {
+    }), h(6, " A\xF1adir texto o p\xE1gina "), I(), s(7, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return g.chooseEraser(), u(g.pdfActionsMenuOpen = false);
-    }), h(8, " Opciones del borrador PDF "), I(), s(9, "button", 34), G("click", function() {
+    }), h(8, " Opciones del borrador PDF "), I(), s(9, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.close());
@@ -43875,19 +43875,19 @@ function SeA(B104, A) {
 function LeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 49)(1, "div", 100)(2, "strong"), h(3, "A\xF1adir"), I(), s(4, "button", 125), G("click", function() {
+    s(0, "section", 51)(1, "div", 102)(2, "strong"), h(3, "A\xF1adir"), I(), s(4, "button", 127), G("click", function() {
       U(e);
       let g = a();
       return u(g.insertOpen = false);
-    }), h(5, " \xD7 "), I()(), s(6, "button", 126), G("click", function() {
+    }), h(5, " \xD7 "), I()(), s(6, "button", 128), G("click", function() {
       U(e);
       let g = a();
       return u(g.placeText());
-    }), s(7, "b"), h(8, "T"), I(), s(9, "span"), h(10, "Caja de texto"), s(11, "small"), h(12, "Escribe directamente sobre la p\xE1gina"), I()()(), s(13, "button", 127), G("click", function() {
+    }), s(7, "b"), h(8, "T"), I(), s(9, "span"), h(10, "Caja de texto"), s(11, "small"), h(12, "Escribe directamente sobre la p\xE1gina"), I()()(), s(13, "button", 129), G("click", function() {
       U(e);
       let g = a();
       return g.insertOpen = false, u(g.placeComment());
-    }), s(14, "b"), h(15, "\u2630"), I(), s(16, "span"), h(17, "Comentario"), s(18, "small"), h(19, "Deja una nota en el documento"), I()()(), s(20, "button", 128), G("click", function() {
+    }), s(14, "b"), h(15, "\u2630"), I(), s(16, "span"), h(17, "Comentario"), s(18, "small"), h(19, "Deja una nota en el documento"), I()()(), s(20, "button", 130), G("click", function() {
       U(e);
       let g = a();
       return g.insertOpen = false, u(!g.pagesOpen && g.togglePages());
@@ -43913,10 +43913,10 @@ function zeA(B104, A) {
 function KeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.changePdfBrush(g.id));
-    }), AA(), s(1, "svg", 151), nA(2, zeA, 1, 4, ":svg:path", null, Ye), I(), jA(), s(4, "span"), h(5), I()();
+    }), AA(), s(1, "svg", 153), nA(2, zeA, 1, 4, ":svg:path", null, Ye), I(), JA(), s(4, "span"), h(5), I()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a(2);
@@ -43926,7 +43926,7 @@ function KeA(B104, A) {
 function OeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.updatePreset({ width: g }));
     }), h(1), I();
@@ -43939,7 +43939,7 @@ function OeA(B104, A) {
 function XeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.updatePreset({ color: g }));
     }), I();
@@ -43952,59 +43952,59 @@ function XeA(B104, A) {
 function ZeA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 50)(1, "div", 100)(2, "div")(3, "input", 129), G("change", function(g) {
+    s(0, "section", 52)(1, "div", 102)(2, "div")(3, "input", 131), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ name: g.target.value }));
-    }), I(), s(4, "span"), h(5, "Herramienta de escritura"), I()(), s(6, "button", 130), G("click", function() {
+    }), I(), s(4, "span"), h(5, "Herramienta de escritura"), I()(), s(6, "button", 132), G("click", function() {
       U(e);
       let g = a();
       return u(g.propertiesPinned = !g.propertiesPinned);
-    }), h(7, " \u2316"), I(), s(8, "button", 131), G("click", function() {
+    }), h(7, " \u2316"), I(), s(8, "button", 133), G("click", function() {
       U(e);
       let g = a();
       return u(g.removePreset());
-    }), AA(), s(9, "svg", 28), $(10, "path", 132), I()(), jA(), s(11, "button", 133), G("click", function() {
+    }), AA(), s(9, "svg", 30), $(10, "path", 134), I()(), JA(), s(11, "button", 135), G("click", function() {
       U(e);
       let g = a();
       return u(g.propertiesOpen = false);
-    }), h(12, " \xD7 "), I()(), AA(), s(13, "svg", 134), nA(14, VeA, 1, 4, ":svg:path", null, Ye), I(), jA(), s(16, "div", 135), nA(17, KeA, 6, 11, "button", 111, _2), I(), s(19, "div", 103)(20, "label", 136), h(21, "Tama\xF1o "), s(22, "output"), h(23), I()(), s(24, "div", 105)(25, "input", 137), G("input", function(g) {
+    }), h(12, " \xD7 "), I()(), AA(), s(13, "svg", 136), nA(14, VeA, 1, 4, ":svg:path", null, Ye), I(), JA(), s(16, "div", 137), nA(17, KeA, 6, 11, "button", 113, _2), I(), s(19, "div", 105)(20, "label", 138), h(21, "Tama\xF1o "), s(22, "output"), h(23), I()(), s(24, "div", 107)(25, "input", 139), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ width: +g.target.value }));
-    }), I(), s(26, "input", 138), G("change", function(g) {
+    }), I(), s(26, "input", 140), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ width: +g.target.value }));
-    }), I()(), s(27, "div", 108)(28, "button", 139), G("click", function() {
+    }), I()(), s(27, "div", 110)(28, "button", 141), G("click", function() {
       U(e);
       let g = a();
       return u(g.updatePreset({ width: g.Math.max(0.5, g.activePreset.width - 0.5) }));
-    }), h(29, " \u2212 "), I(), s(30, "div", 110), nA(31, OeA, 2, 3, "button", 111, Ke), I(), s(33, "button", 140), G("click", function() {
+    }), h(29, " \u2212 "), I(), s(30, "div", 112), nA(31, OeA, 2, 3, "button", 113, Ke), I(), s(33, "button", 142), G("click", function() {
       U(e);
       let g = a();
       return u(g.updatePreset({ width: g.Math.min(96, g.activePreset.width + 0.5) }));
-    }), h(34, " + "), I()()(), s(35, "h3"), h(36, "Apariencia"), I(), s(37, "div", 141), nA(38, XeA, 1, 6, "button", 142, Ke), s(40, "label", 143)(41, "input", 144), G("input", function(g) {
+    }), h(34, " + "), I()()(), s(35, "h3"), h(36, "Apariencia"), I(), s(37, "div", 143), nA(38, XeA, 1, 6, "button", 144, Ke), s(40, "label", 145)(41, "input", 146), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ color: g.target.value }));
-    }), I()()(), s(42, "div", 103)(43, "label", 145), h(44, "Opacidad "), s(45, "output"), h(46), I()(), s(47, "div", 108)(48, "button", 146), G("click", function() {
+    }), I()()(), s(42, "div", 105)(43, "label", 147), h(44, "Opacidad "), s(45, "output"), h(46), I()(), s(47, "div", 110)(48, "button", 148), G("click", function() {
       U(e);
       let g = a();
       return u(g.updatePreset({ opacity: g.Math.max(1, g.activePreset.opacity - 1) }));
-    }), h(49, " \u2212 "), I(), s(50, "div", 105)(51, "input", 147), G("input", function(g) {
+    }), h(49, " \u2212 "), I(), s(50, "div", 107)(51, "input", 149), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ opacity: +g.target.value }));
-    }), I(), s(52, "input", 148), G("change", function(g) {
+    }), I(), s(52, "input", 150), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.updatePreset({ opacity: +g.target.value }));
-    }), I()(), s(53, "button", 149), G("click", function() {
+    }), I()(), s(53, "button", 151), G("click", function() {
       U(e);
       let g = a();
       return u(g.updatePreset({ opacity: g.Math.min(100, g.activePreset.opacity + 1) }));
-    }), h(54, " + "), I()()(), s(55, "button", 150), G("click", function() {
+    }), h(54, " + "), I()()(), s(55, "button", 152), G("click", function() {
       U(e);
       let g = a();
       return u(g.addPreset());
@@ -44016,18 +44016,18 @@ function ZeA(B104, A) {
   }
 }
 function qeA(B104, A) {
-  B104 & 1 && (s(0, "p", 157), h(1, "Marcadores guardados en este dispositivo."), I());
+  B104 & 1 && (s(0, "p", 159), h(1, "Marcadores guardados en este dispositivo."), I());
 }
 function _eA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 171)(1, "button", 42), G("click", function() {
+    s(0, "div", 173)(1, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.visitPage(g));
-    }), s(2, "span", 174), $(3, "canvas", 175), I(), s(4, "span"), h(5), I()(), s(6, "button", 176), G("click", function() {
+    }), s(2, "span", 176), $(3, "canvas", 177), I(), s(4, "span"), h(5), I()(), s(6, "button", 178), G("click", function() {
       let g = U(e).$implicit, n = a(2);
       return u(n.toggleBookmark(g));
-    }), AA(), s(7, "svg", 23), $(8, "path", 177), I()()();
+    }), AA(), s(7, "svg", 14), $(8, "path", 179), I()()();
   }
   if (B104 & 2) {
     let e = A.$implicit, t = a(2);
@@ -44035,12 +44035,12 @@ function _eA(B104, A) {
   }
 }
 function $eA(B104, A) {
-  B104 & 1 && (s(0, "p", 172), h(1, " Todav\xEDa no hay hojas marcadas. Usa Marcar para guardarlas aqu\xED. "), I());
+  B104 & 1 && (s(0, "p", 174), h(1, " Todav\xEDa no hay hojas marcadas. Usa Marcar para guardarlas aqu\xED. "), I());
 }
 function ABA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.moreThumbnails());
@@ -44050,47 +44050,47 @@ function ABA(B104, A) {
 function eBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 51)(1, "div", 152)(2, "strong"), h(3, "Hojas"), I(), s(4, "button", 153), G("click", function() {
+    s(0, "section", 53)(1, "div", 154)(2, "strong"), h(3, "Hojas"), I(), s(4, "button", 155), G("click", function() {
       U(e);
       let g = a();
       return u(g.togglePages());
-    }), h(5, " \xD7 "), I()(), s(6, "div", 154)(7, "button", 155), G("click", function() {
+    }), h(5, " \xD7 "), I()(), s(6, "div", 156)(7, "button", 157), G("click", function() {
       U(e);
       let g = a();
       return u(g.setPagesFilter("all"));
-    }), h(8), I(), s(9, "button", 156), G("click", function() {
+    }), h(8), I(), s(9, "button", 158), G("click", function() {
       U(e);
       let g = a();
       return u(g.setPagesFilter("bookmarked"));
-    }), h(10), I()(), b(11, qeA, 2, 0, "p", 157), s(12, "div", 158)(13, "span"), h(14), I(), s(15, "div", 159)(16, "button", 160), G("click", function() {
+    }), h(10), I()(), b(11, qeA, 2, 0, "p", 159), s(12, "div", 160)(13, "span"), h(14), I(), s(15, "div", 161)(16, "button", 162), G("click", function() {
       U(e);
       let g = a();
       return u(g.movePage(-1));
-    }), h(17, " \u2190 "), I(), s(18, "button", 161), G("click", function() {
+    }), h(17, " \u2190 "), I(), s(18, "button", 163), G("click", function() {
       U(e);
       let g = a();
       return u(g.movePage(1));
-    }), h(19, " \u2192 "), I(), s(20, "button", 162), G("click", function() {
+    }), h(19, " \u2192 "), I(), s(20, "button", 164), G("click", function() {
       U(e);
       let g = a();
       return u(g.organizePages({ action: "delete", page: g.page }));
-    }), h(21, " Eliminar "), I(), s(22, "button", 163), G("click", function() {
+    }), h(21, " Eliminar "), I(), s(22, "button", 165), G("click", function() {
       U(e);
       let g = a();
       return u(g.pdfHistory(false));
-    }), h(23, " \u21B6 "), I(), s(24, "button", 164), G("click", function() {
+    }), h(23, " \u21B6 "), I(), s(24, "button", 166), G("click", function() {
       U(e);
       let g = a();
       return u(g.pdfHistory(true));
-    }), h(25, " \u21B7 "), I()(), s(26, "div", 165)(27, "select", 166), G("change", function(g) {
+    }), h(25, " \u21B7 "), I()(), s(26, "div", 167)(27, "select", 168), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.setPaper(g.target.value));
-    }), s(28, "option", 167), h(29, "En blanco"), I(), s(30, "option", 168), h(31, "Cuadriculada \xB7 5 mm"), I(), s(32, "option", 169), h(33, "Rayada \xB7 5 mm"), I()(), s(34, "button", 34), G("click", function() {
+    }), s(28, "option", 169), h(29, "En blanco"), I(), s(30, "option", 170), h(31, "Cuadriculada \xB7 5 mm"), I(), s(32, "option", 171), h(33, "Rayada \xB7 5 mm"), I()(), s(34, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.addPage());
-    }), h(35, " \uFF0B A\xF1adir hoja "), I()(), s(36, "small"), h(37, "Se a\xF1ade despu\xE9s de la hoja seleccionada."), I()(), s(38, "div", 170), nA(39, _eA, 9, 7, "div", 171, Ke, false, $eA, 2, 0, "p", 172), I(), b(42, ABA, 2, 0, "button", 173), I();
+    }), h(35, " \uFF0B A\xF1adir hoja "), I()(), s(36, "small"), h(37, "Se a\xF1ade despu\xE9s de la hoja seleccionada."), I()(), s(38, "div", 172), nA(39, _eA, 9, 7, "div", 173, Ke, false, $eA, 2, 0, "p", 174), I(), b(42, ABA, 2, 0, "button", 175), I();
   }
   if (B104 & 2) {
     let e = a();
@@ -44106,11 +44106,11 @@ function tBA(B104, A) {
 function gBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "details", 181)(1, "summary")(2, "span", 183), h(3, "\u203A"), I(), s(4, "button", 184), G("click", function(g) {
+    s(0, "details", 183)(1, "summary")(2, "span", 185), h(3, "\u203A"), I(), s(4, "button", 186), G("click", function(g) {
       U(e);
       let n = a().$implicit;
       return a(3).visitPage(n.page), u(g.preventDefault());
-    }), h(5), I()(), s(6, "div", 185), bi(7, tBA, 1, 0, "ng-container", 180), I()();
+    }), h(5), I()(), s(6, "div", 187), bi(7, tBA, 1, 0, "ng-container", 182), I()();
   }
   if (B104 & 2) {
     let e = a().$implicit;
@@ -44122,7 +44122,7 @@ function gBA(B104, A) {
 function nBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 186), G("click", function() {
+    s(0, "button", 188), G("click", function() {
       U(e);
       let g = a().$implicit, n = a(3);
       return u(n.visitPage(g.page));
@@ -44134,7 +44134,7 @@ function nBA(B104, A) {
   }
 }
 function iBA(B104, A) {
-  if (B104 & 1 && b(0, gBA, 8, 7, "details", 181)(1, nBA, 2, 3, "button", 182), B104 & 2) {
+  if (B104 & 1 && b(0, gBA, 8, 7, "details", 183)(1, nBA, 2, 3, "button", 184), B104 & 2) {
     let e = A.$implicit;
     T(e.children.length ? 0 : 1);
   }
@@ -44151,11 +44151,11 @@ function oBA(B104, A) {
 function rBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "aside", 52)(1, "div", 178)(2, "strong"), h(3, "Contenido"), I(), s(4, "span"), h(5), I(), s(6, "button", 179), G("click", function() {
+    s(0, "aside", 54)(1, "div", 180)(2, "strong"), h(3, "Contenido"), I(), s(4, "span"), h(5), I(), s(6, "button", 181), G("click", function() {
       U(e);
       let g = a();
       return u(g.sidebar = false);
-    }), h(7, " \xD7 "), I()(), bi(8, BBA, 1, 0, "ng-container", 180)(9, QBA, 2, 0, "ng-template", null, 2, fQ), b(11, oBA, 2, 0, "p"), I();
+    }), h(7, " \xD7 "), I()(), bi(8, BBA, 1, 0, "ng-container", 182)(9, QBA, 2, 0, "ng-template", null, 2, fQ), b(11, oBA, 2, 0, "p"), I();
   }
   if (B104 & 2) {
     let e = qe(10), t = a();
@@ -44163,12 +44163,12 @@ function rBA(B104, A) {
   }
 }
 function CBA(B104, A) {
-  B104 & 1 && (s(0, "p", 189), h(1, "Preparando lectura\u2026"), I());
+  B104 & 1 && (s(0, "p", 191), h(1, "Preparando lectura\u2026"), I());
 }
 function cBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "p", 193), h(1), I(), s(2, "button", 42), G("click", function() {
+    s(0, "p", 195), h(1), I(), s(2, "button", 44), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.setReadingLayout("text"));
@@ -44180,7 +44180,7 @@ function cBA(B104, A) {
   }
 }
 function EBA(B104, A) {
-  if (B104 & 1 && (s(0, "div", 194), h(1), I(), s(2, "p", 188), h(3, " Para ver las im\xE1genes, f\xF3rmulas y el dise\xF1o original, usa P\xE1gina. "), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "div", 196), h(1), I(), s(2, "p", 190), h(3, " Para ver las im\xE1genes, f\xF3rmulas y el dise\xF1o original, usa P\xE1gina. "), I()), B104 & 2) {
     let e = a(2);
     Y(), cA(e.readingText);
   }
@@ -44188,7 +44188,7 @@ function EBA(B104, A) {
 function sBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "p"), h(1, " Esta hoja no contiene texto seleccionable. Puedes leerla en la vista P\xE1gina. "), I(), s(2, "button", 195), G("click", function() {
+    s(0, "p"), h(1, " Esta hoja no contiene texto seleccionable. Puedes leerla en la vista P\xE1gina. "), I(), s(2, "button", 197), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.setReadingLayout("page"));
@@ -44198,11 +44198,11 @@ function sBA(B104, A) {
 function wBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "article", 187)(1, "p", 188), h(2), I(), b(3, CBA, 2, 0, "p", 189)(4, cBA, 4, 1)(5, EBA, 4, 1)(6, sBA, 4, 0), s(7, "div", 190)(8, "button", 191), G("click", function() {
+    s(0, "article", 189)(1, "p", 190), h(2), I(), b(3, CBA, 2, 0, "p", 191)(4, cBA, 4, 1)(5, EBA, 4, 1)(6, sBA, 4, 0), s(7, "div", 192)(8, "button", 193), G("click", function() {
       U(e);
       let g = a();
       return u(g.go(g.page - 1));
-    }), h(9, " \u2039 Anterior "), I(), s(10, "button", 192), G("click", function() {
+    }), h(9, " \u2039 Anterior "), I(), s(10, "button", 194), G("click", function() {
       U(e);
       let g = a();
       return u(g.go(g.page + 1));
@@ -44220,13 +44220,13 @@ function aBA(B104, A) {
   }
 }
 function IBA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "svg", 197), nA(1, aBA, 1, 4, ":svg:rect", null, Ye), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "svg", 199), nA(1, aBA, 1, 4, ":svg:rect", null, Ye), I()), B104 & 2) {
     let e = a().$implicit, t = a();
     W("viewBox", "0 0 " + e.width + " " + e.height), Y(), iA(t.originFocus.rects);
   }
 }
 function DBA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "svg", 198), $(1, "rect"), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "svg", 200), $(1, "rect"), I()), B104 & 2) {
     let e = a().$implicit, t = a();
     W("viewBox", "0 0 " + e.width + " " + e.height), Y(), W("x", t.textDraft.rect[0])("y", t.textDraft.rect[1])("width", t.textDraft.rect[2] - t.textDraft.rect[0])("height", t.textDraft.rect[3] - t.textDraft.rect[1]);
   }
@@ -44244,31 +44244,31 @@ function MBA(B104, A) {
   }
 }
 function FBA(B104, A) {
-  if (B104 & 1 && (AA(), $(0, "circle", 204)), B104 & 2) {
+  if (B104 & 1 && (AA(), $(0, "circle", 206)), B104 & 2) {
     let e = a(3);
     W("cx", e.eraserPoint[0])("cy", e.eraserPoint[1])("r", e.eraserRadius);
   }
 }
 function hBA(B104, A) {
-  if (B104 & 1 && (AA(), $(0, "polyline", 209)), B104 & 2) {
+  if (B104 & 1 && (AA(), $(0, "polyline", 211)), B104 & 2) {
     let e = A.$implicit;
     W("points", e.path)("stroke-width", e.width);
   }
 }
 function lBA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "defs")(1, "mask", 205), $(2, "rect", 206)(3, "polyline", 207)(4, "circle", 208), I()(), s(5, "g"), nA(6, hBA, 1, 2, ":svg:polyline", 209, Ye), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "defs")(1, "mask", 207), $(2, "rect", 208)(3, "polyline", 209)(4, "circle", 210), I()(), s(5, "g"), nA(6, hBA, 1, 2, ":svg:polyline", 211, Ye), I()), B104 & 2) {
     let e = a(2), t = e.$implicit, g = e.$index, n = a();
     Y(), W("id", n.eraseMaskId)("width", t.width)("height", t.height), Y(), W("width", t.width)("height", t.height), Y(), W("points", n.eraserPath)("stroke-width", n.eraserRadius * 2), Y(), W("cx", n.eraserPoint[0])("cy", n.eraserPoint[1])("r", n.eraserRadius), Y(), W("mask", "url(#" + n.eraseMaskId + ")")("opacity", n.eraserOpacity / 100), Y(), iA(n.eraserInk(g));
   }
 }
 function dBA(B104, A) {
-  if (B104 & 1 && (AA(), $(0, "rect", 210)), B104 & 2) {
+  if (B104 & 1 && (AA(), $(0, "rect", 212)), B104 & 2) {
     let e = A.$implicit;
     W("x", e[0])("y", e[1])("width", e[2] - e[0])("height", e[3] - e[1]);
   }
 }
 function UBA(B104, A) {
-  if (B104 & 1 && nA(0, dBA, 1, 4, ":svg:rect", 210, Ye), B104 & 2) {
+  if (B104 & 1 && nA(0, dBA, 1, 4, ":svg:rect", 212, Ye), B104 & 2) {
     let e = a(3);
     iA(e.hoverAnnotation.rects ?? (e.hoverAnnotation.rect ? $n(0, q2, e.hoverAnnotation.rect) : Vt(2, Fr)));
   }
@@ -44280,7 +44280,7 @@ function uBA(B104, A) {
   }
 }
 function NBA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "svg", 199), nA(1, YBA, 1, 4, ":svg:rect", null, Ye), b(3, MBA, 1, 4, ":svg:rect"), b(4, FBA, 1, 3, ":svg:circle", 204), b(5, lBA, 8, 12), b(6, UBA, 2, 3), b(7, uBA, 1, 4, ":svg:polyline"), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "svg", 201), nA(1, YBA, 1, 4, ":svg:rect", null, Ye), b(3, MBA, 1, 4, ":svg:rect"), b(4, FBA, 1, 3, ":svg:circle", 206), b(5, lBA, 8, 12), b(6, UBA, 2, 3), b(7, uBA, 1, 4, ":svg:polyline"), I()), B104 & 2) {
     let e = a().$implicit, t = a();
     W("viewBox", "0 0 " + e.width + " " + e.height), Y(), iA(t.marks), Y(2), T(t.regionRect ? 3 : -1), Y(), T(t.eraserPoint ? 4 : -1), Y(), T(t.eraserPoint && t.eraserMode === "ink" ? 5 : -1), Y(), T(t.hoverAnnotation && t.eraserMode === "annotation" ? 6 : -1), Y(), T(t.inkPoints.length ? 7 : -1);
   }
@@ -44292,7 +44292,7 @@ function GBA(B104, A) {
   }
 }
 function pBA(B104, A) {
-  if (B104 & 1 && (AA(), $(0, "line", 211)), B104 & 2) {
+  if (B104 & 1 && (AA(), $(0, "line", 213)), B104 & 2) {
     let e = a().$implicit, t = a().$implicit;
     W("x1", e[0])("x2", e[2])("y1", e[3])("y2", e[3])("stroke", t.color);
   }
@@ -44304,7 +44304,7 @@ function mBA(B104, A) {
   }
 }
 function xBA(B104, A) {
-  if (B104 & 1 && b(0, pBA, 1, 5, ":svg:line", 211)(1, mBA, 1, 6, ":svg:rect"), B104 & 2) {
+  if (B104 & 1 && b(0, pBA, 1, 5, ":svg:line", 213)(1, mBA, 1, 6, ":svg:rect"), B104 & 2) {
     let e = a().$implicit;
     T(e.underline ? 0 : 1);
   }
@@ -44316,7 +44316,7 @@ function fBA(B104, A) {
   }
 }
 function yBA(B104, A) {
-  if (B104 & 1 && (AA(), s(0, "svg", 200), nA(1, fBA, 3, 2, null, null, _2), I()), B104 & 2) {
+  if (B104 & 1 && (AA(), s(0, "svg", 202), nA(1, fBA, 3, 2, null, null, _2), I()), B104 & 2) {
     let e = a(), t = e.$implicit, g = e.$index, n = a();
     W("viewBox", "0 0 " + t.width + " " + t.height), Y(), iA(n.pageVisuals(g));
   }
@@ -44324,7 +44324,7 @@ function yBA(B104, A) {
 function RBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    AA(), s(0, "polyline", 213), G("pointerdown", function(g) {
+    AA(), s(0, "polyline", 215), G("pointerdown", function(g) {
       U(e);
       let n = a(2).$implicit, i = a(2);
       return u(i.begin(g, n));
@@ -44340,7 +44340,7 @@ function RBA(B104, A) {
   }
 }
 function HBA(B104, A) {
-  if (B104 & 1 && nA(0, RBA, 1, 5, ":svg:polyline", 212, Ye), B104 & 2) {
+  if (B104 & 1 && nA(0, RBA, 1, 5, ":svg:polyline", 214, Ye), B104 & 2) {
     let e = a().$implicit;
     iA(e.ink ?? Vt(0, Fr));
   }
@@ -44348,7 +44348,7 @@ function HBA(B104, A) {
 function JBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    AA(), s(0, "rect", 215), G("pointerdown", function(g) {
+    AA(), s(0, "rect", 217), G("pointerdown", function(g) {
       U(e);
       let n = a(2).$implicit, i = a(2);
       return u(i.begin(g, n));
@@ -44364,7 +44364,7 @@ function JBA(B104, A) {
   }
 }
 function kBA(B104, A) {
-  if (B104 & 1 && nA(0, JBA, 1, 7, ":svg:rect", 214, Ye), B104 & 2) {
+  if (B104 & 1 && nA(0, JBA, 1, 7, ":svg:rect", 216, Ye), B104 & 2) {
     let e = a().$implicit;
     iA(e.rects ?? (e.rect ? $n(0, q2, e.rect) : Vt(2, Fr)));
   }
@@ -44378,7 +44378,7 @@ function jBA(B104, A) {
 function bBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    AA(), s(0, "rect", 217), G("pointerdown", function(g) {
+    AA(), s(0, "rect", 219), G("pointerdown", function(g) {
       U(e);
       let n = a(3);
       return u(n.beginExcerpt(g));
@@ -44398,24 +44398,24 @@ function bBA(B104, A) {
   }
 }
 function TBA(B104, A) {
-  if (B104 & 1 && nA(0, bBA, 3, 7, ":svg:rect", 216, Ye), B104 & 2) {
+  if (B104 & 1 && nA(0, bBA, 3, 7, ":svg:rect", 218, Ye), B104 & 2) {
     let e = A.$implicit;
     iA(e.citation.rects);
   }
 }
 function vBA(B104, A) {
-  if (B104 & 1 && (s(0, "section", 196), $(1, "canvas", 175), b(2, IBA, 3, 1, ":svg:svg", 197), b(3, DBA, 2, 5, ":svg:svg", 198), b(4, NBA, 8, 6, ":svg:svg", 199), b(5, yBA, 3, 1, ":svg:svg", 200), AA(), s(6, "svg", 201), nA(7, jBA, 2, 1, null, null, GeA, true), I(), s(9, "svg", 202), nA(10, TBA, 2, 0, null, null, peA), I(), jA(), s(12, "span", 203), h(13), I()()), B104 & 2) {
+  if (B104 & 1 && (s(0, "section", 198), $(1, "canvas", 177), b(2, IBA, 3, 1, ":svg:svg", 199), b(3, DBA, 2, 5, ":svg:svg", 200), b(4, NBA, 8, 6, ":svg:svg", 201), b(5, yBA, 3, 1, ":svg:svg", 202), AA(), s(6, "svg", 203), nA(7, jBA, 2, 1, null, null, GeA, true), I(), s(9, "svg", 204), nA(10, TBA, 2, 0, null, null, peA), I(), JA(), s(12, "span", 205), h(13), I()()), B104 & 2) {
     let e = A.$implicit, t = A.$index, g = a();
     hA("width", e.width * g.zoom, "px")("height", e.height * g.zoom, "px"), W("data-page", t)("aria-label", "P\xE1gina " + (t + 1)), Y(), W("aria-label", "P\xE1gina " + (t + 1) + " del PDF"), Y(), T((g.originFocus == null ? null : g.originFocus.page) === t ? 2 : -1), Y(), T((g.textDraft == null ? null : g.textDraft.page) === t ? 3 : -1), Y(), T(g.selectionPage === t ? 4 : -1), Y(), T(g.pageVisuals(t).length ? 5 : -1), Y(), W("viewBox", "0 0 " + e.width + " " + e.height), Y(), iA(g.pageAnnotations(t)), Y(2), W("viewBox", "0 0 " + e.width + " " + e.height), Y(), iA(g.pageExcerpts(t)), Y(3), cA(t + 1);
   }
 }
 function PBA(B104, A) {
-  B104 & 1 && (s(0, "div", 57), h(1, "Abriendo PDF\u2026"), I());
+  B104 & 1 && (s(0, "div", 59), h(1, "Abriendo PDF\u2026"), I());
 }
 function WBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "era-pdf-annotation-panel", 218), G("picked", function(g) {
+    s(0, "era-pdf-annotation-panel", 220), G("picked", function(g) {
       U(e);
       let n = a();
       return u(n.pickAnnotation(g, true));
@@ -44448,7 +44448,7 @@ function LBA(B104, A) {
   }
 }
 function VBA(B104, A) {
-  B104 & 1 && (s(0, "p", 236), h(1, " Esta palabra existe en ambos idiomas. Consulta sus dos significados: "), I());
+  B104 & 1 && (s(0, "p", 238), h(1, " Esta palabra existe en ambos idiomas. Consulta sus dos significados: "), I());
 }
 function zBA(B104, A) {
   if (B104 & 1 && (s(0, "small"), h(1), I()), B104 & 2) {
@@ -44457,7 +44457,7 @@ function zBA(B104, A) {
   }
 }
 function KBA(B104, A) {
-  if (B104 & 1 && (s(0, "strong", 240), h(1), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "strong", 242), h(1), I()), B104 & 2) {
     let e = a().$implicit;
     Y(), cA(e.translations.join(" \xB7 "));
   }
@@ -44471,7 +44471,7 @@ function OBA(B104, A) {
 function XBA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       U(e);
       let g = a().$implicit, n = a(8);
       return u(n.lookupWord(g));
@@ -44489,25 +44489,25 @@ function ZBA(B104, A) {
   }
 }
 function qBA(B104, A) {
-  if (B104 & 1 && b(0, XBA, 2, 1, "button", 173)(1, ZBA, 2, 1, "span"), B104 & 2) {
+  if (B104 & 1 && b(0, XBA, 2, 1, "button", 175)(1, ZBA, 2, 1, "span"), B104 & 2) {
     let e = A.$implicit, t = a(8);
     T(t.singleWord(e) ? 0 : 1);
   }
 }
 function _BA(B104, A) {
-  if (B104 & 1 && (s(0, "div", 241)(1, "small"), h(2), I(), nA(3, qBA, 2, 1, null, null, Ke), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "div", 243)(1, "small"), h(2), I(), nA(3, qBA, 2, 1, null, null, Ke), I()), B104 & 2) {
     let e = a().$implicit, t = a(2).$implicit, g = a(4);
     Y(2), CA("Sin\xF3nimos en ", g.languageName(t.language).toLowerCase()), Y(), iA(e.synonyms);
   }
 }
 function $BA(B104, A) {
-  if (B104 & 1 && (s(0, "p", 243), h(1), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "p", 245), h(1), I()), B104 & 2) {
     let e = A.$implicit;
     Y(), cA(e);
   }
 }
 function AtA(B104, A) {
-  if (B104 & 1 && (s(0, "details")(1, "summary"), h(2), I(), nA(3, $BA, 2, 1, "p", 243, Ke), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "details")(1, "summary"), h(2), I(), nA(3, $BA, 2, 1, "p", 245, Ke), I()), B104 & 2) {
     let e = a().$implicit, t = a(6);
     Y(2), CA(" Ejemplos en ", t.languageName(e.exampleLanguage).toLowerCase(), " "), Y(), iA(e.examples);
   }
@@ -44519,7 +44519,7 @@ function etA(B104, A) {
   }
 }
 function BtA(B104, A) {
-  if (B104 & 1 && (s(0, "li"), b(1, KBA, 2, 1, "strong", 240), b(2, OBA, 2, 2, "p"), b(3, _BA, 5, 1, "div", 241), b(4, AtA, 5, 1, "details"), s(5, "small", 242), h(6), b(7, etA, 1, 1), I()()), B104 & 2) {
+  if (B104 & 1 && (s(0, "li"), b(1, KBA, 2, 1, "strong", 242), b(2, OBA, 2, 2, "p"), b(3, _BA, 5, 1, "div", 243), b(4, AtA, 5, 1, "details"), s(5, "small", 244), h(6), b(7, etA, 1, 1), I()()), B104 & 2) {
     let e = A.$implicit, t = a(2).$implicit;
     Y(), T(e.translations.length ? 1 : -1), Y(), T(e.definition ? 2 : -1), Y(), T(e.synonyms.length ? 3 : -1), Y(), T(e.examples.length ? 4 : -1), Y(2), CA("", e.source, " "), Y(), T(e.definitionLanguage !== t.language && e.definition ? 7 : -1);
   }
@@ -44527,7 +44527,7 @@ function BtA(B104, A) {
 function ttA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 244), G("click", function() {
+    s(0, "button", 246), G("click", function() {
       U(e);
       let g = a().$implicit, n = a().$implicit, i = a(4);
       return u(i.toggleDictionaryGroup(n.language + g.partOfSpeech));
@@ -44539,19 +44539,19 @@ function ttA(B104, A) {
   }
 }
 function gtA(B104, A) {
-  if (B104 & 1 && (s(0, "section", 238)(1, "h4"), h(2), I(), s(3, "ol"), nA(4, BtA, 8, 6, "li", null, Ye), I(), b(6, ttA, 2, 2, "button", 239), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "section", 240)(1, "h4"), h(2), I(), s(3, "ol"), nA(4, BtA, 8, 6, "li", null, Ye), I(), b(6, ttA, 2, 2, "button", 241), I()), B104 & 2) {
     let e = A.$implicit, t = a().$implicit, g = a(4);
     W("data-part-of-speech", e.partOfSpeech), Y(2), cA(e.label), Y(2), iA(e.senses.slice(0, g.expandedDictionaryGroups.has(t.language + e.partOfSpeech) ? e.senses.length : 4)), Y(2), T(e.senses.length > 4 ? 6 : -1);
   }
 }
 function ntA(B104, A) {
-  if (B104 & 1 && (s(0, "section", 237)(1, "h3"), h(2), I(), b(3, zBA, 2, 1, "small"), nA(4, gtA, 7, 3, "section", 238, xeA), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "section", 239)(1, "h3"), h(2), I(), b(3, zBA, 2, 1, "small"), nA(4, gtA, 7, 3, "section", 240, xeA), I()), B104 & 2) {
     let e = A.$implicit, t = a(2), g = a(2);
     W("data-language", e.language), Y(2), tB(" ", g.languageName(e.language), " \u2192 ", g.languageName(e.targetLanguage), " "), Y(), T(e.lemma !== t.word ? 3 : -1), Y(), iA(e.groups);
   }
 }
 function itA(B104, A) {
-  if (B104 & 1 && nA(0, ntA, 6, 4, "section", 237, meA), B104 & 2) {
+  if (B104 & 1 && nA(0, ntA, 6, 4, "section", 239, meA), B104 & 2) {
     let e = a();
     iA(e.readings);
   }
@@ -44559,7 +44559,7 @@ function itA(B104, A) {
 function QtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       let g = U(e).$implicit, n = a(5);
       return u(n.lookupWord(g));
     }), h(1), I();
@@ -44570,7 +44570,7 @@ function QtA(B104, A) {
   }
 }
 function otA(B104, A) {
-  if (B104 & 1 && (s(0, "span"), h(1, "Palabras cercanas:"), I(), s(2, "div", 245), nA(3, QtA, 2, 1, "button", 173, Ke), I()), B104 & 2) {
+  if (B104 & 1 && (s(0, "span"), h(1, "Palabras cercanas:"), I(), s(2, "div", 247), nA(3, QtA, 2, 1, "button", 175, Ke), I()), B104 & 2) {
     let e = a(2);
     Y(3), iA(e.suggestions);
   }
@@ -44582,7 +44582,7 @@ function rtA(B104, A) {
   }
 }
 function CtA(B104, A) {
-  if (B104 & 1 && (s(0, "strong"), h(1), I(), b(2, VBA, 2, 0, "p", 236), b(3, itA, 2, 0)(4, rtA, 3, 1)), B104 & 2) {
+  if (B104 & 1 && (s(0, "strong"), h(1), I(), b(2, VBA, 2, 0, "p", 238), b(3, itA, 2, 0)(4, rtA, 3, 1)), B104 & 2) {
     let e = A;
     Y(), cA(e.word), Y(), T(e.ambiguous ? 2 : -1), Y(), T(e.readings.length ? 3 : 4);
   }
@@ -44590,25 +44590,25 @@ function CtA(B104, A) {
 function ctA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "section", 219), G("pointerdown", function(g) {
+    s(0, "section", 221), G("pointerdown", function(g) {
       return g.stopPropagation();
-    }), s(1, "div", 220)(2, "strong"), h(3, "Diccionario"), I(), s(4, "button", 221), G("click", function() {
+    }), s(1, "div", 222)(2, "strong"), h(3, "Diccionario"), I(), s(4, "button", 223), G("click", function() {
       U(e);
       let g = a();
       return u(g.closeDictionary());
-    }), h(5, " \xD7 "), I()(), s(6, "form", 222), G("submit", function(g) {
+    }), h(5, " \xD7 "), I()(), s(6, "form", 224), G("submit", function(g) {
       U(e);
       let n = a();
       return g.preventDefault(), u(n.lookupWord());
-    }), s(7, "label"), h(8, "Idioma "), s(9, "select", 223), G("change", function(g) {
+    }), s(7, "label"), h(8, "Idioma "), s(9, "select", 225), G("change", function(g) {
       U(e);
       let n = a();
       return u(n.setDictionaryLanguage(g.target.value));
-    }), s(10, "option", 224), h(11, "Detectar autom\xE1ticamente"), I(), s(12, "option", 225), h(13, "Ingl\xE9s \u2192 espa\xF1ol"), I(), s(14, "option", 226), h(15, "Espa\xF1ol \u2192 ingl\xE9s"), I()()(), s(16, "div", 227)(17, "input", 228), G("input", function(g) {
+    }), s(10, "option", 226), h(11, "Detectar autom\xE1ticamente"), I(), s(12, "option", 227), h(13, "Ingl\xE9s \u2192 espa\xF1ol"), I(), s(14, "option", 228), h(15, "Espa\xF1ol \u2192 ingl\xE9s"), I()()(), s(16, "div", 229)(17, "input", 230), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.editDictionaryQuery(g.target.value));
-    }), I(), s(18, "button", 229), h(19, " Buscar "), I()()(), s(20, "div", 230), b(21, SBA, 2, 0, "p"), b(22, LBA, 2, 1, "p"), b(23, CtA, 5, 3), I(), s(24, "small", 231), h(25, "Sin conexi\xF3n \xB7 "), s(26, "a", 232), h(27, "WordNet"), I(), h(28, " \xB7 "), s(29, "a", 233), h(30, "OMW / MCR"), I(), h(31, " \xB7 "), s(32, "a", 234), h(33, "WikDict"), I(), h(34, " \xB7 "), s(35, "a", 235), h(36, "CC BY-SA 3.0"), I()()();
+    }), I(), s(18, "button", 231), h(19, " Buscar "), I()()(), s(20, "div", 232), b(21, SBA, 2, 0, "p"), b(22, LBA, 2, 1, "p"), b(23, CtA, 5, 3), I(), s(24, "small", 233), h(25, "Sin conexi\xF3n \xB7 "), s(26, "a", 234), h(27, "WordNet"), I(), h(28, " \xB7 "), s(29, "a", 235), h(30, "OMW / MCR"), I(), h(31, " \xB7 "), s(32, "a", 236), h(33, "WikDict"), I(), h(34, " \xB7 "), s(35, "a", 237), h(36, "CC BY-SA 3.0"), I()()();
   }
   if (B104 & 2) {
     let e, t = a();
@@ -44618,7 +44618,7 @@ function ctA(B104, A) {
 function EtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 34), G("click", function() {
+    s(0, "button", 36), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.discardPending());
@@ -44632,11 +44632,11 @@ function EtA(B104, A) {
 function stA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 63)(1, "span"), h(2), I(), s(3, "button", 34), G("click", function() {
+    s(0, "div", 65)(1, "span"), h(2), I(), s(3, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.retry());
-    }), h(4, " Reintentar "), I(), b(5, EtA, 2, 1, "button", 246), I();
+    }), h(4, " Reintentar "), I(), b(5, EtA, 2, 1, "button", 248), I();
   }
   if (B104 & 2) {
     let e = a();
@@ -44652,15 +44652,15 @@ function wtA(B104, A) {
 function atA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 247)(1, "strong"), h(2), I(), b(3, wtA, 2, 1, "small"), s(4, "div", 248)(5, "button", 249), G("click", function() {
+    s(0, "div", 249)(1, "strong"), h(2), I(), b(3, wtA, 2, 1, "small"), s(4, "div", 250)(5, "button", 251), G("click", function() {
       U(e);
       let g = a();
       return u(g.deleteActiveAnnotation());
-    }), h(6, " Eliminar"), I(), s(7, "button", 42), G("click", function() {
+    }), h(6, " Eliminar"), I(), s(7, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return g.annotationActionsOpen = false, u(g.annotationsOpen = true);
-    }), h(8, " M\xE1s opciones"), I(), s(9, "button", 250), G("click", function() {
+    }), h(8, " M\xE1s opciones"), I(), s(9, "button", 252), G("click", function() {
       U(e);
       let g = a();
       return u(g.annotationActionsOpen = false);
@@ -44674,22 +44674,22 @@ function atA(B104, A) {
 function ItA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 251)(1, "strong"), h(2, "Caja de texto"), I(), s(3, "textarea", 252, 3), G("input", function(g) {
+    s(0, "div", 253)(1, "strong"), h(2, "Caja de texto"), I(), s(3, "textarea", 254, 3), G("input", function(g) {
       let n = U(e);
       return u(n.text = g.target.value);
-    }), I(), s(5, "label"), h(6, "Tama\xF1o "), s(7, "input", 253), G("input", function(g) {
+    }), I(), s(5, "label"), h(6, "Tama\xF1o "), s(7, "input", 255), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.textFontSize = +g.target.value);
-    }), I(), h(8, " pt"), I(), s(9, "label"), h(10, "Color "), s(11, "input", 254), G("input", function(g) {
+    }), I(), h(8, " pt"), I(), s(9, "label"), h(10, "Color "), s(11, "input", 256), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.textColor = g.target.value);
-    }), I()(), s(12, "div", 248)(13, "button", 34), G("click", function() {
+    }), I()(), s(12, "div", 250)(13, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.saveText());
-    }), h(14, " A\xF1adir texto"), I(), s(15, "button", 42), G("click", function() {
+    }), h(14, " A\xF1adir texto"), I(), s(15, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.clearSelection());
@@ -44703,7 +44703,7 @@ function ItA(B104, A) {
 function DtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "era-pdf-excerpt-links", 255), G("chosen", function(g) {
+    s(0, "era-pdf-excerpt-links", 257), G("chosen", function(g) {
       U(e);
       let n = a();
       return u(n.openExcerpt(g));
@@ -44721,7 +44721,7 @@ function DtA(B104, A) {
 function YtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "era-pdf-extraction-choice", 256), G("copyRequested", function(g) {
+    s(0, "era-pdf-extraction-choice", 258), G("copyRequested", function(g) {
       U(e);
       let n = a();
       return u(n.copyExtraction(g));
@@ -44747,7 +44747,7 @@ function YtA(B104, A) {
 function MtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "button", 42), G("click", function() {
+    s(0, "button", 44), G("click", function() {
       U(e);
       let g = a(2);
       return u(g.openDictionary(g.selectedWord));
@@ -44757,31 +44757,31 @@ function MtA(B104, A) {
 function FtA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 257)(1, "div", 248), b(2, MtA, 2, 0, "button", 173), s(3, "button", 34), G("click", function() {
+    s(0, "div", 259)(1, "div", 250), b(2, MtA, 2, 0, "button", 175), s(3, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.copySelectedText());
-    }), h(4), I(), s(5, "button", 42), G("click", function() {
+    }), h(4), I(), s(5, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.annotate(false));
-    }), h(6, "Resaltar"), I(), s(7, "button", 42), G("click", function() {
+    }), h(6, "Resaltar"), I(), s(7, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.annotate(true));
-    }), h(8, "Subrayar"), I(), s(9, "button", 42), G("click", function() {
+    }), h(8, "Subrayar"), I(), s(9, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.commentSelection());
-    }), h(10, "Comentar"), I(), s(11, "button", 258), G("click", function() {
+    }), h(10, "Comentar"), I(), s(11, "button", 260), G("click", function() {
       U(e);
       let g = a();
       return u(g.clearSelection());
-    }), h(12, " \xD7 "), I()(), s(13, "era-pdf-annotation-colors", 259), G("colorChange", function(g) {
+    }), h(12, " \xD7 "), I()(), s(13, "era-pdf-annotation-colors", 261), G("colorChange", function(g) {
       U(e);
       let n = a();
       return u(n.setAnnotationColor(g));
-    }), I(), s(14, "label", 260), h(15, "Opacidad "), s(16, "input", 261), G("input", function(g) {
+    }), I(), s(14, "label", 262), h(15, "Opacidad "), s(16, "input", 263), G("input", function(g) {
       U(e);
       let n = a();
       return u(n.setAnnotationOpacity(+g.target.value));
@@ -44795,22 +44795,22 @@ function FtA(B104, A) {
 function htA(B104, A) {
   if (B104 & 1) {
     let e = L();
-    s(0, "div", 262), G("pointerdown", function(g) {
+    s(0, "div", 264), G("pointerdown", function(g) {
       return g.stopPropagation();
     })("keydown.escape", function(g) {
       return U(e), a().clearSelection(), u(g.stopPropagation());
-    }), s(1, "strong"), h(2), I(), s(3, "textarea", 263, 4), G("input", function(g) {
+    }), s(1, "strong"), h(2), I(), s(3, "textarea", 265, 4), G("input", function(g) {
       let n = U(e);
       return u(n.text = g.target.value);
-    }), I(), s(5, "era-pdf-annotation-colors", 259), G("colorChange", function(g) {
+    }), I(), s(5, "era-pdf-annotation-colors", 261), G("colorChange", function(g) {
       U(e);
       let n = a();
       return u(n.setAnnotationColor(g));
-    }), I(), s(6, "div")(7, "button", 42), G("click", function() {
+    }), I(), s(6, "div")(7, "button", 44), G("click", function() {
       U(e);
       let g = a();
       return u(g.clearSelection());
-    }), h(8, "Cancelar"), I(), s(9, "button", 34), G("click", function() {
+    }), h(8, "Cancelar"), I(), s(9, "button", 36), G("click", function() {
       U(e);
       let g = a();
       return u(g.saveComment());
@@ -45789,38 +45789,38 @@ var LF = class B100 {
       })("pointerdown", function(n) {
         return t.dismissSplitMenus(n);
       }, UB);
-    }, inputs: { editor: "editor", actions: "actions", revision: "revision", citationFocus: "citationFocus", tool: "tool" }, features: [It], decls: 96, vars: 80, consts: [["presetIcon", ""], ["viewport", ""], ["branch", ""], ["textInput", ""], ["commentInput", ""], ["role", "separator", "tabindex", "0", "aria-label", "Cambiar tama\xF1o del PDF", 1, "pdf-workspace-resize"], ["role", "region", "aria-label", "Lectura del PDF", 1, "reader"], ["role", "group", "aria-label", "Controles del PDF", 1, "pdf-controls-bar"], [1, "pdf-topbar"], ["eraTouchActivate", "", "aria-label", "Vistas y navegaci\xF3n del PDF", 1, "pdf-view-menu-toggle"], [1, "pdf-document-controls"], ["eraTouchActivate", "", "aria-label", "Volver al Lienzo", 1, "back-to-canvas", 3, "click", "disabled"], ["tabindex", "0", "aria-label", "Mover PDF desde el nombre", "aria-description", "Arrastra a un borde para dividir. Usa flechas para mover, Alt y flechas para acoplar, o Enter para ampliar.", 1, "pdf-document-name", 3, "keydown", "dblclick"], ["role", "group", "aria-label", "Distribuci\xF3n del PDF", 1, "pdf-workspace-actions"], ["eraTouchActivate", "", "aria-label", "Acciones del PDF", 1, "pdf-actions-menu-toggle"], ["aria-label", "Navegaci\xF3n del PDF", 1, "pdf-page-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior del lector", 3, "click", "disabled"], ["type", "number", "min", "1", "aria-label", "P\xE1gina del lector", 3, "change", "max", "value", "disabled"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente del lector", 3, "click", "disabled"], ["role", "status", 1, "status"], [1, "pdf-view-popover"], ["aria-label", "Vistas y marcadores del PDF", 1, "pdf-reader-dock"], ["eraTouchActivate", "", "aria-label", "Modo lectura", "title", "Alternar modo lectura", 3, "touchend", "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "M12 5C8 3 5 3 2 4v15c3-1 6-1 10 1 4-2 7-2 10-1V4c-3-1-6-1-10 1Zm0 0v15"], ["eraTouchActivate", "", "aria-label", "Mostrar \xEDndice", 3, "click"], ["d", "M4 5h16M4 12h16M4 19h16"], ["eraTouchActivate", "", "aria-label", "Mostrar miniaturas del PDF", 3, "click"], ["viewBox", "0 0 24 24"], ["x", "3", "y", "3", "width", "7", "height", "7", "rx", "1"], ["x", "14", "y", "3", "width", "7", "height", "7", "rx", "1"], ["x", "3", "y", "14", "width", "7", "height", "7", "rx", "1"], ["x", "14", "y", "14", "width", "7", "height", "7", "rx", "1"], [1, "thumbnail-label"], ["eraTouchActivate", "", 3, "click", "disabled"], ["d", "M5 3h12v18l-6-4-6 4V3Zm13 4h6m-3-3v6"], ["eraTouchActivate", "", "aria-label", "Diccionario en modo lectura"], ["aria-label", "Herramientas del PDF", 1, "pdf-categories"], ["eraTouchActivate", "", "aria-label", "Diccionario espa\xF1ol e ingl\xE9s", "title", "Diccionario espa\xF1ol \u2194 ingl\xE9s", 3, "click"], ["eraTouchActivate", "", "aria-label", "Seleccionar texto", 3, "click"], ["d", "m5 3 14 9-7 1-3 7-4-17Z"], [1, "toolbar-divider"], ["eraTouchActivate", "", 3, "click"], ["d", "M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5M9 9h6v6H9Z"], ["role", "toolbar", "aria-label", "Acciones r\xE1pidas del PDF", 1, "pdf-split-strip"], ["aria-label", "Opciones de lectura", 1, "pdf-reading-options"], [1, "body"], ["role", "dialog", "aria-label", "Propiedades del borrador PDF", 1, "pdf-properties", "pdf-eraser-properties"], ["role", "group", "aria-label", "Acciones adicionales del PDF", 1, "pdf-split-actions"], ["role", "dialog", "aria-label", "A\xF1adir al PDF", 1, "pdf-properties", "pdf-insert-menu"], ["role", "dialog", "aria-label", "Propiedades del pincel PDF", 1, "pdf-properties"], ["role", "dialog", "aria-label", "Miniaturas del PDF", 1, "pdf-pages-panel"], ["aria-label", "\xCDndice del PDF"], [1, "viewport", 3, "scroll", "wheel", "pointerdown", "pointermove", "pointerleave", "pointerup", "pointercancel", "lostpointercapture"], ["aria-label", "Texto de la p\xE1gina PDF", 1, "pdf-reading-text", 3, "font-size"], [1, "document", 3, "hidden"], [1, "sheet", 3, "width", "height"], ["role", "status", 1, "loading"], [3, "annotations", "selected", "busy"], ["aria-label", "Zoom del PDF"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del PDF", 3, "click"], ["role", "dialog", "aria-label", "Diccionario de palabras", 1, "pdf-dictionary"], ["role", "alert", 1, "error"], ["role", "toolbar", "aria-label", "Acciones de la anotaci\xF3n", 1, "selection-actions", "annotation-actions", 3, "left", "top"], ["role", "dialog", "aria-label", "Nueva caja de texto PDF", 1, "selection-actions", "text-box-draft", 3, "left", "top"], [3, "links", "left", "top"], [3, "left", "top", "hasText", "canExtractPdf", "copyBusy", "canAnnotate"], ["role", "toolbar", "aria-label", "Acciones del texto seleccionado", 1, "selection-actions", 3, "left", "top"], ["role", "dialog", "aria-label", "Nuevo comentario en PDF", 1, "comment-composer", 3, "left", "top"], ["role", "separator", "tabindex", "0", "aria-label", "Cambiar tama\xF1o del PDF", 1, "pdf-workspace-resize", 3, "keydown"], ["eraTouchActivate", "", "aria-label", "Vistas y navegaci\xF3n del PDF", 1, "pdf-view-menu-toggle", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ampliar o restaurar PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Acciones del PDF", 1, "pdf-actions-menu-toggle", 3, "click"], ["eraTouchActivate", "", "aria-label", "Diccionario en modo lectura", 3, "click"], ["role", "group", "aria-label", "P\xE1ginas del PDF dividido", 1, "pdf-split-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior del PDF dividido", "title", "P\xE1gina anterior", 3, "click", "disabled"], ["type", "number", "aria-label", "P\xE1gina del PDF dividido", "min", "1", 3, "change", "max", "value", "disabled"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente del PDF dividido", "title", "P\xE1gina siguiente", 3, "click", "disabled"], ["role", "group", "aria-label", "Herramientas r\xE1pidas del PDF", 1, "pdf-split-shortcuts"], ["eraTouchActivate", "", "aria-label", "\xCDndice del PDF dividido", "title", "\xCDndice", 3, "click"], ["d", "M8 5h13M8 12h13M8 19h13M3 5h.1M3 12h.1M3 19h.1"], ["eraTouchActivate", "", "aria-label", "Miniaturas del PDF dividido", "title", "Miniaturas", 3, "click"], ["d", "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"], ["eraTouchActivate", "", "aria-label", "Opciones del borrador PDF", "title", "Opciones del borrador PDF", 3, "click"], ["d", "m4 14 9-10a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-8 9H9l-5-4a2 2 0 0 1 0-3ZM8 10l9 8M13 21h8"], ["eraTouchActivate", "", "aria-label", "Comentar en el PDF dividido", "title", "Comentar", 3, "click"], ["d", "M4 4h16v12H9l-5 4V4Zm8 3v6m-3-3h6"], ["eraTouchActivate", "", "aria-label", "Lectura del PDF dividido", "title", "Modo lectura", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Extraer del PDF dividido", "title", "Extraer una regi\xF3n", 3, "click"], ["role", "group", "aria-label", "Zoom del PDF dividido", 1, "pdf-split-zoom"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del PDF dividido", "title", "Reducir zoom", 3, "click"], ["aria-label", "Zoom del PDF dividido"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del PDF dividido", "title", "Aumentar zoom", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ajustar PDF dividido", 3, "click"], ["role", "group", "aria-label", "Formato de lectura", 1, "reading-layout"], ["role", "group", "aria-label", "Tama\xF1o de letra de lectura", 1, "reading-font"], ["eraTouchActivate", "", "aria-label", "Reducir letra de lectura", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Aumentar letra de lectura", 3, "click", "disabled"], ["viewBox", "0 0 180 50", "aria-hidden", "true", 1, "pdf-brush-icon"], [1, "properties-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar propiedades del borrador PDF", 3, "click"], ["aria-label", "Vista previa del tama\xF1o del borrador", 1, "eraser-preview"], [1, "property-block"], ["for", "pdf-eraser-size"], [1, "property-range"], ["id", "pdf-eraser-size", "aria-label", "Tama\xF1o del borrador PDF", "type", "range", "min", "1", "max", "200", "step", "1", 3, "input", "value"], ["aria-label", "Tama\xF1o exacto del borrador PDF", "type", "number", "min", "1", "max", "200", "step", "1", 3, "change", "value"], [1, "property-actions"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir tama\xF1o del borrador PDF", 1, "property-step", 3, "click", "disabled"], [1, "width-presets"], ["eraTouchActivate", "", 3, "active"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar tama\xF1o del borrador PDF", 1, "property-step", 3, "click", "disabled"], ["for", "pdf-eraser-opacity"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir opacidad del borrador PDF", 1, "property-step", 3, "click", "disabled"], ["id", "pdf-eraser-opacity", "aria-label", "Opacidad del borrador PDF", "type", "range", "min", "1", "max", "100", 3, "input", "disabled", "value"], ["aria-label", "Opacidad exacta del borrador PDF", "type", "number", "min", "1", "max", "100", 3, "change", "disabled", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar opacidad del borrador PDF", 1, "property-step", 3, "click", "disabled"], [1, "property-block", "eraser-mode"], ["aria-label", "Modo de borrado del PDF", 3, "change", "value"], ["value", "ink"], ["value", "annotation"], [1, "eraser-hint"], ["eraTouchActivate", "", "aria-label", "Mostrar anotaciones", 3, "click"], ["eraTouchActivate", "", "aria-label", "A\xF1adir al PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar men\xFA A\xF1adir al PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "A\xF1adir caja de texto al PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "A\xF1adir comentario al PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Organizar p\xE1ginas desde A\xF1adir", 3, "click"], ["aria-label", "Nombre del favorito PDF", "maxlength", "60", 3, "change", "value"], ["eraTouchActivate", "", "aria-label", "Anclar propiedades PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Eliminar favorito PDF", 3, "click", "disabled"], ["d", "M4 6h16M9 6V3h6v3m-9 0 1 15h10l1-15M10 10v7m4-7v7"], ["eraTouchActivate", "", "aria-label", "Cerrar propiedades PDF", 3, "click"], ["viewBox", "0 0 180 50", "aria-label", "Muestra del pincel PDF", 1, "pdf-ink-preview"], [1, "pdf-brush-profiles"], ["for", "pdf-brush-width"], ["id", "pdf-brush-width", "aria-label", "Grosor del pincel PDF", "type", "range", "min", "0.5", "max", "96", "step", "0.5", 3, "input", "value"], ["aria-label", "Grosor exacto del pincel PDF", "type", "number", "min", "0.5", "max", "96", "step", "0.5", 3, "change", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir grosor del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar grosor del pincel PDF", 1, "property-step", 3, "click", "disabled"], [1, "pdf-palette"], ["eraTouchActivate", "", 3, "background", "selected-color"], ["title", "Color personalizado", 1, "custom-color"], ["type", "color", "aria-label", "Color personalizado del pincel PDF", 3, "input", "value"], ["for", "pdf-brush-opacity"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir opacidad del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["id", "pdf-brush-opacity", "aria-label", "Opacidad del pincel PDF", "type", "range", "min", "1", "max", "100", 3, "input", "value"], ["type", "number", "aria-label", "Opacidad exacta del pincel PDF", "min", "1", "max", "100", 3, "change", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar opacidad del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "duplicate-preset", 3, "click", "disabled"], ["viewBox", "0 0 180 50"], [1, "pages-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar miniaturas del PDF", 3, "click"], ["role", "group", "aria-label", "Filtrar hojas del PDF", 1, "pdf-page-filters"], ["eraTouchActivate", "", "aria-label", "Mostrar todas las hojas", 3, "click"], ["eraTouchActivate", "", "aria-label", "Mostrar hojas marcadas", 3, "click"], [1, "bookmark-hint"], ["aria-label", "Organizar p\xE1ginas del PDF", 1, "page-operations"], [1, "page-operation-buttons"], ["eraTouchActivate", "", "aria-label", "Mover hoja hacia atr\xE1s", "title", "Mover antes", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Mover hoja hacia adelante", "title", "Mover despu\xE9s", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Eliminar hoja del PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Deshacer cambio del PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Rehacer cambio del PDF", 3, "click", "disabled"], [1, "add-pdf-page"], ["aria-label", "Papel de la nueva hoja PDF", 3, "change", "value"], ["value", "blank"], ["value", "grid"], ["value", "ruled"], [1, "thumbnail-grid"], [1, "pdf-page-card"], [1, "empty-marked-pages"], ["eraTouchActivate", ""], [1, "thumbnail-paper"], ["width", "1", "height", "1"], ["eraTouchActivate", "", 1, "thumbnail-bookmark", 3, "click"], ["d", "M6 3h12v18l-6-4-6 4V3Z"], [1, "aside-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar \xEDndice del PDF", 3, "click"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"], ["open", "", 1, "chapter"], ["eraTouchActivate", "", 1, "entry", "leaf", 3, "disabled"], ["aria-hidden", "true", 1, "chevron"], ["eraTouchActivate", "", 1, "entry", 3, "click", "disabled"], [1, "subsections"], ["eraTouchActivate", "", 1, "entry", "leaf", 3, "click", "disabled"], ["aria-label", "Texto de la p\xE1gina PDF", 1, "pdf-reading-text"], [1, "reading-page-label"], ["role", "status"], [1, "reading-page-turn"], ["eraTouchActivate", "", "aria-label", "Leer p\xE1gina anterior", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Leer p\xE1gina siguiente", 3, "click", "disabled"], ["role", "alert"], [1, "reading-copy"], ["eraTouchActivate", "", "aria-label", "Ver p\xE1gina original", 3, "click"], [1, "sheet"], ["preserveAspectRatio", "none", "aria-label", "Origen de la referencia", 1, "pdf-origin-focus"], ["preserveAspectRatio", "none", "aria-hidden", "true", 1, "text-draft-bounds"], ["preserveAspectRatio", "none", "aria-hidden", "true"], ["preserveAspectRatio", "none", "aria-hidden", "true", 1, "pending-marks"], ["preserveAspectRatio", "none", "aria-label", "Anotaciones de la p\xE1gina", 1, "annotation-hits"], ["preserveAspectRatio", "none", "aria-label", "Citas del PDF", 1, "excerpt-marks"], ["aria-hidden", "true", 1, "page-number"], ["fill", "none", "stroke", "#777", "stroke-width", "1"], ["maskUnits", "userSpaceOnUse", "x", "0", "y", "0"], ["x", "0", "y", "0", 2, "fill", "black", "stroke", "none"], [2, "fill", "none", "stroke", "white"], [2, "fill", "white", "stroke", "none"], [2, "stroke", "#df4444", "fill", "none"], [2, "fill", "#e34c4c22", "stroke", "#d44242", "stroke-width", "1.5"], ["stroke-width", "1"], ["tabindex", "0", "role", "button", 2, "stroke", "transparent", "fill", "none", 3, "pointer-events"], ["tabindex", "0", "role", "button", 2, "stroke", "transparent", "fill", "none", 3, "pointerdown", "keydown.enter"], ["tabindex", "0", "role", "button", 2, "fill", "transparent", "stroke", "none", 3, "pointer-events"], ["tabindex", "0", "role", "button", 2, "fill", "transparent", "stroke", "none", 3, "pointerdown", "keydown.enter"], ["tabindex", "0", "role", "button", 3, "pointer-events"], ["tabindex", "0", "role", "button", 3, "pointerdown", "click", "keydown.enter"], [3, "picked", "patch", "closed", "showCites", "annotations", "selected", "busy"], ["role", "dialog", "aria-label", "Diccionario de palabras", 1, "pdf-dictionary", 3, "pointerdown"], [1, "dictionary-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar diccionario", 3, "click"], [3, "submit"], ["aria-label", "Direcci\xF3n del diccionario", 3, "change", "value"], ["value", "auto"], ["value", "en"], ["value", "es"], [1, "dictionary-search"], ["aria-label", "Palabra para traducir", "placeholder", "Una palabra\u2026", "autocomplete", "off", "autocapitalize", "none", 3, "input", "value"], ["eraTouchActivate", "", "type", "submit", 3, "disabled"], ["aria-live", "polite", 1, "dictionary-results"], [1, "dictionary-credit"], ["href", "https://wordnet.princeton.edu/", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://github.com/omwn/omw-data", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://www.wikdict.com/page/download", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://creativecommons.org/licenses/by-sa/3.0/", "target", "_blank", "rel", "noopener noreferrer"], [1, "dictionary-ambiguity"], [1, "dictionary-reading"], [1, "dictionary-group"], ["eraTouchActivate", "", 1, "more-senses"], [1, "sense-translations"], [1, "sense-synonyms"], [1, "sense-source"], [1, "sense-example"], ["eraTouchActivate", "", 1, "more-senses", 3, "click"], [1, "dictionary-suggestions"], ["eraTouchActivate", "", 3, "disabled"], ["role", "toolbar", "aria-label", "Acciones de la anotaci\xF3n", 1, "selection-actions", "annotation-actions"], [1, "selection-tools"], ["eraTouchActivate", "", "aria-label", "Eliminar anotaci\xF3n seleccionada", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Cerrar acciones de la anotaci\xF3n", 3, "click"], ["role", "dialog", "aria-label", "Nueva caja de texto PDF", 1, "selection-actions", "text-box-draft"], ["aria-label", "Texto de la caja PDF", "placeholder", "Escribe aqu\xED\u2026", "maxlength", "100000", 3, "input", "value"], ["type", "number", "aria-label", "Tama\xF1o de letra del PDF", "min", "6", "max", "72", 3, "input", "value"], ["type", "color", "aria-label", "Color del texto PDF", 3, "input", "value"], [3, "chosen", "dismissed", "links"], [3, "copyRequested", "annotateText", "chosen", "dismissed", "hasText", "canExtractPdf", "copyBusy", "canAnnotate"], ["role", "toolbar", "aria-label", "Acciones del texto seleccionado", 1, "selection-actions"], ["eraTouchActivate", "", "aria-label", "Cerrar selecci\xF3n", 3, "click"], [3, "colorChange", "color"], [1, "selection-opacity"], ["aria-label", "Opacidad del marcado", "type", "range", "min", "5", "max", "100", 3, "input", "value"], ["role", "dialog", "aria-label", "Nuevo comentario en PDF", 1, "comment-composer", 3, "pointerdown", "keydown.escape"], ["aria-label", "Texto del comentario PDF", "placeholder", "Escribe tu comentario\u2026", "maxlength", "100000", 3, "input", "value"]], template: function(e, t) {
+    }, inputs: { editor: "editor", actions: "actions", revision: "revision", citationFocus: "citationFocus", tool: "tool" }, features: [It], decls: 98, vars: 80, consts: [["presetIcon", ""], ["viewport", ""], ["branch", ""], ["textInput", ""], ["commentInput", ""], ["role", "separator", "tabindex", "0", "aria-label", "Cambiar tama\xF1o del PDF", 1, "pdf-workspace-resize"], ["role", "region", "aria-label", "Lectura del PDF", 1, "reader"], ["role", "group", "aria-label", "Controles del PDF", 1, "pdf-controls-bar"], [1, "pdf-topbar"], ["eraTouchActivate", "", "aria-label", "Vistas y navegaci\xF3n del PDF", 1, "pdf-view-menu-toggle"], [1, "pdf-document-controls"], ["tabindex", "0", "aria-label", "Mover PDF desde el nombre", "aria-description", "Arrastra a un borde para dividir. Usa flechas para mover, Alt y flechas para acoplar, o Enter para ampliar.", 1, "pdf-document-name", 3, "keydown", "dblclick"], ["role", "group", "aria-label", "Ventana del PDF", 1, "pdf-workspace-actions"], ["eraTouchActivate", "", "aria-label", "Cerrar PDF", "title", "Cerrar PDF y volver al Lienzo", 1, "back-to-canvas", 3, "click", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["d", "m6 6 12 12M18 6 6 18"], ["eraTouchActivate", "", "aria-label", "Ampliar o restaurar PDF"], ["eraTouchActivate", "", "aria-label", "Acciones del PDF", 1, "pdf-actions-menu-toggle"], ["aria-label", "Navegaci\xF3n del PDF", 1, "pdf-page-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior del lector", 3, "click", "disabled"], ["type", "number", "min", "1", "aria-label", "P\xE1gina del lector", 3, "change", "max", "value", "disabled"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente del lector", 3, "click", "disabled"], ["role", "status", 1, "status"], [1, "pdf-view-popover"], ["aria-label", "Vistas y marcadores del PDF", 1, "pdf-reader-dock"], ["eraTouchActivate", "", "aria-label", "Modo lectura", "title", "Alternar modo lectura", 3, "touchend", "click", "disabled"], ["d", "M12 5C8 3 5 3 2 4v15c3-1 6-1 10 1 4-2 7-2 10-1V4c-3-1-6-1-10 1Zm0 0v15"], ["eraTouchActivate", "", "aria-label", "Mostrar \xEDndice", 3, "click"], ["d", "M4 5h16M4 12h16M4 19h16"], ["eraTouchActivate", "", "aria-label", "Mostrar miniaturas del PDF", 3, "click"], ["viewBox", "0 0 24 24"], ["x", "3", "y", "3", "width", "7", "height", "7", "rx", "1"], ["x", "14", "y", "3", "width", "7", "height", "7", "rx", "1"], ["x", "3", "y", "14", "width", "7", "height", "7", "rx", "1"], ["x", "14", "y", "14", "width", "7", "height", "7", "rx", "1"], [1, "thumbnail-label"], ["eraTouchActivate", "", 3, "click", "disabled"], ["d", "M5 3h12v18l-6-4-6 4V3Zm13 4h6m-3-3v6"], ["eraTouchActivate", "", "aria-label", "Diccionario en modo lectura"], ["aria-label", "Herramientas del PDF", 1, "pdf-categories"], ["eraTouchActivate", "", "aria-label", "Diccionario espa\xF1ol e ingl\xE9s", "title", "Diccionario espa\xF1ol \u2194 ingl\xE9s", 3, "click"], ["eraTouchActivate", "", "aria-label", "Seleccionar texto", 3, "click"], ["d", "m5 3 14 9-7 1-3 7-4-17Z"], [1, "toolbar-divider"], ["eraTouchActivate", "", 3, "click"], ["d", "M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5M9 9h6v6H9Z"], ["role", "toolbar", "aria-label", "Acciones r\xE1pidas del PDF", 1, "pdf-split-strip"], ["aria-label", "Opciones de lectura", 1, "pdf-reading-options"], [1, "body"], ["role", "dialog", "aria-label", "Propiedades del borrador PDF", 1, "pdf-properties", "pdf-eraser-properties"], ["role", "group", "aria-label", "Acciones adicionales del PDF", 1, "pdf-split-actions"], ["role", "dialog", "aria-label", "A\xF1adir al PDF", 1, "pdf-properties", "pdf-insert-menu"], ["role", "dialog", "aria-label", "Propiedades del pincel PDF", 1, "pdf-properties"], ["role", "dialog", "aria-label", "Miniaturas del PDF", 1, "pdf-pages-panel"], ["aria-label", "\xCDndice del PDF"], [1, "viewport", 3, "scroll", "wheel", "pointerdown", "pointermove", "pointerleave", "pointerup", "pointercancel", "lostpointercapture"], ["aria-label", "Texto de la p\xE1gina PDF", 1, "pdf-reading-text", 3, "font-size"], [1, "document", 3, "hidden"], [1, "sheet", 3, "width", "height"], ["role", "status", 1, "loading"], [3, "annotations", "selected", "busy"], ["aria-label", "Zoom del PDF"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del PDF", 3, "click"], ["role", "dialog", "aria-label", "Diccionario de palabras", 1, "pdf-dictionary"], ["role", "alert", 1, "error"], ["role", "toolbar", "aria-label", "Acciones de la anotaci\xF3n", 1, "selection-actions", "annotation-actions", 3, "left", "top"], ["role", "dialog", "aria-label", "Nueva caja de texto PDF", 1, "selection-actions", "text-box-draft", 3, "left", "top"], [3, "links", "left", "top"], [3, "left", "top", "hasText", "canExtractPdf", "copyBusy", "canAnnotate"], ["role", "toolbar", "aria-label", "Acciones del texto seleccionado", 1, "selection-actions", 3, "left", "top"], ["role", "dialog", "aria-label", "Nuevo comentario en PDF", 1, "comment-composer", 3, "left", "top"], ["role", "separator", "tabindex", "0", "aria-label", "Cambiar tama\xF1o del PDF", 1, "pdf-workspace-resize", 3, "keydown"], ["eraTouchActivate", "", "aria-label", "Vistas y navegaci\xF3n del PDF", 1, "pdf-view-menu-toggle", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ampliar o restaurar PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Acciones del PDF", 1, "pdf-actions-menu-toggle", 3, "click"], ["eraTouchActivate", "", "aria-label", "Diccionario en modo lectura", 3, "click"], ["role", "group", "aria-label", "P\xE1ginas del PDF dividido", 1, "pdf-split-navigation"], ["eraTouchActivate", "", "aria-label", "P\xE1gina anterior del PDF dividido", "title", "P\xE1gina anterior", 3, "click", "disabled"], ["type", "number", "aria-label", "P\xE1gina del PDF dividido", "min", "1", 3, "change", "max", "value", "disabled"], ["eraTouchActivate", "", "aria-label", "P\xE1gina siguiente del PDF dividido", "title", "P\xE1gina siguiente", 3, "click", "disabled"], ["role", "group", "aria-label", "Herramientas r\xE1pidas del PDF", 1, "pdf-split-shortcuts"], ["eraTouchActivate", "", "aria-label", "\xCDndice del PDF dividido", "title", "\xCDndice", 3, "click"], ["d", "M8 5h13M8 12h13M8 19h13M3 5h.1M3 12h.1M3 19h.1"], ["eraTouchActivate", "", "aria-label", "Miniaturas del PDF dividido", "title", "Miniaturas", 3, "click"], ["d", "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"], ["eraTouchActivate", "", "aria-label", "Opciones del borrador PDF", "title", "Opciones del borrador PDF", 3, "click"], ["d", "m4 14 9-10a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-8 9H9l-5-4a2 2 0 0 1 0-3ZM8 10l9 8M13 21h8"], ["eraTouchActivate", "", "aria-label", "Comentar en el PDF dividido", "title", "Comentar", 3, "click"], ["d", "M4 4h16v12H9l-5 4V4Zm8 3v6m-3-3h6"], ["eraTouchActivate", "", "aria-label", "Lectura del PDF dividido", "title", "Modo lectura", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Extraer del PDF dividido", "title", "Extraer una regi\xF3n", 3, "click"], ["role", "group", "aria-label", "Zoom del PDF dividido", 1, "pdf-split-zoom"], ["eraTouchActivate", "", "aria-label", "Reducir zoom del PDF dividido", "title", "Reducir zoom", 3, "click"], ["aria-label", "Zoom del PDF dividido"], ["eraTouchActivate", "", "aria-label", "Aumentar zoom del PDF dividido", "title", "Aumentar zoom", 3, "click"], ["eraTouchActivate", "", "aria-label", "Ajustar PDF dividido", 3, "click"], ["role", "group", "aria-label", "Formato de lectura", 1, "reading-layout"], ["role", "group", "aria-label", "Tama\xF1o de letra de lectura", 1, "reading-font"], ["eraTouchActivate", "", "aria-label", "Reducir letra de lectura", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Aumentar letra de lectura", 3, "click", "disabled"], ["viewBox", "0 0 180 50", "aria-hidden", "true", 1, "pdf-brush-icon"], [1, "properties-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar propiedades del borrador PDF", 3, "click"], ["aria-label", "Vista previa del tama\xF1o del borrador", 1, "eraser-preview"], [1, "property-block"], ["for", "pdf-eraser-size"], [1, "property-range"], ["id", "pdf-eraser-size", "aria-label", "Tama\xF1o del borrador PDF", "type", "range", "min", "1", "max", "200", "step", "1", 3, "input", "value"], ["aria-label", "Tama\xF1o exacto del borrador PDF", "type", "number", "min", "1", "max", "200", "step", "1", 3, "change", "value"], [1, "property-actions"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir tama\xF1o del borrador PDF", 1, "property-step", 3, "click", "disabled"], [1, "width-presets"], ["eraTouchActivate", "", 3, "active"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar tama\xF1o del borrador PDF", 1, "property-step", 3, "click", "disabled"], ["for", "pdf-eraser-opacity"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir opacidad del borrador PDF", 1, "property-step", 3, "click", "disabled"], ["id", "pdf-eraser-opacity", "aria-label", "Opacidad del borrador PDF", "type", "range", "min", "1", "max", "100", 3, "input", "disabled", "value"], ["aria-label", "Opacidad exacta del borrador PDF", "type", "number", "min", "1", "max", "100", 3, "change", "disabled", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar opacidad del borrador PDF", 1, "property-step", 3, "click", "disabled"], [1, "property-block", "eraser-mode"], ["aria-label", "Modo de borrado del PDF", 3, "change", "value"], ["value", "ink"], ["value", "annotation"], [1, "eraser-hint"], ["eraTouchActivate", "", "aria-label", "Mostrar anotaciones", 3, "click"], ["eraTouchActivate", "", "aria-label", "A\xF1adir al PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Cerrar men\xFA A\xF1adir al PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "A\xF1adir caja de texto al PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "A\xF1adir comentario al PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Organizar p\xE1ginas desde A\xF1adir", 3, "click"], ["aria-label", "Nombre del favorito PDF", "maxlength", "60", 3, "change", "value"], ["eraTouchActivate", "", "aria-label", "Anclar propiedades PDF", 3, "click"], ["eraTouchActivate", "", "aria-label", "Eliminar favorito PDF", 3, "click", "disabled"], ["d", "M4 6h16M9 6V3h6v3m-9 0 1 15h10l1-15M10 10v7m4-7v7"], ["eraTouchActivate", "", "aria-label", "Cerrar propiedades PDF", 3, "click"], ["viewBox", "0 0 180 50", "aria-label", "Muestra del pincel PDF", 1, "pdf-ink-preview"], [1, "pdf-brush-profiles"], ["for", "pdf-brush-width"], ["id", "pdf-brush-width", "aria-label", "Grosor del pincel PDF", "type", "range", "min", "0.5", "max", "96", "step", "0.5", 3, "input", "value"], ["aria-label", "Grosor exacto del pincel PDF", "type", "number", "min", "0.5", "max", "96", "step", "0.5", 3, "change", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir grosor del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar grosor del pincel PDF", 1, "property-step", 3, "click", "disabled"], [1, "pdf-palette"], ["eraTouchActivate", "", 3, "background", "selected-color"], ["title", "Color personalizado", 1, "custom-color"], ["type", "color", "aria-label", "Color personalizado del pincel PDF", 3, "input", "value"], ["for", "pdf-brush-opacity"], ["eraTouchActivate", "", "type", "button", "aria-label", "Disminuir opacidad del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["id", "pdf-brush-opacity", "aria-label", "Opacidad del pincel PDF", "type", "range", "min", "1", "max", "100", 3, "input", "value"], ["type", "number", "aria-label", "Opacidad exacta del pincel PDF", "min", "1", "max", "100", 3, "change", "value"], ["eraTouchActivate", "", "type", "button", "aria-label", "Aumentar opacidad del pincel PDF", 1, "property-step", 3, "click", "disabled"], ["eraTouchActivate", "", 1, "duplicate-preset", 3, "click", "disabled"], ["viewBox", "0 0 180 50"], [1, "pages-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar miniaturas del PDF", 3, "click"], ["role", "group", "aria-label", "Filtrar hojas del PDF", 1, "pdf-page-filters"], ["eraTouchActivate", "", "aria-label", "Mostrar todas las hojas", 3, "click"], ["eraTouchActivate", "", "aria-label", "Mostrar hojas marcadas", 3, "click"], [1, "bookmark-hint"], ["aria-label", "Organizar p\xE1ginas del PDF", 1, "page-operations"], [1, "page-operation-buttons"], ["eraTouchActivate", "", "aria-label", "Mover hoja hacia atr\xE1s", "title", "Mover antes", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Mover hoja hacia adelante", "title", "Mover despu\xE9s", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Eliminar hoja del PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Deshacer cambio del PDF", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Rehacer cambio del PDF", 3, "click", "disabled"], [1, "add-pdf-page"], ["aria-label", "Papel de la nueva hoja PDF", 3, "change", "value"], ["value", "blank"], ["value", "grid"], ["value", "ruled"], [1, "thumbnail-grid"], [1, "pdf-page-card"], [1, "empty-marked-pages"], ["eraTouchActivate", ""], [1, "thumbnail-paper"], ["width", "1", "height", "1"], ["eraTouchActivate", "", 1, "thumbnail-bookmark", 3, "click"], ["d", "M6 3h12v18l-6-4-6 4V3Z"], [1, "aside-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar \xEDndice del PDF", 3, "click"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"], ["open", "", 1, "chapter"], ["eraTouchActivate", "", 1, "entry", "leaf", 3, "disabled"], ["aria-hidden", "true", 1, "chevron"], ["eraTouchActivate", "", 1, "entry", 3, "click", "disabled"], [1, "subsections"], ["eraTouchActivate", "", 1, "entry", "leaf", 3, "click", "disabled"], ["aria-label", "Texto de la p\xE1gina PDF", 1, "pdf-reading-text"], [1, "reading-page-label"], ["role", "status"], [1, "reading-page-turn"], ["eraTouchActivate", "", "aria-label", "Leer p\xE1gina anterior", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Leer p\xE1gina siguiente", 3, "click", "disabled"], ["role", "alert"], [1, "reading-copy"], ["eraTouchActivate", "", "aria-label", "Ver p\xE1gina original", 3, "click"], [1, "sheet"], ["preserveAspectRatio", "none", "aria-label", "Origen de la referencia", 1, "pdf-origin-focus"], ["preserveAspectRatio", "none", "aria-hidden", "true", 1, "text-draft-bounds"], ["preserveAspectRatio", "none", "aria-hidden", "true"], ["preserveAspectRatio", "none", "aria-hidden", "true", 1, "pending-marks"], ["preserveAspectRatio", "none", "aria-label", "Anotaciones de la p\xE1gina", 1, "annotation-hits"], ["preserveAspectRatio", "none", "aria-label", "Citas del PDF", 1, "excerpt-marks"], ["aria-hidden", "true", 1, "page-number"], ["fill", "none", "stroke", "#777", "stroke-width", "1"], ["maskUnits", "userSpaceOnUse", "x", "0", "y", "0"], ["x", "0", "y", "0", 2, "fill", "black", "stroke", "none"], [2, "fill", "none", "stroke", "white"], [2, "fill", "white", "stroke", "none"], [2, "stroke", "#df4444", "fill", "none"], [2, "fill", "#e34c4c22", "stroke", "#d44242", "stroke-width", "1.5"], ["stroke-width", "1"], ["tabindex", "0", "role", "button", 2, "stroke", "transparent", "fill", "none", 3, "pointer-events"], ["tabindex", "0", "role", "button", 2, "stroke", "transparent", "fill", "none", 3, "pointerdown", "keydown.enter"], ["tabindex", "0", "role", "button", 2, "fill", "transparent", "stroke", "none", 3, "pointer-events"], ["tabindex", "0", "role", "button", 2, "fill", "transparent", "stroke", "none", 3, "pointerdown", "keydown.enter"], ["tabindex", "0", "role", "button", 3, "pointer-events"], ["tabindex", "0", "role", "button", 3, "pointerdown", "click", "keydown.enter"], [3, "picked", "patch", "closed", "showCites", "annotations", "selected", "busy"], ["role", "dialog", "aria-label", "Diccionario de palabras", 1, "pdf-dictionary", 3, "pointerdown"], [1, "dictionary-heading"], ["eraTouchActivate", "", "aria-label", "Cerrar diccionario", 3, "click"], [3, "submit"], ["aria-label", "Direcci\xF3n del diccionario", 3, "change", "value"], ["value", "auto"], ["value", "en"], ["value", "es"], [1, "dictionary-search"], ["aria-label", "Palabra para traducir", "placeholder", "Una palabra\u2026", "autocomplete", "off", "autocapitalize", "none", 3, "input", "value"], ["eraTouchActivate", "", "type", "submit", 3, "disabled"], ["aria-live", "polite", 1, "dictionary-results"], [1, "dictionary-credit"], ["href", "https://wordnet.princeton.edu/", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://github.com/omwn/omw-data", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://www.wikdict.com/page/download", "target", "_blank", "rel", "noopener noreferrer"], ["href", "https://creativecommons.org/licenses/by-sa/3.0/", "target", "_blank", "rel", "noopener noreferrer"], [1, "dictionary-ambiguity"], [1, "dictionary-reading"], [1, "dictionary-group"], ["eraTouchActivate", "", 1, "more-senses"], [1, "sense-translations"], [1, "sense-synonyms"], [1, "sense-source"], [1, "sense-example"], ["eraTouchActivate", "", 1, "more-senses", 3, "click"], [1, "dictionary-suggestions"], ["eraTouchActivate", "", 3, "disabled"], ["role", "toolbar", "aria-label", "Acciones de la anotaci\xF3n", 1, "selection-actions", "annotation-actions"], [1, "selection-tools"], ["eraTouchActivate", "", "aria-label", "Eliminar anotaci\xF3n seleccionada", 3, "click", "disabled"], ["eraTouchActivate", "", "aria-label", "Cerrar acciones de la anotaci\xF3n", 3, "click"], ["role", "dialog", "aria-label", "Nueva caja de texto PDF", 1, "selection-actions", "text-box-draft"], ["aria-label", "Texto de la caja PDF", "placeholder", "Escribe aqu\xED\u2026", "maxlength", "100000", 3, "input", "value"], ["type", "number", "aria-label", "Tama\xF1o de letra del PDF", "min", "6", "max", "72", 3, "input", "value"], ["type", "color", "aria-label", "Color del texto PDF", 3, "input", "value"], [3, "chosen", "dismissed", "links"], [3, "copyRequested", "annotateText", "chosen", "dismissed", "hasText", "canExtractPdf", "copyBusy", "canAnnotate"], ["role", "toolbar", "aria-label", "Acciones del texto seleccionado", 1, "selection-actions"], ["eraTouchActivate", "", "aria-label", "Cerrar selecci\xF3n", 3, "click"], [3, "colorChange", "color"], [1, "selection-opacity"], ["aria-label", "Opacidad del marcado", "type", "range", "min", "5", "max", "100", 3, "input", "value"], ["role", "dialog", "aria-label", "Nuevo comentario en PDF", 1, "comment-composer", 3, "pointerdown", "keydown.escape"], ["aria-label", "Texto del comentario PDF", "placeholder", "Escribe tu comentario\u2026", "maxlength", "100000", 3, "input", "value"]], template: function(e, t) {
       if (e & 1) {
         let g = L();
-        b(0, feA, 1, 1, "div", 5), s(1, "section", 6)(2, "div", 7)(3, "header", 8), b(4, yeA, 2, 1, "button", 9), s(5, "div", 10)(6, "button", 11), G("click", function() {
-          return t.close();
-        }), h(7, " \u2039 Lienzo "), I(), s(8, "strong", 12), G("keydown", function(i) {
+        b(0, feA, 1, 1, "div", 5), s(1, "section", 6)(2, "div", 7)(3, "header", 8), b(4, yeA, 2, 1, "button", 9), s(5, "div", 10)(6, "strong", 11), G("keydown", function(i) {
           return t.workspace == null ? null : t.workspace.moveKey(i);
         })("dblclick", function() {
           return t.workspace == null ? null : t.workspace.toggleFull();
-        }), h(9), I()(), b(10, ReA, 4, 1, "div", 13), b(11, HeA, 2, 1, "button", 14), s(12, "nav", 15)(13, "button", 16), G("click", function() {
+        }), h(7), I()(), s(8, "div", 12)(9, "button", 13), G("click", function() {
+          return t.close();
+        }), AA(), s(10, "svg", 14), $(11, "path", 15), I()(), b(12, ReA, 3, 1, "button", 16), I(), b(13, HeA, 2, 1, "button", 17), JA(), s(14, "nav", 18)(15, "button", 19), G("click", function() {
           return t.go(t.page - 1);
-        }), h(14, " \u2039 "), I(), s(15, "input", 17), G("change", function(i) {
+        }), h(16, " \u2039 "), I(), s(17, "input", 20), G("change", function(i) {
           return t.inputPage(i);
-        }), I(), s(16, "span"), h(17), I(), s(18, "button", 18), G("click", function() {
+        }), I(), s(18, "span"), h(19), I(), s(20, "button", 21), G("click", function() {
           return t.go(t.page + 1);
-        }), h(19, " \u203A "), I()(), s(20, "span", 19), h(21), I()(), s(22, "div", 20)(23, "nav", 21)(24, "button", 22), G("touchend", function(i) {
+        }), h(21, " \u203A "), I()(), s(22, "span", 22), h(23), I()(), s(24, "div", 23)(25, "nav", 24)(26, "button", 25), G("touchend", function(i) {
           return i.preventDefault();
         })("click", function() {
           return t.toggleReading();
-        }), AA(), s(25, "svg", 23), $(26, "path", 24), I(), jA(), s(27, "span"), h(28, "Lectura"), I()(), s(29, "button", 25), G("click", function() {
+        }), AA(), s(27, "svg", 14), $(28, "path", 26), I(), JA(), s(29, "span"), h(30, "Lectura"), I()(), s(31, "button", 27), G("click", function() {
           return t.toggleOutline();
-        }), AA(), s(30, "svg", 23), $(31, "path", 26), I(), jA(), s(32, "span"), h(33, "\xCDndice"), I()(), s(34, "button", 27), G("click", function() {
+        }), AA(), s(32, "svg", 14), $(33, "path", 28), I(), JA(), s(34, "span"), h(35, "\xCDndice"), I()(), s(36, "button", 29), G("click", function() {
           return t.togglePages();
-        }), AA(), s(35, "svg", 28), $(36, "rect", 29)(37, "rect", 30)(38, "rect", 31)(39, "rect", 32), I(), jA(), s(40, "span", 33), h(41, "Hojas"), I()(), s(42, "button", 34), G("click", function() {
+        }), AA(), s(37, "svg", 30), $(38, "rect", 31)(39, "rect", 32)(40, "rect", 33)(41, "rect", 34), I(), JA(), s(42, "span", 35), h(43, "Hojas"), I()(), s(44, "button", 36), G("click", function() {
           return t.toggleBookmark();
-        }), AA(), s(43, "svg", 23), $(44, "path", 35), I(), jA(), s(45, "span"), h(46), I()(), b(47, JeA, 4, 1, "button", 36), s(48, "nav", 37)(49, "button", 38), G("click", function() {
+        }), AA(), s(45, "svg", 14), $(46, "path", 37), I(), JA(), s(47, "span"), h(48), I()(), b(49, JeA, 4, 1, "button", 38), s(50, "nav", 39)(51, "button", 40), G("click", function() {
           return t.dictionaryOpen ? t.closeDictionary() : t.openDictionary(t.selectedWord ?? "");
-        }), h(50, " A\u2194A "), I(), s(51, "button", 39), G("click", function() {
+        }), h(52, " A\u2194A "), I(), s(53, "button", 41), G("click", function() {
           return t.choosePdfTool("select");
-        }), AA(), s(52, "svg", 28), $(53, "path", 40), I()(), jA(), $(54, "span", 41), s(55, "button", 42), G("click", function() {
+        }), AA(), s(54, "svg", 30), $(55, "path", 42), I()(), JA(), $(56, "span", 43), s(57, "button", 44), G("click", function() {
           return t.choosePdfTool(t.tool === "pdf-region" ? "select" : "pdf-region");
-        }), AA(), s(56, "svg", 28), $(57, "path", 43), I(), h(58, "Extraer "), I()()()(), b(59, keA, 37, 14, "div", 44), b(60, beA, 7, 7, "div", 45), I(), bi(61, veA, 3, 0, "ng-template", null, 0, fQ), jA(), s(63, "div", 46), b(64, WeA, 48, 23, "section", 47), b(65, SeA, 11, 1, "section", 48), b(66, LeA, 27, 2, "section", 49), b(67, ZeA, 57, 17, "section", 50), b(68, eBA, 43, 20, "section", 51), b(69, rBA, 12, 7, "aside", 52), s(70, "main", 53, 1), G("scroll", function() {
+        }), AA(), s(58, "svg", 30), $(59, "path", 45), I(), h(60, "Extraer "), I()()()(), b(61, keA, 37, 14, "div", 46), b(62, beA, 7, 7, "div", 47), I(), bi(63, veA, 3, 0, "ng-template", null, 0, fQ), JA(), s(65, "div", 48), b(66, WeA, 48, 23, "section", 49), b(67, SeA, 11, 1, "section", 50), b(68, LeA, 27, 2, "section", 51), b(69, ZeA, 57, 17, "section", 52), b(70, eBA, 43, 20, "section", 53), b(71, rBA, 12, 7, "aside", 54), s(72, "main", 55, 1), G("scroll", function() {
           return t.scrolled();
         })("wheel", function(i) {
           return t.wheel(i);
@@ -45836,17 +45836,17 @@ var LF = class B100 {
           return t.cancelPointer(i);
         })("lostpointercapture", function(i) {
           return t.lost(i);
-        }), b(72, wBA, 12, 8, "article", 54), s(73, "div", 55), nA(74, vBA, 14, 14, "section", 56, Ye), I(), b(76, PBA, 2, 0, "div", 57), I(), b(77, WBA, 1, 4, "era-pdf-annotation-panel", 58), s(78, "footer", 59)(79, "button", 60), G("click", function() {
+        }), b(74, wBA, 12, 8, "article", 56), s(75, "div", 57), nA(76, vBA, 14, 14, "section", 58, Ye), I(), b(78, PBA, 2, 0, "div", 59), I(), b(79, WBA, 1, 4, "era-pdf-annotation-panel", 60), s(80, "footer", 61)(81, "button", 62), G("click", function() {
           return t.setZoom(t.zoom / 1.2);
-        }), h(80, " \u2212"), I(), s(81, "output"), h(82), I(), s(83, "button", 61), G("click", function() {
+        }), h(82, " \u2212"), I(), s(83, "output"), h(84), I(), s(85, "button", 63), G("click", function() {
           return t.setZoom(t.zoom * 1.2);
-        }), h(84, " +"), I(), $(85, "span", 41), s(86, "button", 42), G("click", function() {
+        }), h(86, " +"), I(), $(87, "span", 43), s(88, "button", 44), G("click", function() {
           return t.fit();
-        }), h(87, "Ajustar"), I()(), b(88, ctA, 37, 6, "section", 62), b(89, stA, 6, 3, "div", 63), I(), b(90, atA, 11, 7, "div", 64), b(91, ItA, 17, 8, "div", 65), b(92, DtA, 1, 5, "era-pdf-excerpt-links", 66), b(93, YtA, 1, 8, "era-pdf-extraction-choice", 67), b(94, FtA, 19, 10, "div", 68), b(95, htA, 11, 8, "div", 69), I();
+        }), h(89, "Ajustar"), I()(), b(90, ctA, 37, 6, "section", 64), b(91, stA, 6, 3, "div", 65), I(), b(92, atA, 11, 7, "div", 66), b(93, ItA, 17, 8, "div", 67), b(94, DtA, 1, 5, "era-pdf-excerpt-links", 68), b(95, YtA, 1, 8, "era-pdf-extraction-choice", 69), b(96, FtA, 19, 10, "div", 70), b(97, htA, 11, 8, "div", 71), I();
       }
       if (e & 2) {
         let g, n, i;
-        T(t.workspace && t.workspace.layout !== "full" ? 0 : -1), Y(), hA("--pdf-tool-size", t.toolSize, "px")("--pdf-tool-rows", t.toolRows)("--pdf-toolbar-width", t.toolColumns * (t.toolSize + 2) + 6, "px"), HA("reading", t.readingMode)("shared-palette", t.sharedPalette)("pdf-view-menu-open", t.pdfViewMenuOpen)("pdf-actions-menu-open", t.pdfActionsMenuOpen)("text-reading", t.textReading), Y(3), T(t.sharedPalette ? 4 : -1), Y(2), x("disabled", t.saving || !!t.pendingCount), Y(2), W("title", ((t.source == null ? null : t.source.name) ?? "PDF") + " \xB7 Arrastra para mover o dividir"), Y(), cA(t.source == null ? null : t.source.name), Y(), T(t.workspace ? 10 : -1), Y(), T(t.sharedPalette ? 11 : -1), Y(2), x("disabled", t.page === 0 || t.saving), Y(2), x("max", (t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 1)("value", t.page + 1)("disabled", t.saving), Y(2), CA("/ ", (t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 0), Y(), x("disabled", t.page + 1 >= ((t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 0) || t.saving), Y(3), cA(t.saving ? "Guardando en PDF\u2026" : t.placingText ? "Pulsa la p\xE1gina para a\xF1adir una caja de texto" : t.placingComment ? "Pulsa la p\xE1gina para comentar" : t.regionRect ? "Extraer del PDF" : t.eraserFeedback || t.status), Y(3), HA("active", t.readingMode), x("disabled", t.saving || !t.info), W("aria-pressed", t.readingMode), Y(5), W("aria-expanded", t.sidebar), Y(5), W("aria-expanded", t.pagesOpen), Y(8), HA("active", t.pageBookmarked), x("disabled", !t.info), W("aria-label", t.pageBookmarked ? "Quitar marcador de esta p\xE1gina" : "Marcar esta p\xE1gina")("aria-pressed", t.pageBookmarked), Y(4), cA(t.pageBookmarked ? "Marcada" : "Marcar"), Y(), T(t.readingMode ? 47 : -1), Y(2), W("aria-expanded", t.dictionaryOpen), Y(2), HA("active", t.tool === "select"), W("aria-pressed", t.tool === "select"), Y(4), HA("active", t.tool === "pdf-region"), W("aria-pressed", t.tool === "pdf-region"), Y(4), T(t.sharedPalette ? 59 : -1), Y(), T(t.readingMode ? 60 : -1), Y(4), T(t.tool === "erase" && t.eraserPropertiesOpen ? 64 : -1), Y(), T(t.sharedPalette && t.pdfActionsMenuOpen ? 65 : -1), Y(), T(t.insertOpen ? 66 : -1), Y(), T(t.propertiesOpen && !t.sharedPalette ? 67 : -1), Y(), T(t.pagesOpen ? 68 : -1), Y(), T(t.sidebar ? 69 : -1), Y(), HA("text-viewport", t.textReading)("hand", t.tool === "pan")("drawing", t.tool === "draw" || t.tool === "erase"), Y(2), T(t.textReading ? 72 : -1), Y(), hA("min-width", (t.readingMode ? (t.info == null || t.info.pages == null || t.info.pages[t.page] == null ? null : t.info.pages[t.page].width) ?? t.documentWidth : t.documentWidth) * t.zoom, "px"), x("hidden", t.textReading), Y(), iA((t.info == null ? null : t.info.pages) ?? Vt(79, Fr)), Y(2), T(t.loading ? 76 : -1), Y(), T(t.annotationsOpen ? 77 : -1), Y(5), CA("", t.Math.round(t.zoom * 100), "%"), Y(6), T(t.dictionaryOpen ? 88 : -1), Y(), T(t.error ? 89 : -1), Y(), T((g = t.annotationActionsOpen && t.activeAnnotation) ? 90 : -1, g), Y(), T((n = t.textDraft) ? 91 : -1, n), Y(), T(t.excerptLinks ? 92 : -1), Y(), T(t.pendingExtraction ? 93 : -1), Y(), T(t.selection && !t.commentDraft ? 94 : -1), Y(), T((i = t.commentDraft) ? 95 : -1, i);
+        T(t.workspace && t.workspace.layout !== "full" ? 0 : -1), Y(), hA("--pdf-tool-size", t.toolSize, "px")("--pdf-tool-rows", t.toolRows)("--pdf-toolbar-width", t.toolColumns * (t.toolSize + 2) + 6, "px"), HA("reading", t.readingMode)("shared-palette", t.sharedPalette)("pdf-view-menu-open", t.pdfViewMenuOpen)("pdf-actions-menu-open", t.pdfActionsMenuOpen)("text-reading", t.textReading), Y(3), T(t.sharedPalette ? 4 : -1), Y(2), W("title", ((t.source == null ? null : t.source.name) ?? "PDF") + " \xB7 Arrastra para mover o dividir"), Y(), cA(t.source == null ? null : t.source.name), Y(2), x("disabled", t.saving || !!t.pendingCount), Y(3), T(t.workspace ? 12 : -1), Y(), T(t.sharedPalette ? 13 : -1), Y(2), x("disabled", t.page === 0 || t.saving), Y(2), x("max", (t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 1)("value", t.page + 1)("disabled", t.saving), Y(2), CA("/ ", (t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 0), Y(), x("disabled", t.page + 1 >= ((t.info == null || t.info.pages == null ? null : t.info.pages.length) ?? 0) || t.saving), Y(3), cA(t.saving ? "Guardando en PDF\u2026" : t.placingText ? "Pulsa la p\xE1gina para a\xF1adir una caja de texto" : t.placingComment ? "Pulsa la p\xE1gina para comentar" : t.regionRect ? "Extraer del PDF" : t.eraserFeedback || t.status), Y(3), HA("active", t.readingMode), x("disabled", t.saving || !t.info), W("aria-pressed", t.readingMode), Y(5), W("aria-expanded", t.sidebar), Y(5), W("aria-expanded", t.pagesOpen), Y(8), HA("active", t.pageBookmarked), x("disabled", !t.info), W("aria-label", t.pageBookmarked ? "Quitar marcador de esta p\xE1gina" : "Marcar esta p\xE1gina")("aria-pressed", t.pageBookmarked), Y(4), cA(t.pageBookmarked ? "Marcada" : "Marcar"), Y(), T(t.readingMode ? 49 : -1), Y(2), W("aria-expanded", t.dictionaryOpen), Y(2), HA("active", t.tool === "select"), W("aria-pressed", t.tool === "select"), Y(4), HA("active", t.tool === "pdf-region"), W("aria-pressed", t.tool === "pdf-region"), Y(4), T(t.sharedPalette ? 61 : -1), Y(), T(t.readingMode ? 62 : -1), Y(4), T(t.tool === "erase" && t.eraserPropertiesOpen ? 66 : -1), Y(), T(t.sharedPalette && t.pdfActionsMenuOpen ? 67 : -1), Y(), T(t.insertOpen ? 68 : -1), Y(), T(t.propertiesOpen && !t.sharedPalette ? 69 : -1), Y(), T(t.pagesOpen ? 70 : -1), Y(), T(t.sidebar ? 71 : -1), Y(), HA("text-viewport", t.textReading)("hand", t.tool === "pan")("drawing", t.tool === "draw" || t.tool === "erase"), Y(2), T(t.textReading ? 74 : -1), Y(), hA("min-width", (t.readingMode ? (t.info == null || t.info.pages == null || t.info.pages[t.page] == null ? null : t.info.pages[t.page].width) ?? t.documentWidth : t.documentWidth) * t.zoom, "px"), x("hidden", t.textReading), Y(), iA((t.info == null ? null : t.info.pages) ?? Vt(79, Fr)), Y(2), T(t.loading ? 78 : -1), Y(), T(t.annotationsOpen ? 79 : -1), Y(5), CA("", t.Math.round(t.zoom * 100), "%"), Y(6), T(t.dictionaryOpen ? 90 : -1), Y(), T(t.error ? 91 : -1), Y(), T((g = t.annotationActionsOpen && t.activeAnnotation) ? 92 : -1, g), Y(), T((n = t.textDraft) ? 93 : -1, n), Y(), T(t.excerptLinks ? 94 : -1), Y(), T(t.pendingExtraction ? 95 : -1), Y(), T(t.selection && !t.commentDraft ? 96 : -1), Y(), T((i = t.commentDraft) ? 97 : -1, i);
       }
     }, dependencies: [nr, Me, Hc, PF, fc, xc], styles: [`[_nghost-%COMP%] {
   position: absolute;
@@ -47981,6 +47981,7 @@ aside[_ngcontent-%COMP%]   summary[_ngcontent-%COMP%] {
 }
 .pdf-workspace-actions[_ngcontent-%COMP%] {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 4px;
 }
@@ -48085,9 +48086,6 @@ aside[_ngcontent-%COMP%]   summary[_ngcontent-%COMP%] {
 .reader.shared-palette[_ngcontent-%COMP%]   .pdf-document-name[_ngcontent-%COMP%] {
   max-width: none;
   font-size: 11px;
-}
-.reader.shared-palette[_ngcontent-%COMP%]   .back-to-canvas[_ngcontent-%COMP%] {
-  display: none;
 }
 .reader.shared-palette[_ngcontent-%COMP%]   .pdf-controls-bar[_ngcontent-%COMP%]   .pdf-reader-dock[_ngcontent-%COMP%], 
 .reader.shared-palette[_ngcontent-%COMP%]   .pdf-page-navigation[_ngcontent-%COMP%], 
@@ -48412,7 +48410,7 @@ function AT(B104, A) {
   if (B104 != null && typeof Object.getOwnPropertySymbols == "function") for (var g = 0, t = Object.getOwnPropertySymbols(B104); g < t.length; g++) A.indexOf(t[g]) < 0 && Object.prototype.propertyIsEnumerable.call(B104, t[g]) && (e[t[g]] = B104[t[g]]);
   return e;
 }
-function JA(B104, A, e, t) {
+function kA(B104, A, e, t) {
   function g(n) {
     return n instanceof e ? n : new e(function(i) {
       i(n);
@@ -48439,7 +48437,7 @@ function JA(B104, A, e, t) {
     r((t = t.apply(B104, A || [])).next());
   });
 }
-function kA(B104, A) {
+function jA(B104, A) {
   var e = { label: 0, sent: function() {
     if (n[0] & 1) throw n[1];
     return n[1];
@@ -50124,9 +50122,9 @@ var DiA = (function() {
     }, this.context = A, this.objectsPerTick = e;
   }
   return B104.prototype.serializeToBuffer = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t, g, n, i, Q, o, r, C, c, E, w, D, F, l, N;
-      return kA(this, function(p) {
+      return jA(this, function(p) {
         switch (p.label) {
           case 0:
             return [4, this.computeBufferSize()];
@@ -50149,9 +50147,9 @@ var DiA = (function() {
   }, B104.prototype.createTrailerDict = function() {
     return this.context.obj({ Size: this.context.largestObjectNumber + 1, Root: this.context.trailerInfo.Root, Encrypt: this.context.trailerInfo.Encrypt, Info: this.context.trailerInfo.Info, ID: this.context.trailerInfo.ID });
   }, B104.prototype.computeBufferSize = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t, g, n, i, Q, o, r, C, c;
-      return kA(this, function(E) {
+      return jA(this, function(E) {
         switch (E.label) {
           case 0:
             A = QQ.forVersion(1, 7), e = A.sizeInBytes() + 2, t = Fa.create(), g = this.context.enumerateIndirectObjects(), n = 0, i = g.length, E.label = 1;
@@ -50280,9 +50278,9 @@ var FiA = (function(B104) {
     return i.encodeStreams = g, i.objectsPerStream = n, i;
   }
   return A.prototype.computeBufferSize = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q, o, r, D, F, C, N, c, E, l, w, D, F, l, N, p, R, j, J;
-      return kA(this, function(v) {
+      return jA(this, function(v) {
         switch (v.label) {
           case 0:
             e = this.context.largestObjectNumber + 1, t = QQ.forVersion(1, 7), g = t.sizeInBytes() + 2, n = tm.create(this.createTrailerDict(), this.encodeStreams), i = [], Q = [], o = [], r = this.context.enumerateIndirectObjects(), D = 0, F = r.length, v.label = 1;
@@ -50500,9 +50498,9 @@ var GiA = (function() {
     }, this.font = A, this.scale = 1e3 / this.font.unitsPerEm, this.fontData = e, this.fontName = this.font.postscriptName || "Font", this.customName = t, this.fontFeatures = g, this.baseFontName = "", this.glyphCache = yt.populatedBy(this.allGlyphsInFontSortedById);
   }
   return B104.for = function(A, e, t, g) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return [4, A.create(e)];
@@ -50528,9 +50526,9 @@ var GiA = (function() {
   }, B104.prototype.embedIntoContext = function(A, e) {
     return this.baseFontName = this.customName || A.addRandomSuffix(this.fontName), this.embedFontDict(A, e);
   }, B104.prototype.embedFontDict = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t, g, n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return [4, this.embedCIDFontDict(A)];
@@ -50542,9 +50540,9 @@ var GiA = (function() {
   }, B104.prototype.isCFF = function() {
     return this.font.cff;
   }, B104.prototype.embedCIDFontDict = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             return [4, this.embedFontDescriptor(A)];
@@ -50554,9 +50552,9 @@ var GiA = (function() {
       });
     });
   }, B104.prototype.embedFontDescriptor = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q, o, r, C, c, E, w, D, F, l;
-      return kA(this, function(N) {
+      return jA(this, function(N) {
         switch (N.label) {
           case 0:
             return [4, this.embedFontStream(A)];
@@ -50566,15 +50564,15 @@ var GiA = (function() {
       });
     });
   }, B104.prototype.serializeFont = function() {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(A) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(A) {
         return [2, this.fontData];
       });
     });
   }, B104.prototype.embedFontStream = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g;
-      return kA(this, function(n) {
+      return jA(this, function(n) {
         switch (n.label) {
           case 0:
             return g = (t = A).flateStream, [4, this.serializeFont()];
@@ -50606,9 +50604,9 @@ var piA = (function(B104) {
     }), i.glyphIdMap = /* @__PURE__ */ new Map(), i;
   }
   return A.for = function(e, t, g, n) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var i;
-      return kA(this, function(Q) {
+      return jA(this, function(Q) {
         switch (Q.label) {
           case 0:
             return [4, e.create(t)];
@@ -50653,9 +50651,9 @@ var miA = (function() {
   return B104.for = function(A, e, t) {
     return t === void 0 && (t = {}), new B104(A, e, t);
   }, B104.prototype.embedIntoContext = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C, c;
-      return kA(this, function(E) {
+      return jA(this, function(E) {
         return t = this.options, g = t.mimeType, n = t.description, i = t.creationDate, Q = t.modificationDate, o = t.afRelationship, r = A.flateStream(this.fileData, { Type: "EmbeddedFile", Subtype: g ?? void 0, Params: { Size: this.fileData.length, CreationDate: i ? ae.fromDate(i) : void 0, ModDate: Q ? ae.fromDate(Q) : void 0 } }), C = A.register(r), c = A.obj({ Type: "Filespec", F: ae.of(this.fileName), UF: xA.fromText(this.fileName), EF: { F: C }, Desc: n ? xA.fromText(n) : void 0, AFRelationship: o ?? void 0 }), e ? (A.assign(e, c), [2, e]) : [2, A.register(c)];
       });
     });
@@ -50673,9 +50671,9 @@ var fiA = (function() {
     this.imageData = A, this.bitsPerComponent = e, this.width = t, this.height = g, this.colorSpace = n;
   }
   return B104.for = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q, o, r, C, c;
-      return kA(this, function(E) {
+      return jA(this, function(E) {
         if (e = new DataView(A.buffer), t = e.getUint16(0), t !== 65496) throw new Error("SOI not found in JPEG");
         for (g = 2; g < e.byteLength && (n = e.getUint16(g), g += 2, !QW.includes(n)); ) g += e.getUint16(g);
         if (!QW.includes(n)) throw new Error("Invalid JPEG");
@@ -50684,9 +50682,9 @@ var fiA = (function() {
       });
     });
   }, B104.prototype.embedIntoContext = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         return t = A.stream(this.imageData, { Type: "XObject", Subtype: "Image", BitsPerComponent: this.bitsPerComponent, Width: this.width, Height: this.height, ColorSpace: this.colorSpace, Filter: "DCTDecode", Decode: this.colorSpace === AE.DeviceCMYK ? [1, 0, 1, 0, 1, 0, 1, 0] : void 0 }), e ? (A.assign(e, t), [2, e]) : [2, A.register(t)];
       });
     });
@@ -51419,16 +51417,16 @@ var HiA = (function() {
     this.image = A, this.bitsPerComponent = A.bitsPerComponent, this.width = A.width, this.height = A.height, this.colorSpace = "DeviceRGB";
   }
   return B104.for = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e;
-      return kA(this, function(t) {
+      return jA(this, function(t) {
         return e = rW.load(A), [2, new B104(e)];
       });
     });
   }, B104.prototype.embedIntoContext = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t, g;
-      return kA(this, function(n) {
+      return jA(this, function(n) {
         return t = this.embedAlphaChannel(A), g = A.flateStream(this.image.rgbChannel, { Type: "XObject", Subtype: "Image", BitsPerComponent: this.image.bitsPerComponent, Width: this.image.width, Height: this.image.height, ColorSpace: this.colorSpace, SMask: t }), e ? (A.assign(e, g), [2, e]) : [2, A.register(g)];
       });
     });
@@ -51826,15 +51824,15 @@ var XiA = (function() {
     this.width = g.right - g.left, this.height = g.top - g.bottom, this.boundingBox = g, this.transformationMatrix = t ?? OiA(g);
   }
   return B104.for = function(A, e, t) {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(g) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(g) {
         return [2, new B104(A, e, t)];
       });
     });
   }, B104.prototype.embedIntoContext = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C, c, E;
-      return kA(this, function(w) {
+      return jA(this, function(w) {
         if (t = this.page.normalizedEntries(), g = t.Contents, n = t.Resources, !g) throw new JP();
         return i = this.decodeContents(g), Q = this.boundingBox, o = Q.left, r = Q.bottom, C = Q.right, c = Q.top, E = A.flateStream(i, { Type: "XObject", Subtype: "Form", FormType: 1, BBox: [o, r, C, c], Matrix: this.transformationMatrix, Resources: n }), e ? (A.assign(e, E), [2, e]) : [2, A.register(E)];
       });
@@ -53056,9 +53054,9 @@ var uQA = (function(B104) {
     }), g.firstOffset = n.lookup(y.of("First"), pA).asNumber(), g.objectCount = n.lookup(y.of("N"), pA).asNumber(), g;
   }
   return A.prototype.parseIntoContext = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q, o, r;
-      return kA(this, function(C) {
+      return jA(this, function(C) {
         switch (C.label) {
           case 0:
             if (this.alreadyParsed) throw new Xc("PDFObjectStreamParser", "parseIntoContext");
@@ -53133,9 +53131,9 @@ var GQA = (function(B104) {
     }, i.objectsPerTick = t, i.throwOnInvalidObject = g, i;
   }
   return A.prototype.parseDocument = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             if (this.alreadyParsed) throw new Xc("PDFParser", "parseDocument");
@@ -53184,9 +53182,9 @@ var GQA = (function(B104) {
       return this.bytes.moveTo(e), false;
     }
   }, A.prototype.parseIndirectObject = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             return e = this.parseIndirectObjectHeader(), this.skipWhitespaceAndComments(), t = this.parseObject(), this.skipWhitespaceAndComments(), this.matchKeyword(Oe.endobj), t instanceof Ii && t.dict.lookup(y.of("Type")) === y.of("ObjStm") ? [4, Em.forStream(t, this.shouldWaitForTick).parseIntoContext()] : [3, 2];
@@ -53210,9 +53208,9 @@ var GQA = (function(B104) {
     var Q = this.bytes.offset() - Oe.endobj.length, o = da.of(this.bytes.slice(n, Q));
     return this.context.assign(g, o), g;
   }, A.prototype.parseIndirectObjects = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             this.skipWhitespaceAndComments(), g.label = 1;
@@ -53266,8 +53264,8 @@ var GQA = (function(B104) {
       return this.skipWhitespace(), this.matchKeyword(Oe.eof), this.skipWhitespaceAndComments(), this.matchKeyword(Oe.eof), this.skipWhitespaceAndComments(), kr.forLastCrossRefSectionOffset(e);
     }
   }, A.prototype.parseDocumentSection = function() {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(e) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(e) {
         switch (e.label) {
           case 0:
             return [4, this.parseIndirectObjects()];
@@ -53978,8 +53976,8 @@ var WQA = (function() {
   }, B104.prototype.size = function() {
     return this.scale(1);
   }, B104.prototype.embed = function() {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(A) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(A) {
         switch (A.label) {
           case 0:
             return this.alreadyEmbedded ? [3, 2] : [4, this.embedder.embedIntoContext(this.doc.context, this.ref)];
@@ -54011,8 +54009,8 @@ var SQA = (function() {
   }, B104.prototype.getCharacterSet = function() {
     return this.embedder instanceof jr ? this.embedder.encoding.supportedCodePoints : this.embedder.font.characterSet;
   }, B104.prototype.embed = function() {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(A) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(A) {
         switch (A.label) {
           case 0:
             return this.modified ? [4, this.embedder.embedIntoContext(this.doc.context, this.ref)] : [3, 2];
@@ -54041,9 +54039,9 @@ var LQA = (function() {
   }, B104.prototype.size = function() {
     return this.scale(1);
   }, B104.prototype.embed = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             return this.embedder ? (this.embedTask || (A = this, e = A.doc, t = A.ref, this.embedTask = this.embedder.embedIntoContext(e.context, t)), [4, this.embedTask]) : [2];
@@ -54772,9 +54770,9 @@ var AoA = (function() {
     this.alreadyEmbedded = false, this.ref = A, this.doc = e, this.embedder = t;
   }
   return B104.prototype.embed = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t, g, n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return this.alreadyEmbedded ? [3, 2] : [4, this.embedder.embedIntoContext(this.doc.context, this.ref)];
@@ -54795,9 +54793,9 @@ var eoA = (function() {
     this.alreadyEmbedded = false, this.ref = A, this.doc = e, this.embedder = t;
   }
   return B104.prototype.embed = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t, g, n, i, Q;
-      return kA(this, function(o) {
+      return jA(this, function(o) {
         switch (o.label) {
           case 0:
             return this.alreadyEmbedded ? [3, 2] : (A = this.doc, e = A.catalog, t = A.context, [4, this.embedder.embedIntoContext(this.doc.context, this.ref)]);
@@ -54820,9 +54818,9 @@ var BoA = (function() {
   return B104.for = function(A, e) {
     return new B104(A, e);
   }, B104.prototype.embedIntoContext = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         return t = A.obj({ Type: "Action", S: "JavaScript", JS: xA.fromText(this.script) }), e ? (A.assign(e, t), [2, e]) : [2, A.register(t)];
       });
     });
@@ -54847,9 +54845,9 @@ var toA = (function() {
     t && this.updateInfoDict();
   }
   return B104.load = function(A, e) {
-    return e === void 0 && (e = {}), JA(this, void 0, void 0, function() {
+    return e === void 0 && (e = {}), kA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C, c, E, w, D;
-      return kA(this, function(F) {
+      return jA(this, function(F) {
         switch (F.label) {
           case 0:
             return t = e.ignoreEncryption, g = t === void 0 ? false : t, n = e.parseSpeed, i = n === void 0 ? bh.Slow : n, Q = e.throwOnInvalidObject, o = Q === void 0 ? false : Q, r = e.updateMetadata, C = r === void 0 ? true : r, c = e.capNumbers, E = c === void 0 ? false : c, Z(A, "pdf", ["string", Uint8Array, ArrayBuffer]), Z(g, "ignoreEncryption", ["boolean"]), Z(i, "parseSpeed", ["number"]), Z(o, "throwOnInvalidObject", ["boolean"]), w = jc(A), [4, wm.forBytesWithOptions(w, i, o, E).parseDocument()];
@@ -54859,9 +54857,9 @@ var toA = (function() {
       });
     });
   }, B104.create = function(A) {
-    return A === void 0 && (A = {}), JA(this, void 0, void 0, function() {
+    return A === void 0 && (A = {}), kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q;
-      return kA(this, function(o) {
+      return jA(this, function(o) {
         return e = A.updateMetadata, t = e === void 0 ? true : e, g = $c.create(), n = Ja.withContext(g), i = g.register(n), Q = Ha.withContextAndPages(g, i), g.trailerInfo.Root = g.register(Q), [2, new B104(g, false, t)];
       });
     });
@@ -54957,9 +54955,9 @@ var toA = (function() {
     var n = this.catalog.insertLeafNode(e.ref, A);
     return e.node.setParent(n), this.pageMap.set(e.node, e), this.pageCache.invalidate(), this.pageCount = t + 1, e;
   }, B104.prototype.copyPages = function(A, e) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C;
-      return kA(this, function(c) {
+      return jA(this, function(c) {
         switch (c.label) {
           case 0:
             return Z(A, "srcDoc", [[B104, "PDFDocument"]]), Z(e, "indices", [Array]), [4, A.flush()];
@@ -54970,9 +54968,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.copy = function() {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var A, e, t, g;
-      return kA(this, function(n) {
+      return jA(this, function(n) {
         switch (n.label) {
           case 0:
             return [4, B104.create()];
@@ -54989,16 +54987,16 @@ var toA = (function() {
     var t = wS.for(e, A), g = this.context.nextRef(), n = Hm.of(g, this, t);
     this.javaScripts.push(n);
   }, B104.prototype.attach = function(A, e, t) {
-    return t === void 0 && (t = {}), JA(this, void 0, void 0, function() {
+    return t === void 0 && (t = {}), kA(this, void 0, void 0, function() {
       var g, n, i, Q;
-      return kA(this, function(o) {
+      return jA(this, function(o) {
         return Z(A, "attachment", ["string", Uint8Array, ArrayBuffer]), Z(e, "name", ["string"]), wA(t.mimeType, "mimeType", ["string"]), wA(t.description, "description", ["string"]), wA(t.creationDate, "options.creationDate", [Date]), wA(t.modificationDate, "options.modificationDate", [Date]), ag(t.afRelationship, "options.afRelationship", Ua), g = jc(A), n = im.for(g, e, t), i = this.context.nextRef(), Q = sS.of(i, this, n), this.embeddedFiles.push(Q), [2];
       });
     });
   }, B104.prototype.embedFont = function(A, e) {
-    return e === void 0 && (e = {}), JA(this, void 0, void 0, function() {
+    return e === void 0 && (e = {}), kA(this, void 0, void 0, function() {
       var t, g, n, i, Q, o, r, C, c, E;
-      return kA(this, function(w) {
+      return jA(this, function(w) {
         switch (w.label) {
           case 0:
             return t = e.subset, g = t === void 0 ? false : t, n = e.customName, i = e.features, Z(A, "font", ["string", Uint8Array, ArrayBuffer]), Z(g, "subset", ["boolean"]), Xp(A) ? (Q = jr.for(A, n), [3, 7]) : [3, 1];
@@ -55024,9 +55022,9 @@ var toA = (function() {
     var t = jr.for(A, e), g = this.context.nextRef(), n = bB.of(g, this, t);
     return this.fonts.push(n), n;
   }, B104.prototype.embedJpg = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return Z(A, "jpg", ["string", Uint8Array, ArrayBuffer]), e = jc(A), [4, ua.for(e)];
@@ -55036,9 +55034,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.embedPng = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t, g, n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return Z(A, "png", ["string", Uint8Array, ArrayBuffer]), e = jc(A), [4, Na.for(e)];
@@ -55048,9 +55046,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.embedPdf = function(A, e) {
-    return e === void 0 && (e = [0]), JA(this, void 0, void 0, function() {
+    return e === void 0 && (e = [0]), kA(this, void 0, void 0, function() {
       var t, g, n;
-      return kA(this, function(i) {
+      return jA(this, function(i) {
         switch (i.label) {
           case 0:
             return Z(A, "pdf", ["string", Uint8Array, ArrayBuffer, [B104, "PDFDocument"]]), Z(e, "indices", [Array]), A instanceof B104 ? (g = A, [3, 3]) : [3, 1];
@@ -55064,9 +55062,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.embedPage = function(A, e, t) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var g;
-      return kA(this, function(n) {
+      return jA(this, function(n) {
         switch (n.label) {
           case 0:
             return Z(A, "page", [[zB, "PDFPage"]]), [4, this.embedPages([A], [e], [t])];
@@ -55076,9 +55074,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.embedPages = function(A, e, t) {
-    return e === void 0 && (e = []), t === void 0 && (t = []), JA(this, void 0, void 0, function() {
+    return e === void 0 && (e = []), t === void 0 && (t = []), kA(this, void 0, void 0, function() {
       var r, C, g, n, i, Q, o, r, C, c, E, w, D, F, l;
-      return kA(this, function(N) {
+      return jA(this, function(N) {
         switch (N.label) {
           case 0:
             if (A.length === 0) return [2, []];
@@ -55098,8 +55096,8 @@ var toA = (function() {
       });
     });
   }, B104.prototype.flush = function() {
-    return JA(this, void 0, void 0, function() {
-      return kA(this, function(A) {
+    return kA(this, void 0, void 0, function() {
+      return jA(this, function(A) {
         switch (A.label) {
           case 0:
             return [4, this.embedAll(this.fonts)];
@@ -55117,9 +55115,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.save = function(A) {
-    return A === void 0 && (A = {}), JA(this, void 0, void 0, function() {
+    return A === void 0 && (A = {}), kA(this, void 0, void 0, function() {
       var e, t, g, n, i, Q, o, r, C, c;
-      return kA(this, function(E) {
+      return jA(this, function(E) {
         switch (E.label) {
           case 0:
             return e = A.useObjectStreams, t = e === void 0 ? true : e, g = A.addDefaultPage, n = g === void 0 ? true : g, i = A.objectsPerTick, Q = i === void 0 ? 50 : i, o = A.updateFieldAppearances, r = o === void 0 ? true : o, Z(t, "useObjectStreams", ["boolean"]), Z(n, "addDefaultPage", ["boolean"]), Z(Q, "objectsPerTick", ["number"]), Z(r, "updateFieldAppearances", ["boolean"]), n && this.getPageCount() === 0 && this.addPage(), r && (C = this.formCache.getValue(), C && C.updateFieldAppearances()), [4, this.flush()];
@@ -55129,9 +55127,9 @@ var toA = (function() {
       });
     });
   }, B104.prototype.saveAsBase64 = function(A) {
-    return A === void 0 && (A = {}), JA(this, void 0, void 0, function() {
+    return A === void 0 && (A = {}), kA(this, void 0, void 0, function() {
       var e, t, g, n, i;
-      return kA(this, function(Q) {
+      return jA(this, function(Q) {
         switch (Q.label) {
           case 0:
             return e = A.dataUri, t = e === void 0 ? false : e, g = AT(A, ["dataUri"]), Z(t, "dataUri", ["boolean"]), [4, this.save(g)];
@@ -55146,9 +55144,9 @@ var toA = (function() {
       if (i?.indexOf(A) !== void 0) return n;
     }
   }, B104.prototype.embedAll = function(A) {
-    return JA(this, void 0, void 0, function() {
+    return kA(this, void 0, void 0, function() {
       var e, t;
-      return kA(this, function(g) {
+      return jA(this, function(g) {
         switch (g.label) {
           case 0:
             e = 0, t = A.length, g.label = 1;
@@ -56094,7 +56092,7 @@ var Vh = class B101 {
         return t.toggle();
       })("keydown", function(n) {
         return t.key(n);
-      }), s(2, "span", 3)(3, "span", 4), h(4), I(), s(5, "span", 5), h(6), I()(), AA(), s(7, "svg", 6), $(8, "path", 7), I()(), jA(), s(9, "div", 8, 1), G("keydown", function(n) {
+      }), s(2, "span", 3)(3, "span", 4), h(4), I(), s(5, "span", 5), h(6), I()(), AA(), s(7, "svg", 6), $(8, "path", 7), I()(), JA(), s(9, "div", 8, 1), G("keydown", function(n) {
         return t.key(n);
       }), nA(11, foA, 8, 5, "button", 9, moA), I()), e & 2 && (x("disabled", t.disabled), W("aria-label", t.label)("aria-description", t.current ? t.current.label + ". " + t.current.description : null)("aria-expanded", t.open)("aria-controls", t.menuId), Y(4), cA(t.current == null ? null : t.current.label), Y(2), cA(t.current == null ? null : t.current.description), Y(3), x("hidden", !t.open)("id", t.menuId), W("aria-label", t.label), Y(2), iA(t.choices));
     }, dependencies: [Me], styles: [`[_nghost-%COMP%] {
@@ -56913,7 +56911,7 @@ function IrA(B104, A) {
       U(e);
       let g = a();
       return u(g.action("save"));
-    }), AA(), s(1, "svg", 17), b(2, ErA, 1, 0, ":svg:path", 81)(3, srA, 1, 0, ":svg:path", 82)(4, wrA, 1, 0, ":svg:path", 83)(5, arA, 1, 0, ":svg:path", 84), I(), jA(), s(6, "span", 85), h(7), I()();
+    }), AA(), s(1, "svg", 17), b(2, ErA, 1, 0, ":svg:path", 81)(3, srA, 1, 0, ":svg:path", 82)(4, wrA, 1, 0, ":svg:path", 83)(5, arA, 1, 0, ":svg:path", 84), I(), JA(), s(6, "span", 85), h(7), I()();
   }
   if (B104 & 2) {
     let e, t = a();
@@ -58324,11 +58322,11 @@ var Kh = class B103 {
           return t.canvasActionsOpen = !t.canvasActionsOpen;
         }), h(7, " \u2630 "), I(), s(8, "div", 14), b(9, IrA, 8, 10, "button", 15), s(10, "button", 16), G("click", function() {
           return U(g), t.exportOpen = true, t.settingsOpen = false, t.brushesOpen = false, u(t.pageMenu = null);
-        }), AA(), s(11, "svg", 17), $(12, "path", 18), I()(), b(13, DrA, 4, 1, "button", 19), jA(), s(14, "button", 20), G("click", function() {
+        }), AA(), s(11, "svg", 17), $(12, "path", 18), I()(), b(13, DrA, 4, 1, "button", 19), JA(), s(14, "button", 20), G("click", function() {
           return U(g), t.settingsOpen = !t.settingsOpen, u(t.brushesOpen = false);
-        }), AA(), s(15, "svg", 17), $(16, "path", 21)(17, "circle", 22)(18, "circle", 23)(19, "circle", 24), I()(), jA(), s(20, "button", 25), G("click", function() {
+        }), AA(), s(15, "svg", 17), $(16, "path", 21)(17, "circle", 22)(18, "circle", 23)(19, "circle", 24), I()(), JA(), s(20, "button", 25), G("click", function() {
           return t.toggleExpanded();
-        }), AA(), s(21, "svg", 26), b(22, YrA, 4, 0)(23, MrA, 4, 0), I()()()(), b(24, qrA, 10, 7, "aside", 27), jA(), s(25, "section", 28)(26, "button", 29), G("click", function() {
+        }), AA(), s(21, "svg", 26), b(22, YrA, 4, 0)(23, MrA, 4, 0), I()()()(), b(24, qrA, 10, 7, "aside", 27), JA(), s(25, "section", 28)(26, "button", 29), G("click", function() {
           return t.stepPage(-1);
         }), h(27, " \u2039 "), I(), s(28, "button", 30), G("click", function() {
           return U(g), t.sidebarOpen = true, t.sidebarView = "pages", t.pagesOpen = true, u(t.focused = false);
@@ -63435,8 +63433,8 @@ var dflt = function(dat, lvl, plvl, pre, post, st2) {
     var msk_1 = (1 << plvl) - 1;
     var prev = st2.p || new u16(32768), head = st2.h || new u16(msk_1 + 1);
     var bs1_1 = Math.ceil(plvl / 3), bs2_1 = 2 * bs1_1;
-    var hsh = function(i10) {
-      return (dat[i10] ^ dat[i10 + 1] << bs1_1 ^ dat[i10 + 2] << bs2_1) & msk_1;
+    var hsh = function(i8) {
+      return (dat[i8] ^ dat[i8 + 1] << bs1_1 ^ dat[i8 + 2] << bs2_1) & msk_1;
     };
     var syms = new i32(25e3);
     var lf2 = new u16(288), df2 = new u16(32);
@@ -66169,16 +66167,16 @@ function _unsupportedIterableToArray(r, a10) {
 }
 function AsyncGenerator(e) {
   var t, n;
-  function resume(t10, n10) {
+  function resume(t10, n8) {
     try {
-      var r = e[t10](n10), o = r.value, u10 = o instanceof _OverloadYield;
-      Promise.resolve(u10 ? o.v : o).then(function(n11) {
+      var r = e[t10](n8), o = r.value, u10 = o instanceof _OverloadYield;
+      Promise.resolve(u10 ? o.v : o).then(function(n10) {
         if (u10) {
           var i = "return" === t10 && o.k ? t10 : "next";
-          if (!o.k || n11.done) return resume(i, n11);
-          n11 = e[i](n11).value;
+          if (!o.k || n10.done) return resume(i, n10);
+          n10 = e[i](n10).value;
         }
-        settle(!!r.done, n11);
+        settle(!!r.done, n10);
       }, function(e10) {
         resume("throw", e10);
       });

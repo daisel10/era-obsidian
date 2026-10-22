@@ -1,6 +1,17 @@
 # Review notes
 
-## Current release: 1.6.18
+## Current release: 1.6.19
+
+The PDF reader header now always exposes an X close button immediately before expand/restore and PDF actions. The button shares a non-shrinking group with expand/restore, and the document title yields space in narrow panes. It is available in full, four split and floating layouts. It uses the existing close path to flush reading position and protects pending annotations and in-progress saves. Existing close and reading-position tests now target the accessible close label.
+
+Matching private source: tag `1.6.19` in `daisel10/era`, commit `da097a49fb92225521b16e34d4c19a8a9d314031`.
+`main.js` SHA-256: `c1cc7ba54a8558e0fe9491f3c033203f9bdb3cd754b72bb6628e6ba38cd53551`.
+
+Validation: 246 UI and 111 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. Chrome at density 2 checks 12 cases across all six PDF layouts at viewport widths 1180 and 640. It verifies the close button is visible and enabled, ordered before expand/restore and actions, within the visible viewport, and closes the reader via real touch while retaining the resource. The controlled PDF backend renders asynchronous colored pages.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.18
 
 The shared tool palette now docks at all four edges in both canvas and PDF workspaces. Four translucent targets appear only during palette movement, including above the full PDF reader. Top and bottom docks use horizontal strips; side docks keep icons upright in vertical strips with inward-facing writing settings. Small tool lists scroll along their orientation with hidden scrollbars. Dragging out restores the circular wheel; Alt+arrows on the docked grip chooses a side. Side preference extends the existing optional local UI position record, with legacy horizontal preferences still opening at the top.
 
