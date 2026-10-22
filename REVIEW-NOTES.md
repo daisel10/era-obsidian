@@ -1,6 +1,21 @@
 # Review notes
 
-## Current release: 1.6.17
+## Current release: 1.6.18
+
+The shared tool palette now docks at all four edges in both canvas and PDF workspaces. Four translucent targets appear only during palette movement, including above the full PDF reader. Top and bottom docks use horizontal strips; side docks keep icons upright in vertical strips with inward-facing writing settings. Small tool lists scroll along their orientation with hidden scrollbars. Dragging out restores the circular wheel; Alt+arrows on the docked grip chooses a side. Side preference extends the existing optional local UI position record, with legacy horizontal preferences still opening at the top.
+
+Dock geometry follows the remaining canvas for split PDFs and the actual PDF viewport in full view. Color popovers open beside vertical strips, bottom controls leave room for canvas navigation, and the palette remains above a floating PDF. Canceling a drag restores the prior side and shape.
+
+Expanding a PDF now captures its current placement before entering full view. A PDF opened directly on the left no longer defaults to the right on restoration; all four initial dock sides and floating bounds are retained without remounting the reader.
+
+Matching private source: tag `1.6.18` in `daisel10/era`, commit `dfa3fb8271e5a58c62cb5a8585752a942f349885`.
+`main.js` SHA-256: `001301c4f6dd9726bc002ae2c361c750568e8b76fc3935c5b669d0084bc4cc99`.
+
+Validation: 246 UI and 111 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. New tests verify all four palette sides, canceled drag restoration, local side persistence and first-open PDF expand/restore geometry for all dock sides and floating placement. Chrome at density 2 uses real mouse drags for 32 dock cases across canvas, full PDF, four split layouts, floating PDF and a narrow 640px window. It checks target visibility/highlighting, pane bounds, upright orientation, tool presence and visible color popovers. Five PDF expand/restore cases retain exact bounds; a full page reload retains the palette side. The controlled PDF backend renders asynchronous colored pages. Physical iPad verification remains pending.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.17
 
 The PDF reader now stores a local reading checkpoint per vault and PDF path: page identity/index, offsets in PDF units, manual or fitted zoom, reading layout and text scroll/font size. Normal opens from Resources, inline PDF cards and title docking resume the checkpoint. Explicit page opens and citation origins take precedence.
 
