@@ -45159,7 +45159,7 @@ var SF = class e100 {
     this.editor.pdfPalette = this.sharedControls, this.resize = new ResizeObserver(() => {
       this.layout(), this.sizeTools();
       let A = this.viewport.nativeElement.clientWidth;
-      this.fitted && this.info && !this.loading && A && A !== this.viewportWidth && this.setZoom(this.fitZoom(), true), this.viewportWidth = A;
+      this.fitted && this.info && !this.loading && A && A !== this.viewportWidth && this.setZoom(this.fitZoom(), true), this.viewportWidth = A, A && this.viewport.nativeElement.clientHeight && !this.loading && this.paintVisible();
     }), this.resize.observe(this.viewport.nativeElement), this.sizeTools(), this.touchInput = new Rc(this.viewport.nativeElement, { ready: () => this.ready && !this.loading && !!this.info, activeId: () => this.pointer?.id, touchAction: () => this.editor.touchInputAction("pdf"), touchStarted: () => this.editor.focusTouchSurface("pdf"), historyGesture: () => "off", focusGesture: () => false, focus: () => {
     }, down: (A, B) => this.beginSingle(A, this.touchAnnotation, B), move: (A) => this.moveSingle(A), end: (A) => void this.endSingle(A), cancel: () => {
       this.cancel(), this.clearSelection();
@@ -70137,6 +70137,13 @@ var EraView = class extends import_obsidian3.FileView {
     );
   }
   setExpanded(expanded) {
+    const pdfViewport = this.contentEl.querySelector(
+      "era-pdf-reader .viewport"
+    );
+    const pdfScroll = pdfViewport && {
+      top: pdfViewport.scrollTop,
+      left: pdfViewport.scrollLeft
+    };
     if (expanded && !this.expansion) {
       this.plugin.expandedView?.setExpanded(false);
       const doc = this.contentEl.ownerDocument;
@@ -70159,9 +70166,13 @@ var EraView = class extends import_obsidian3.FileView {
       if (this.plugin.expandedView === this)
         this.plugin.expandedView = void 0;
     }
+    if (pdfViewport && pdfScroll) {
+      pdfViewport.scrollTop = pdfScroll.top;
+      pdfViewport.scrollLeft = pdfScroll.left;
+    }
     this.editor.expanded = expanded;
     this.editor.onStateChange();
-    if (expanded) this.editor.canvas.focus();
+    if (expanded) this.editor.canvas.focus({ preventScroll: true });
   }
   refreshTheme() {
     const canvas = this.editor.canvas;

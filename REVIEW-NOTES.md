@@ -1,6 +1,19 @@
 # Review notes
 
-## Current release: 1.6.15
+## Current release: 1.6.16
+
+Expanding and restoring an Obsidian Era view now preserves both PDF viewport scroll axes when moving the content element into or out of the overlay. Reparenting a scroll box can reset its native offsets; previously this returned the reader to page one while its raster cache still contained pages from the old reading position. Canvas focus now prevents automatic scrolling.
+
+The PDF viewport ResizeObserver also refreshes visible rasters for height-only changes, even when width and fitted zoom remain constant. Existing page pixels and cached scales remain intact; the reader requests missing pages through the existing bounded render queue.
+
+Matching private source: tag `1.6.16` in `daisel10/era`, commit `dd240b8c72837790d427973bb319f71894491ae2`.
+`main.js` SHA-256: `4292c766a473c08202daddcda7bc287db866147f3e9bc29827b274d39dd52af0`.
+
+Validation: 240 UI and 111 plugin tests pass. Angular/plugin compilation, both host type checks and formatting checks pass. Both new regressions fail with the previous release: newly exposed PDF pages remain blank on height-only expansion, and the real Obsidian overlay method loses both scroll axes when native resets are simulated. Chrome at density 2 verifies pixels and retained reading pages through 48 expansion/restoration transitions across four PDF dock positions, starting at the beginning, middle and final page. A 49th case exposes previously unpainted pages by expanding only viewport height. The browser uses a controlled asynchronous colored raster backend and mirrors the host overlay movement; plugin tests exercise the distributed host method. Physical iPad verification remains pending.
+
+The complete ZIP contains 21 verified files, including existing recognition models, runtime and licenses. Notebook formats, Obsidian minimum 1.8.7 and recognition behavior are unchanged.
+
+## Previous release: 1.6.15
 
 Dragging objects, individual ink strokes or mixed selections to the visible canvas edges now scrolls the viewport continuously. A bounded animation loop ramps speed toward the edge, compensates world coordinates to preserve the grip under the pointer at every zoom, and synchronizes object previews with the camera in the same frame. Release, cancellation and context changes stop the animation; center or PDF-pane entry pauses it. Existing object and ink transactions retain a single undo step. PDF title docking and resizing keep their established behavior.
 
