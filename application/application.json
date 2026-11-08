@@ -1,0 +1,19 @@
+{
+  "api": 1,
+  "files": {
+    "application.js": "88d787dd10bb9cfc6abbc8223e7d80d53cdb9ee5eb318c478e66527f52751c8b",
+    "application.css": "3ad94cf5ff565394357be790d83e37f0273edb53a79b4779f189c0c0a8cb1435",
+    "assets/era_wasm_bg.wasm": "4881ec2c51d2f89bc8e749b99fd9e9fc6f7d2622d603dedd38d33e159e1a902b",
+    "handwriting/worker.js": "1edbf49003e1ec7018344310d748b833b3bea72b43d72e48160c9219ac82679e",
+    "handwriting/tokenizer.json": "68bcb5468c854362a615f3d2ff6a5e4091a85f4c8198993ed9a30afe0b143737",
+    "handwriting/encoder.onnx": "2f29edbd925f8a49c9c7d1349895f960cf09d2efdc76fe23f957048d476e0d03",
+    "handwriting/decoder.onnx": "40166e4f975b3cecd24bb422db80eb06912777c8e8a56ab44f6bd771ec5df553",
+    "equations/worker.js": "63adeaba9b67002cfb72cf7b7a43e4c4de92d302ce9b9a5f0fb2069afc6d1c51",
+    "equations/encoder_int8.onnx": "272f17c7b120db61db6cd8d77e695d0139144044abd57d9b23284435a5d916fa",
+    "equations/ort-wasm-simd-threaded.wasm": "175fabe412fc7fd1376e3178861a47ebfdc30cedb3b2c3f6bb72c37d96c26f73",
+    "equations/vocab.json": "1d75cbbea3bed558683d7e9c3b3c72069ef2143a155d5f8c610f85a281af000c",
+    "equations/decoder_int8.onnx": "658901d81ca3aa4b62b0da262e8fe67ebcfdac19cfb52ca2cfd076bebd481088",
+    "equations/ort-wasm-simd-threaded.mjs": "b538a29137066dbed1f0f449fb081dfd35ccde3d5b155adc34532cefa3b23ee2",
+    "index.html": "5ac205a2b51cad56e7ce2e3de46561d767d5f3f614f7c1b8e57bbae685fbead8"
+  }
+}

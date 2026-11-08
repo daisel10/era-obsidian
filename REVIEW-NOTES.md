@@ -1,6 +1,22 @@
 # Review notes
 
-## Current release: 1.6.19
+## Preliminary release: 1.7.0
+
+The plugin packages the same compiled Home, library, settings and editor used by Era web/Tauri. A local host adapter connects the frontend to Obsidian's Vault without Era's local HTTP service. The release is preliminary; 1.6.19 remains the latest stable release.
+
+BRAT's three-file installation is supported: main.js includes the exact compiled frontend and reuses its embedded WASM. The pinned application manifest rejects stale optional application directories left by older ZIP installs. Application code is never fetched at runtime. Recognition models retain their pinned, verified first-use preparation. The complete ZIP includes application/, equations/, handwriting/ and licenses.
+
+Validation: both host type checks and plugin formatting checks pass; 13 application integration tests and 8 installer tests pass. A separate test loads the distributed CommonJS bundle without external application files and verifies the exact frontend plus valid WASM. Chromium verifies the embedded BRAT path, Home, pen input, saving, reopening, Study and absence of Era HTTP backend requests. A complete temporary-Vault install preserves its control note.
+
+Known limits: real Obsidian and physical mobile checks are pending. Native Wikis/Relations and SQLite adapters are not connected. Legacy suites retain recorded failures: 17 in the previous plugin view, 1 in Desktop and 95 in editor tests; the isolated previous-view comparison found the same 17 failures before and after integration. This does not certify complete platform parity or community-directory approval.
+
+Source: the author's current private working tree; no new private source tag is asserted for this distribution. Historical source references below refer to their own releases.
+
+main.js SHA-256: ad34410f8fefd8226e2373c307362e279c2755c2e68e7ab8ae5fb45adf5ca8fb.
+
+[Release notes](releases/1.7.0.md).
+
+## Previous stable release: 1.6.19
 
 The PDF reader header now always exposes an X close button immediately before expand/restore and PDF actions. The button shares a non-shrinking group with expand/restore, and the document title yields space in narrow panes. It is available in full, four split and floating layouts. It uses the existing close path to flush reading position and protects pending annotations and in-progress saves. Existing close and reading-position tests now target the accessible close label.
 

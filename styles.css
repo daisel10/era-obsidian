@@ -34,6 +34,30 @@
   color-scheme: dark;
 }
 
+.workspace-leaf-content[data-type="era-canvas"]
+  .era-editor[data-era-appearance="celestial"] {
+  --era-theme-paper: #f6f3ed;
+  --era-theme-surface: #fdfbf7;
+  --era-theme-hover: #f0e7d6;
+  --era-theme-active: #e9dcc0;
+  --era-theme-accent: #89601f;
+  --era-theme-ink: #25231f;
+  --era-theme-muted: #756c5e;
+  --era-theme-line: #ded5c5;
+  --era-theme-wordmark: #25231f;
+  --text-on-accent: #fff;
+  color-scheme: light;
+}
+
+.era-settings-logo {
+  display: block;
+  width: 180px;
+  height: 180px;
+  margin: 0 0 24px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
 .era-obsidian-expanded {
   position: fixed;
   inset: 0;
@@ -42,6 +66,45 @@
 }
 
 .era-obsidian-expanded > .view-content {
+  width: 100%;
+  height: 100%;
+}
+
+.notebook-dialog {
+  --era-theme-paper: var(--background-primary);
+  --era-theme-surface: var(--background-secondary);
+  --era-theme-ink: var(--text-normal);
+  --era-theme-muted: var(--text-muted);
+  --era-theme-line: var(--background-modifier-border);
+  --era-theme-accent: var(--interactive-accent);
+  --era-theme-accent-label: var(--text-accent);
+  --era-theme-active: var(--background-modifier-hover);
+}
+
+.era-cover-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.era-cover-picker .notebook-cover {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 49px;
+  --era-theme-line: var(--background-modifier-border);
+}
+
+.era-cover-picker .cover-caption,
+.era-cover-picker .cover-wordmark {
+  display: none;
+}
+.era-application-container {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.era-application-frame {
+  display: block;
+  border: 0;
   width: 100%;
   height: 100%;
 }
@@ -437,5 +500,317 @@
 @media (hover: none) {
   .era-study-shortcuts {
     display: none;
+  }
+}
+
+/* Shared cover previews and editor for Tauri and Obsidian. */
+.notebook-cover,
+.home-notebook .notebook-cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: var(--cover-color);
+  color: var(--cover-ink);
+  border: 1px solid color-mix(in srgb, var(--cover-color) 80%, #000);
+  border-radius: 4px 10px 10px 4px;
+  box-shadow:
+    inset 6px 0 #00000017,
+    inset 7px 0 #ffffff17,
+    3px 4px 0 color-mix(in srgb, var(--cover-color) 45%, var(--era-theme-line));
+}
+.notebook-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset -1px 0 #ffffff18;
+}
+.notebook-cover img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.cover-art {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.cover-art svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+.notebook-cover[data-design="linen"] .cover-art {
+  opacity: 0.12;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, currentColor 2px 2.5px),
+    repeating-linear-gradient(90deg, transparent 0 3px, currentColor 3px 3.5px);
+}
+.notebook-cover[data-design="waves"] .cover-art {
+  opacity: 0.22;
+  background: repeating-radial-gradient(
+    ellipse at 115% -10%,
+    transparent 0 9px,
+    currentColor 9.5px 10px,
+    transparent 10.5px 17px
+  );
+}
+.notebook-cover[data-design="geometric"] .cover-art {
+  opacity: 0.2;
+  background:
+    linear-gradient(
+      145deg,
+      transparent 40%,
+      currentColor 40.5% 41%,
+      transparent 41.5% 55%,
+      currentColor 55.5% 56%,
+      transparent 56.5%
+    ),
+    linear-gradient(
+      35deg,
+      transparent 56%,
+      currentColor 56.5% 57%,
+      transparent 57.5%
+    );
+}
+.cover-caption {
+  position: relative;
+  z-index: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-align: center;
+  font:
+    400 13px/1.25 Georgia,
+    serif;
+  margin: 0 15px;
+  pointer-events: none;
+}
+.cover-wordmark {
+  position: absolute;
+  bottom: 13px;
+  font:
+    italic 11px Georgia,
+    serif;
+  opacity: 0.65;
+  pointer-events: none;
+}
+.notebook-cover[data-design="photo"] .cover-caption,
+.notebook-cover[data-design="photo"] .cover-wordmark {
+  display: none;
+}
+
+.notebook-cover[data-design="photo"][data-photo-loaded="false"] .cover-caption {
+  display: -webkit-box;
+}
+
+.notebook-dialog {
+  box-sizing: border-box;
+  width: min(620px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid var(--era-theme-line);
+  border-radius: 18px;
+  background: var(--era-theme-surface);
+  color: var(--era-theme-ink);
+  box-shadow: 0 24px 100px #0004;
+}
+.notebook-dialog::backdrop {
+  background: #10121666;
+  backdrop-filter: blur(4px);
+}
+.notebook-dialog h2 {
+  margin: 0 0 24px;
+  font:
+    400 26px Georgia,
+    serif;
+  letter-spacing: -0.5px;
+}
+.notebook-dialog h3 {
+  font:
+    600 12px "Segoe UI",
+    system-ui,
+    sans-serif;
+  margin: 0 0 12px;
+}
+.notebook-dialog label {
+  display: block;
+  font:
+    12px "Segoe UI",
+    system-ui,
+    sans-serif;
+}
+.notebook-dialog input[name="notebook-name"] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin-top: 9px;
+  background: var(--era-theme-paper);
+  color: var(--era-theme-ink);
+  border: 1px solid var(--era-theme-line);
+  border-radius: 8px;
+  font: inherit;
+}
+.notebook-dialog-help {
+  font:
+    11px/1.7 "Segoe UI",
+    system-ui,
+    sans-serif;
+  color: var(--era-theme-muted);
+}
+.notebook-dialog-error {
+  color: #b6554b;
+  font:
+    12px/1.6 "Segoe UI",
+    system-ui,
+    sans-serif;
+}
+.notebook-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+.notebook-dialog button {
+  cursor: pointer;
+  font:
+    12px "Segoe UI",
+    system-ui,
+    sans-serif;
+}
+.notebook-dialog-actions button {
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--era-theme-line);
+  color: var(--era-theme-ink);
+  background: transparent;
+}
+.notebook-dialog-actions .notebook-dialog-primary {
+  color: white;
+  background: var(--era-theme-accent);
+  border-color: transparent;
+}
+.cover-editor-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 28px;
+}
+.cover-editor-preview.notebook-cover {
+  width: 172px;
+  height: 230px;
+  align-self: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: var(--cover-color);
+  color: var(--cover-ink);
+  border-radius: 4px 12px 12px 4px;
+  box-shadow:
+    inset 8px 0 #0002,
+    4px 5px 0 var(--era-theme-line);
+}
+.cover-editor-preview .cover-caption {
+  font-size: 19px;
+}
+.cover-design-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 22px;
+}
+.cover-design-options button {
+  border: 1px solid var(--era-theme-line);
+  border-radius: 6px;
+  padding: 7px 9px;
+  background: transparent;
+  color: var(--era-theme-muted);
+}
+.cover-design-options button[aria-pressed="true"] {
+  color: var(--era-theme-accent-label);
+  background: var(--era-theme-active);
+  border-color: var(--era-theme-accent);
+}
+.cover-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 10px 0 14px;
+}
+.cover-color-options button {
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 2px solid var(--era-theme-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--era-theme-line);
+}
+.cover-custom-color {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  color: var(--era-theme-muted);
+}
+.cover-custom-color input {
+  width: 32px;
+  height: 26px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.cover-upload {
+  margin-top: 21px;
+  color: var(--era-theme-accent-label);
+}
+.cover-upload input {
+  display: block;
+  margin-top: 10px;
+  font:
+    10px "Segoe UI",
+    system-ui,
+    sans-serif;
+  max-width: 100%;
+  color: var(--era-theme-muted);
+}
+.cover-upload input::file-selector-button {
+  padding: 7px 10px;
+  border: 1px solid var(--era-theme-line);
+  border-radius: 6px;
+  background: var(--era-theme-paper);
+  color: var(--era-theme-ink);
+  cursor: pointer;
+  margin-right: 8px;
+}
+@media (max-width: 650px) {
+  .notebook-dialog {
+    padding: 22px;
+  }
+  .cover-editor-layout {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .cover-editor-preview.notebook-cover {
+    width: 108px;
+    height: 148px;
+  }
+  .cover-editor-preview .cover-caption {
+    font-size: 13px;
+  }
+  .cover-color-options {
+    gap: 6px;
+  }
+  .cover-design-options {
+    margin-bottom: 16px;
   }
 }

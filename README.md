@@ -1,6 +1,14 @@
 # Era para Obsidian
 
-**Versión 1.6.19.** Cuadernos para escribir, dibujar y trabajar con imágenes,
+**Versión preliminar 1.7.0: aplicación compartida.** Inicio, biblioteca, Configuración general y editor utilizan el mismo frontend compilado de Era que web y Tauri, conectado al Vault de Obsidian. No requiere el servidor local de Era.
+
+[Descargar la preliminar 1.7.0](https://github.com/daisel10/era-obsidian/releases/download/1.7.0/era-1.7.0.zip) · [Notas y límites](releases/1.7.0.md)
+
+Para probarla con BRAT, seleccionar explícitamente **1.7.0**. La aplicación y el motor están incluidos en `main.js`, por lo que funciona con la instalación de tres archivos de BRAT. Para instalación manual, copiar la carpeta `era` completa del ZIP, conservando `data.json`, los cuadernos y Estudio. El lápiz y **Era: Abrir Era** abren Inicio; **Era: Abrir Estudio** utiliza la aplicación compartida. Las exportaciones se guardan dentro del Vault.
+
+**Alcance preliminar:** la comprobación dentro de Obsidian real y en dispositivos móviles sigue pendiente. Los adaptadores de Wikis/Relaciones y SQLite todavía no están conectados; las suites históricas conservan fallos previos. Consultar las notas antes de actualizar.
+
+**Última versión estable: 1.6.19.** Las instrucciones y descripciones siguientes corresponden a esa versión estable. Cuadernos para escribir, dibujar y trabajar con imágenes,
 textos y PDF dentro de Obsidian. Este repositorio distribuye el plugin
 compilado, listo para instalar.
 
