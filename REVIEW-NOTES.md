@@ -1,5 +1,15 @@
 # Review notes
 
+## Preliminary release: 1.7.1
+
+Fixes the shared Home view closing immediately when no notebook is attached. FileView marks a no-file state for closure by default. The application view now sets allowNoFile and explicitly accepts .era notebooks. The compiled frontend and its resource hashes are unchanged.
+
+Validation: 15 integration tests pass; types and plugin formatting pass. The distributed CommonJS regression test fails against 1.7.0 and passes with this build. The installed Obsidian 1.14.5 FileView.setState method was exercised independently: the previous state requests closure; the corrected state does not. Automated interaction with the Windows app remained unavailable, so this is not presented as a full GUI verification.
+
+main.js SHA-256: d71efd866d8d7f450a592cabeed97a8350a366693c2a0babd0a1f40031f76044.
+
+[Fix and update instructions](releases/1.7.1.md).
+
 ## Preliminary release: 1.7.0
 
 The plugin packages the same compiled Home, library, settings and editor used by Era web/Tauri. A local host adapter connects the frontend to Obsidian's Vault without Era's local HTTP service. The release is preliminary; 1.6.19 remains the latest stable release.

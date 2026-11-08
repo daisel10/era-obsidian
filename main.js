@@ -70586,6 +70586,7 @@ var EraApplicationView = class extends import_obsidian2.FileView {
   constructor(leaf, plugin) {
     super(leaf);
     this.plugin = plugin;
+    this.allowNoFile = true;
   }
   frame;
   control;
@@ -70601,6 +70602,9 @@ var EraApplicationView = class extends import_obsidian2.FileView {
   }
   getIcon() {
     return "pencil";
+  }
+  canAcceptExtension(extension) {
+    return extension === "era";
   }
   async onOpen() {
     this.contentEl.empty();

@@ -1,10 +1,12 @@
 # Era para Obsidian
 
-**Versión preliminar 1.7.0: aplicación compartida.** Inicio, biblioteca, Configuración general y editor utilizan el mismo frontend compilado de Era que web y Tauri, conectado al Vault de Obsidian. No requiere el servidor local de Era.
+**Versión preliminar 1.7.1: aplicación compartida.** Inicio, biblioteca, Configuración general y editor utilizan el mismo frontend compilado de Era que web y Tauri, conectado al Vault de Obsidian. No requiere el servidor local de Era.
 
-[Descargar la preliminar 1.7.0](https://github.com/daisel10/era-obsidian/releases/download/1.7.0/era-1.7.0.zip) · [Notas y límites](releases/1.7.0.md)
+**La 1.7.1 corrige el cierre automático de Inicio de la 1.7.0 cuando todavía no hay un cuaderno abierto.** Actualizar y recargar el plugin.
 
-Para probarla con BRAT, seleccionar explícitamente **1.7.0**. La aplicación y el motor están incluidos en `main.js`, por lo que funciona con la instalación de tres archivos de BRAT. Para instalación manual, copiar la carpeta `era` completa del ZIP, conservando `data.json`, los cuadernos y Estudio. El lápiz y **Era: Abrir Era** abren Inicio; **Era: Abrir Estudio** utiliza la aplicación compartida. Las exportaciones se guardan dentro del Vault.
+[Descargar la preliminar 1.7.1](https://github.com/daisel10/era-obsidian/releases/download/1.7.1/era-1.7.1.zip) · [Notas y límites](releases/1.7.1.md)
+
+Para probarla con BRAT, seleccionar explícitamente **1.7.1**. La aplicación y el motor están incluidos en `main.js`, por lo que funciona con la instalación de tres archivos de BRAT. Para instalación manual, copiar la carpeta `era` completa del ZIP, conservando `data.json`, los cuadernos y Estudio. El lápiz y **Era: Abrir Era** abren Inicio; **Era: Abrir Estudio** utiliza la aplicación compartida. Las exportaciones se guardan dentro del Vault.
 
 **Alcance preliminar:** la comprobación dentro de Obsidian real y en dispositivos móviles sigue pendiente. Los adaptadores de Wikis/Relaciones y SQLite todavía no están conectados; las suites históricas conservan fallos previos. Consultar las notas antes de actualizar.
 
